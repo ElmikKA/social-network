@@ -1,12 +1,19 @@
 package api
 
-import "net/http"
+import (
+	"net/http"
+)
 
-func Routes() http.Handler {
-	mux := http.NewServeMux()
+func (api *APIServer) Routes() *http.ServeMux {
+	router := http.NewServeMux()
 
-	mux.HandleFunc("/api/register", Register)
-	mux.HandleFunc("/api/login", Login)
+	router.HandleFunc("/api/register", api.Register)
+	router.HandleFunc("/api/login", api.Login)
+	router.HandleFunc("/api/getUsers", api.requireLogin(api.GetUsers))
+	router.HandleFunc("/api/websocket", api.requireLogin(api.Websocket))
 
-	return mux
+	// goroutine for webscocket connections
+	go api.HandleWebsocketConnections()
+
+	return router
 }

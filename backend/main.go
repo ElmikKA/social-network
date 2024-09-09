@@ -2,26 +2,20 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"net/http"
 	"social-network/db"
 	"social-network/pkg/api"
+	"social-network/pkg/utils"
 )
 
 func main() {
-
-	err := db.InitDb()
+	Db, err := db.InitDb()
 	if err != nil {
-		fmt.Println("error", err)
+		fmt.Println("database init error", err)
 	}
+	utils.ResetOnline(Db)
 
-	srv := &http.Server{
-		Addr:    ":8080",
-		Handler: api.Routes(),
-	}
-
-	println("starting api server at http://localhost:8080")
-	if err := srv.ListenAndServe(); err != nil {
-		log.Fatalf("error starting server: %v", err)
+	server := api.NewAPIServer(":8080", Db)
+	if err := server.Run(); err != nil {
+		fmt.Println(err)
 	}
 }
