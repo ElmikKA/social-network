@@ -87,6 +87,7 @@ func (api *APIServer) HandleWebsocketConnections() {
 }
 
 func sendPrivateMessage(msg interface{}) {
+	fmt.Println(msg)
 	mu.Lock()
 	defer mu.Unlock()
 	// add to db
