@@ -4,12 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"social-network/db"
 	"social-network/pkg/models"
-	"social-network/pkg/sessions"
 )
 
-func (api *APIServer) Register(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -29,7 +27,7 @@ func (api *APIServer) Register(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(string(data))
 
 	// check if user is already registered
-	exists, err := db.CheckUserExists(api.db, credentials)
+	exists, err := h.store.CheckUserExists(credentials)
 	if err != nil {
 		fmt.Println("error checking existing user", err)
 		responseData["response"] = "failure"
@@ -47,7 +45,7 @@ func (api *APIServer) Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// add user to db
-	err = db.AddUser(api.db, credentials)
+	err = h.store.AddUser(credentials)
 	if err != nil {
 		fmt.Println("register error adding new user", err)
 		responseData["response"] = "failure"
@@ -63,7 +61,7 @@ func (api *APIServer) Register(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(responseData)
 }
 
-func (api *APIServer) Login(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -85,7 +83,7 @@ func (api *APIServer) Login(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(credentials)
 
 	// check if credentials match
-	loggedIn, id, err := db.CheckLogin(api.db, credentials)
+	loggedIn, id, err := h.store.CheckLogin(credentials)
 	if err != nil {
 		fmt.Println("login error CheckLogin", err)
 		responseData["response"] = "failure"
@@ -106,7 +104,7 @@ func (api *APIServer) Login(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("logged in with id:", id)
 
 	// sessions
-	err = sessions.AddSession(w, r, api.db, id)
+	err = h.AddSession(w, r, id)
 	if err != nil {
 		fmt.Println("error adding session", err)
 		responseData["response"] = "failure"
@@ -123,6 +121,6 @@ func (api *APIServer) Login(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(responseData)
 }
 
-func (api *APIServer) GetUsers(w http.ResponseWriter, r *http.Request) {
+func (j *Handler) GetUsers(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("getUsers")
 }

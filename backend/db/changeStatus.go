@@ -1,22 +1,21 @@
-package utils
+package db
 
 import (
-	"database/sql"
 	"fmt"
 )
 
-func ResetOnline(Db *sql.DB) {
+func (s *Store) ResetOnline() {
 	query := `UPDATE users
 			SET online = -1`
-	_, err := Db.Exec(query)
+	_, err := s.Db.Exec(query)
 	if err != nil {
 		fmt.Println("error reseting online status", err)
 	}
 }
 
-func GoOffline(Db *sql.DB, id int) error {
+func (s *Store) GoOffline(id int) error {
 	query := `UPDATE users SET online = -1 WHERE id = ?`
-	_, err := Db.Exec(query, id)
+	_, err := s.Db.Exec(query, id)
 	if err != nil {
 		fmt.Println("error changing to offline status", err)
 		return err
@@ -24,9 +23,9 @@ func GoOffline(Db *sql.DB, id int) error {
 	return nil
 }
 
-func GoOnline(Db *sql.DB, id int) error {
+func (s *Store) GoOnline(id int) error {
 	query := `UPDATE users SET online = 1 WHERE id = ?`
-	_, err := Db.Exec(query, id)
+	_, err := s.Db.Exec(query, id)
 	if err != nil {
 		fmt.Println("error changing online status", err)
 		return err

@@ -4,20 +4,19 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"social-network/db"
 )
 
-func (api *APIServer) requireLogin(handler http.HandlerFunc) http.HandlerFunc {
+func (h *Handler) requireLogin(handler http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		cookie, err := r.Cookie("session")
 		if err == nil {
 			// cookie found
-			_, err = db.GetSessionByCookie(api.db, cookie.Value)
+			_, err = h.store.GetSessionByCookie(cookie.Value)
 			if err == nil {
 				// logged in
 				fmt.Println("middleware: logged in")
 				var err error
-				api.id, api.username, err = db.GetUserFromCookie(r, api.db)
+				h.id, h.username, err = h.store.GetUserFromCookie(r)
 				if err != nil {
 					fmt.Println("error getting id and username on middleware", err)
 					return

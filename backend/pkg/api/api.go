@@ -4,13 +4,12 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
+	"social-network/db"
 )
 
 type APIServer struct {
-	addr     string
-	db       *sql.DB
-	username string
-	id       int
+	addr string
+	db   *sql.DB
 }
 
 func NewAPIServer(addr string, db *sql.DB) *APIServer {
@@ -21,6 +20,8 @@ func NewAPIServer(addr string, db *sql.DB) *APIServer {
 }
 
 func (api *APIServer) Run() error {
+	handlerStore := db.NewStore(api.db)
+	handler := NewHandler(handlerStore)
 	fmt.Printf("listening on: http://localhost%v\n", api.addr)
-	return http.ListenAndServe(api.addr, api.Routes())
+	return http.ListenAndServe(api.addr, handler.Routes())
 }

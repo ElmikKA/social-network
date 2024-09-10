@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"social-network/pkg/models"
-	"social-network/pkg/utils"
 	"sync"
 
 	"github.com/gorilla/websocket"
@@ -21,7 +20,7 @@ var (
 )
 var broadcast = make(chan interface{})
 
-func (api *APIServer) Websocket(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) Websocket(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("in websocket")
 
 	// upgrade to websocket connection
@@ -34,22 +33,22 @@ func (api *APIServer) Websocket(w http.ResponseWriter, r *http.Request) {
 	// add defer to close the websocket after use
 	defer func() {
 		fmt.Println("closing websocket")
-		api.CloseSocket(conn)
+		h.CloseSocket(conn)
 	}()
 
 	// change status to online
 
 	fmt.Println("changing status to online")
 
-	utils.GoOnline(api.db, api.id)
+	h.store.GoOnline(h.id)
 
 	// send logged in message to every connected user
 	mu.Lock()
 	for msgConn := range connections {
 		onlineResponse := make(map[string]interface{})
 		onlineResponse["statusChange"] = true
-		onlineResponse["id"] = api.id
-		onlineResponse["username"] = api.username
+		onlineResponse["id"] = h.id
+		onlineResponse["username"] = h.username
 		onlineResponse["online"] = 1
 
 		if err := msgConn.WriteJSON(onlineResponse); err != nil {
@@ -59,8 +58,8 @@ func (api *APIServer) Websocket(w http.ResponseWriter, r *http.Request) {
 
 	// adds new connection to the connections map
 	connections[conn] = map[string]interface{}{
-		"id":       api.id,
-		"username": api.username,
+		"id":       h.id,
+		"username": h.username,
 	}
 	mu.Unlock()
 
@@ -79,7 +78,7 @@ func (api *APIServer) Websocket(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (api *APIServer) HandleWebsocketConnections() {
+func (h *Handler) HandleWebsocketConnections() {
 	for msg := range broadcast {
 		fmt.Println("got a broadcast")
 		sendPrivateMessage(msg)
@@ -106,7 +105,7 @@ func sendPrivateMessage(msg interface{}) {
 	}
 }
 
-func (api *APIServer) CloseSocket(conn *websocket.Conn) {
+func (h *Handler) CloseSocket(conn *websocket.Conn) {
 	// delete connection from connections
 	mu.Lock()
 	defer mu.Unlock()
@@ -115,14 +114,14 @@ func (api *APIServer) CloseSocket(conn *websocket.Conn) {
 	conn.Close()
 
 	// change online status
-	utils.GoOffline(api.db, api.id)
+	h.store.GoOffline(h.id)
 
 	// send every connection a status change
 	for msgConn := range connections {
 		onlineResponse := make(map[string]interface{})
 		onlineResponse["statusChange"] = true
-		onlineResponse["id"] = api.id
-		onlineResponse["username"] = api.username
+		onlineResponse["id"] = h.id
+		onlineResponse["username"] = h.username
 		onlineResponse["online"] = -1
 
 		if err := msgConn.WriteJSON(onlineResponse); err != nil {

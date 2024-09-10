@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"social-network/db"
 	"social-network/pkg/api"
-	"social-network/pkg/utils"
 )
 
 func main() {
@@ -12,7 +11,6 @@ func main() {
 	if err != nil {
 		fmt.Println("database init error", err)
 	}
-	utils.ResetOnline(Db)
 
 	server := api.NewAPIServer(":8080", Db)
 	if err := server.Run(); err != nil {

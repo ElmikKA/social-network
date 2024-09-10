@@ -1,17 +1,15 @@
-package sessions
+package api
 
 import (
-	"database/sql"
 	"fmt"
 	"net/http"
-	"social-network/db"
 	"social-network/pkg/models"
 	"time"
 
 	"github.com/google/uuid"
 )
 
-func AddSession(w http.ResponseWriter, r *http.Request, Db *sql.DB, id int) error {
+func (h *Handler) AddSession(w http.ResponseWriter, r *http.Request, id int) error {
 	// create and add a new session
 	cookie, err := r.Cookie("session")
 	if err != nil || cookie == nil {
@@ -32,14 +30,14 @@ func AddSession(w http.ResponseWriter, r *http.Request, Db *sql.DB, id int) erro
 			Cookie:  cookie.Value,
 			Expires: cookie.Expires,
 		}
-		if err = db.CreateSession(Db, session); err != nil {
+		if err = h.store.CreateSession(session); err != nil {
 			fmt.Println("AddSession error creating new session", err)
 			return err
 		}
 		fmt.Println("added new session")
 	} else {
 		// Cookie exiss
-		session, err := db.GetSessionByCookie(Db, cookie.Value)
+		session, err := h.store.GetSessionByCookie(cookie.Value)
 		if err != nil {
 			// no session with that cookie in db
 			fmt.Println("no session with that cookie in db")
@@ -57,14 +55,14 @@ func AddSession(w http.ResponseWriter, r *http.Request, Db *sql.DB, id int) erro
 				Cookie:  cookie.Value,
 				Expires: cookie.Expires,
 			}
-			if err = db.CreateSession(Db, session); err != nil {
+			if err = h.store.CreateSession(session); err != nil {
 				fmt.Println("error creating session")
 				return err
 			}
 			fmt.Println("created new session")
 		} else if session.Id != id {
 			// session belongs to a different user
-			if err = db.DeleteSession(Db, session.Id); err != nil {
+			if err = h.store.DeleteSession(session.Id); err != nil {
 				fmt.Println("AddSession error deleting session", err)
 				return err
 			}
@@ -85,7 +83,7 @@ func AddSession(w http.ResponseWriter, r *http.Request, Db *sql.DB, id int) erro
 				Cookie:  cookie.Value,
 				Expires: cookie.Expires,
 			}
-			if err = db.CreateSession(Db, session); err != nil {
+			if err = h.store.CreateSession(session); err != nil {
 				fmt.Println("error creating session")
 				return err
 			}
@@ -93,7 +91,7 @@ func AddSession(w http.ResponseWriter, r *http.Request, Db *sql.DB, id int) erro
 		} else {
 			// session belongs to the user
 			// extends the expiresAt
-			if err = db.ExtendSessionDate(Db, cookie.Value); err != nil {
+			if err = h.store.ExtendSessionDate(cookie.Value); err != nil {
 				fmt.Println("AddSession error extending session")
 				return err
 			}
