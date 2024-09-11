@@ -1,17 +1,13 @@
-import Header from "./components/Header.jsx"
-import Footer from "./components/Footer.jsx";
+// import Header from "./Header.jsx"
+// import Footer from "./Footer.jsx";
+import Register from "./Register.jsx"
 function App() {
 
   return (
     <>
-      <Header />
-      <Footer />
+      <Register />
     </>
   );
-
-
-
-
 }
 
 export default App
