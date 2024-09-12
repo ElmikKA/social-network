@@ -21,9 +21,16 @@ func (h *Handler) Routes() *http.ServeMux {
 
 	router.HandleFunc("/api/register", h.Register)
 	router.HandleFunc("/api/login", h.Login)
-	router.HandleFunc("/api/getUsers", h.requireLogin(h.GetUsers))
-	router.HandleFunc("/api/websocket", h.requireLogin(h.Websocket))
+	router.HandleFunc("/api/getUser", h.requireLogin(h.GetUser))
+	router.HandleFunc("/api/getAllUsers", h.requireLogin(h.GetAllUsers))
+	router.HandleFunc("/api/avatars/", h.ServeAvatar)
+	router.HandleFunc("/api/addPost", h.requireLogin(h.AddPost))
+	router.HandleFunc("/api/getPost/{id}", h.requireLogin(h.GetPost))
+	router.HandleFunc("/api/getAllPosts", h.requireLogin(h.GetAllPosts))
+	router.HandleFunc("/api/addComment", h.requireLogin(h.AddComment))
+	router.HandleFunc("/api/getComments/{postId}", h.requireLogin(h.GetComments))
 
+	router.HandleFunc("/api/websocket", h.requireLogin(h.Websocket))
 	// goroutine for webscocket connections
 	go h.HandleWebsocketConnections()
 

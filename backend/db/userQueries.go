@@ -29,9 +29,9 @@ func (s *Store) AddUser(user models.Users) error {
 	}
 	fmt.Println("hashed pass:", hashedPassword)
 	query := `
-		INSERT INTO users (name, email, password, firstName, lastName, dateOfBirth, avatar, avatarMimeType, nickname, aboutMe) VALUES (?,?,?,?,?,?,?,?,?,?)
+		INSERT INTO users (name, email, password, firstName, lastName, dateOfBirth, avatar, nickname, aboutMe) VALUES (?,?,?,?,?,?,?,?,?)
 	`
-	_, err = s.Db.Exec(query, user.Name, user.Email, hashedPassword, user.FirstName, user.LastName, user.DateOfBirth, user.Avatar, user.AvatarMimeType, user.Nickname, user.AboutMe)
+	_, err = s.Db.Exec(query, user.Name, user.Email, hashedPassword, user.FirstName, user.LastName, user.DateOfBirth, user.Avatar, user.Nickname, user.AboutMe)
 	if err != nil {
 		fmt.Println("error adding user", err)
 		return err
@@ -61,25 +61,73 @@ func (s *Store) CheckLogin(credentials models.LoginCredentials) (bool, int, erro
 	return true, id, nil
 }
 
-func (s *Store) GetUserFromCookie(r *http.Request) (int, string, error) {
+func (s *Store) GetUserFromCookie(r *http.Request) (models.Users, error) {
 	cookie, err := r.Cookie("session")
 	if err != nil {
 		fmt.Println("error getting userfromcookie", err)
-		return 0, "", err
+		return models.Users{}, err
 	}
 
 	session, err := s.GetSessionByCookie(cookie.Value)
 	if err != nil {
 		fmt.Println("getuserfromcookie session error", err)
-		return 0, "", err
+		return models.Users{}, err
 	}
 
 	user := models.Users{}
-	query := `SELECT id, name FROM users WHERE id = ?`
-	err = s.Db.QueryRow(query, session.Id).Scan(&user.Id, &user.Name)
+	query := `SELECT id, name, email, firstName, lastName, dateOfBirth, avatar, 
+	 nickname, aboutMe, online FROM users WHERE id = ?`
+	err = s.Db.QueryRow(query, session.Id).Scan(
+		&user.Id,
+		&user.Name,
+		&user.Email,
+		&user.FirstName,
+		&user.LastName,
+		&user.DateOfBirth,
+		&user.Avatar,
+		&user.Nickname,
+		&user.AboutMe,
+		&user.Online,
+	)
 	if err != nil {
 		fmt.Println("getuserfromcookie error", err)
-		return 0, "", err
+		return models.Users{}, err
 	}
-	return user.Id, user.Name, nil
+	return user, nil
+}
+
+func (s *Store) GetAllUsers() ([]models.Users, error) {
+	query := `
+		SELECT id, name, email, firstName, lastName, dateOfBirth, avatar, 
+	 nickname, aboutMe, online FROM users
+	`
+	rows, err := s.Db.Query(query)
+	if err != nil {
+		fmt.Println("error querying getallusers", err)
+		return []models.Users{}, nil
+	}
+	defer rows.Close()
+
+	var users []models.Users
+	for rows.Next() {
+		var user models.Users
+		err := rows.Scan(
+			&user.Id,
+			&user.Name,
+			&user.Email,
+			&user.FirstName,
+			&user.LastName,
+			&user.DateOfBirth,
+			&user.Avatar,
+			&user.Nickname,
+			&user.AboutMe,
+			&user.Online,
+		)
+		if err != nil {
+			fmt.Println("err scanning getallusers", err)
+			return []models.Users{}, err
+		}
+		users = append(users, user)
+	}
+	return users, nil
 }

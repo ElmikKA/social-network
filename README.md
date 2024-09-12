@@ -12,3 +12,5 @@ https://github.com/01-edu/public/tree/master/subjects/social-network/audit
 ``goose up-by-one`` (goes up one table)
 
 ``goose down`` (drops the latest table)
+
+``kooduser@pupil:~/js/social-network/backend$ GOOSE_DRIVER=sqlite3 GOOSE_DBSTRING=./db/sn.db goose -s -dir ./db/migrations/ create add_new_posts_table sql``

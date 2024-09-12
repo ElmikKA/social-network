@@ -21,6 +21,7 @@ var (
 var broadcast = make(chan interface{})
 
 func (h *Handler) Websocket(w http.ResponseWriter, r *http.Request) {
+	CorsEnabler(w, r)
 	fmt.Println("in websocket")
 
 	// upgrade to websocket connection

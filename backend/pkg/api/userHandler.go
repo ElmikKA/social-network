@@ -5,26 +5,39 @@ import (
 	"fmt"
 	"net/http"
 	"social-network/pkg/models"
+	"social-network/pkg/utils"
 )
 
 func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
+	CorsEnabler(w, r)
+	if r.Method == http.MethodOptions {
+		return
+	}
 	if r.Method != "POST" {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	responseData := make(map[string]interface{})
-
-	credentials := models.Users{}
-	err := json.NewDecoder(r.Body).Decode(&credentials)
+	err := r.ParseMultipartForm(10 << 20)
 	if err != nil {
-		fmt.Println("Register error decoding json ", err)
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		http.Error(w, "Unable to parse form", http.StatusBadRequest)
 		return
 	}
 
-	data, _ := json.MarshalIndent(credentials, "", "  ")
-	fmt.Println(string(data))
+	responseData := make(map[string]interface{})
+
+	credentials := models.Users{
+		Name:        r.FormValue("name"),
+		Email:       r.FormValue("email"),
+		Password:    r.FormValue("password"),
+		FirstName:   r.FormValue("firstName"),
+		LastName:    r.FormValue("lastName"),
+		DateOfBirth: r.FormValue("dateOfBirth"),
+		Nickname:    r.FormValue("nickname"),
+		AboutMe:     r.FormValue("aboutMe"),
+	}
+
+	fmt.Println(credentials)
 
 	// check if user is already registered
 	exists, err := h.store.CheckUserExists(credentials)
@@ -37,6 +50,7 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if exists {
+		fmt.Println("user alreday registered")
 		responseData["response"] = "failure"
 		responseData["message"] = "Username or email already registered"
 		w.Header().Set("Content-Type", "application/json")
@@ -45,6 +59,13 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// add user to db
+	filePath, err := utils.SaveFile(r, credentials.Name, "Avatar")
+	if err != nil {
+		fmt.Println("error saving file")
+	}
+	fmt.Println(filePath)
+	credentials.Avatar = filePath
+
 	err = h.store.AddUser(credentials)
 	if err != nil {
 		fmt.Println("register error adding new user", err)
@@ -62,6 +83,10 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
+	CorsEnabler(w, r)
+	if r.Method == http.MethodOptions {
+		return
+	}
 	if r.Method != "POST" {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -80,7 +105,6 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(responseData)
 		return
 	}
-	fmt.Println(credentials)
 
 	// check if credentials match
 	loggedIn, id, err := h.store.CheckLogin(credentials)
@@ -101,7 +125,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(responseData)
 		return
 	}
-	fmt.Println("logged in with id:", id)
+	fmt.Println("logged in with :", id)
 
 	// sessions
 	err = h.AddSession(w, r, id)
@@ -121,6 +145,66 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(responseData)
 }
 
-func (j *Handler) GetUsers(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("getUsers")
+func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
+	CorsEnabler(w, r)
+	if r.Method == http.MethodOptions {
+		return
+	}
+	if r.Method != "GET" {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// gets only the logged in user
+
+	responseData := make(map[string]interface{})
+
+	user, err := h.store.GetUserFromCookie(r)
+	if err != nil {
+		fmt.Println("getUser handler err", err)
+		responseData["respone"] = "failure"
+		responseData["message"] = "Couldn't get user from cookie"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+
+	responseData["response"] = "success"
+	responseData["message"] = "Getuser successful"
+	responseData["getUser"] = user
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(responseData)
+	fmt.Println("sent the response")
+}
+
+func (h *Handler) GetAllUsers(w http.ResponseWriter, r *http.Request) {
+	CorsEnabler(w, r)
+	// fmt.Println("getAllUsers")
+
+	if r.Method != "GET" {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	// gets all users
+
+	responseData := make(map[string]interface{})
+
+	users, err := h.store.GetAllUsers()
+	if err != nil {
+		fmt.Println("getAllUsers handler err", err)
+		responseData["respone"] = "failure"
+		responseData["message"] = "Couldn't get all users"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+
+	responseData["response"] = "success"
+	responseData["message"] = "GetAllUsers successful"
+	responseData["getAllUsers"] = users
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(responseData)
 }

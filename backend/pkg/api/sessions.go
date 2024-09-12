@@ -10,17 +10,18 @@ import (
 )
 
 func (h *Handler) AddSession(w http.ResponseWriter, r *http.Request, id int) error {
+	CorsEnabler(w, r)
 	// create and add a new session
 	cookie, err := r.Cookie("session")
 	if err != nil || cookie == nil {
 		// no cookie found or error finding cookie
 		fmt.Println("no cookie found")
 		cookie = &http.Cookie{
-			Name:    "session",
-			Value:   uuid.New().String(),
-			Path:    "/",
-			Expires: time.Now().Add(30 * time.Minute),
-			// SameSite: http.SameSiteNoneMode,
+			Name:     "session",
+			Value:    uuid.New().String(),
+			Path:     "/",
+			Expires:  time.Now().Add(30 * time.Minute),
+			SameSite: http.SameSiteNoneMode,
 			// Secure:   true,
 		}
 		http.SetCookie(w, cookie)
@@ -39,14 +40,15 @@ func (h *Handler) AddSession(w http.ResponseWriter, r *http.Request, id int) err
 		// Cookie exiss
 		session, err := h.store.GetSessionByCookie(cookie.Value)
 		if err != nil {
+			fmt.Println("no session with that cookie in db")
 			// no session with that cookie in db
 			fmt.Println("no session with that cookie in db")
 			cookie = &http.Cookie{
-				Name:    "session",
-				Value:   uuid.New().String(),
-				Path:    "/",
-				Expires: time.Now().Add(30 * time.Minute),
-				// SameSite: http.SameSiteNoneMode,
+				Name:     "session",
+				Value:    uuid.New().String(),
+				Path:     "/",
+				Expires:  time.Now().Add(30 * time.Minute),
+				SameSite: http.SameSiteNoneMode,
 				// Secure:   true,
 			}
 			http.SetCookie(w, cookie)
@@ -61,6 +63,7 @@ func (h *Handler) AddSession(w http.ResponseWriter, r *http.Request, id int) err
 			}
 			fmt.Println("created new session")
 		} else if session.Id != id {
+			fmt.Println("session in db for a diff user")
 			// session belongs to a different user
 			if err = h.store.DeleteSession(session.Id); err != nil {
 				fmt.Println("AddSession error deleting session", err)
@@ -69,11 +72,11 @@ func (h *Handler) AddSession(w http.ResponseWriter, r *http.Request, id int) err
 
 			// create new cookie and session
 			cookie = &http.Cookie{
-				Name:    "session",
-				Value:   uuid.New().String(),
-				Path:    "/",
-				Expires: time.Now().Add(30 * time.Minute),
-				// SameSite: http.SameSiteNoneMode,
+				Name:     "session",
+				Value:    uuid.New().String(),
+				Path:     "/",
+				Expires:  time.Now().Add(30 * time.Minute),
+				SameSite: http.SameSiteNoneMode,
 				// Secure:   true,
 			}
 			http.SetCookie(w, cookie)

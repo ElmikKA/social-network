@@ -8,10 +8,10 @@ CREATE TABLE users (
     firstName TEXT NOT NULL,
     lastName TEXT NOT NULL,
     dateOfBirth DATETIME NOT NULL,
-    avatar BLOB,
-    avatarMimeType TEXT,
-    nickname TEXT,
-    aboutMe TEXT,
+    avatar TEXT DEFAULT '',
+    -- avatarMimeType TEXT DEFAULT '',
+    nickname TEXT DEFAULT '',
+    aboutMe TEXT DEFAULT '',
     online INTEGER DEFAULT -1
 );
 
