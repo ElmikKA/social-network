@@ -12,3 +12,4 @@ CREATE TABLE notifications (
 
 -- +goose Down
 DROP TABLE notifications;
+

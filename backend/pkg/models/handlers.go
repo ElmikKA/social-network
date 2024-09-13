@@ -26,4 +26,7 @@ type UserStore interface {
 	AddFollower(userId, following int, pending string) (int, error)
 	CheckUserPrivacyStatus(userId int) (string, error)
 	AddNotification(notification Notification) error
+	RespondFollow(userId, responseId int, answer string) error
+	AddGroup(group Group) (int, error)
+	AddGroupMember(group Group) error
 }

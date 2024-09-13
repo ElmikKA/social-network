@@ -12,7 +12,8 @@ CREATE TABLE users (
     -- avatarMimeType TEXT DEFAULT '',
     nickname TEXT DEFAULT '',
     aboutMe TEXT DEFAULT '',
-    online INTEGER DEFAULT -1
+    online INTEGER DEFAULT -1,
+    privacy TEXT NOT NULL DEFAULT "public"
 );
 
 -- adds a default row to the users table

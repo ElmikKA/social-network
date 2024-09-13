@@ -384,3 +384,44 @@ export const useSetComment = (postId) => {
         handleSubmit
     }
 }
+
+export const useAddFollow = (followId) => {
+    useEffect(() => {
+        const addFollow = async () => {
+            try {
+                await fetch(`http://localhost:8080/api/addFollow/${followId}`, {
+                    credentials: 'include',
+                    method: "GET"
+                })
+            } catch (err) {
+                console.log("error adding follower", err)
+                return err
+            }
+        }
+        addFollow()
+    }, [])
+    return null
+}
+
+export const RespondFollow = (toUserId, pending) => {
+    // toUserId is the id of the person who sent you the follow request
+    // pending is "completed" or "rejected" depending of if you want to accept or reject the follow
+
+    useEffect(() => {
+        const acceptRejectFollow = async () => {
+            try {
+                const response = await fetch(`http://localhost:8080/api/respondFollow/${toUserId}`, {
+                    credentials: 'include',
+                    method: "POST",
+                    body: JSON.stringify({ pending: `${pending}` })
+                })
+                console.log(response)
+            } catch (err) {
+                console.log("error confirm/reject follow", err)
+                return err
+            }
+        }
+        acceptRejectFollow()
+    }, [])
+    return null
+}

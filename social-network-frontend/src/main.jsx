@@ -9,6 +9,8 @@ import Profile from './pages/profile/Profile'
 import Home from './pages/HomePage/Home'
 import CreatePost from './pages/CreatePost/CreatePost'
 import Comment from './components/Comment'
+import Follow from './addingStuff/Follow'
+import Groups from './addingStuff/Groups'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -18,12 +20,15 @@ createRoot(document.getElementById('root')).render(
     <Login />
     <hr />
     {/* <Profile /> */}
-    <hr />
-    <Home />
+    {/* <hr /> */}
+    {/* <Home /> */}
     {/* <hr /> */}
     {/* <Comment /> */}
     {/* <hr /> */}
     {/* <CreatePost /> */}
+    {/* <Follow /> */}
+    <Groups />
+
 
   </StrictMode>,
 )
