@@ -6,16 +6,16 @@ const Groups = () => {
     const { groupData, handleChange, handleSubmit } = useCreateGroup()
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', maxWidth: '400px', margin: '0 auto' }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', maxWidth: '400px', margin: '0 auto' }}>
             <label htmlFor="title">Titl</label>
             <input type="text" id="title" required value={groupData.title} onChange={handleChange} />
 
             <label htmlFor="description">description</label>
-            <input type="text" id="description" value={groupData.description} onChange={handleChange} />
+            <input type="text" id="description" value={groupData.description} onChange={handleChange} required />
 
-            <button onClick={handleSubmit}>create group</button>
+            <button type='submit'>create group</button>
 
-        </div>
+        </form>
     )
 }
 

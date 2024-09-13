@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"social-network/pkg/models"
+	"strconv"
 
 	"github.com/mattn/go-sqlite3"
 )
@@ -53,7 +54,7 @@ func (h *Handler) CreateGroup(w http.ResponseWriter, r *http.Request) {
 
 	group.Id = groupId
 
-	err = h.store.AddGroupMember(group)
+	_, err = h.store.AddGroupMember(group)
 	if err != nil {
 		responseData["response"] = "failure"
 		responseData["message"] = "Internal server error"
@@ -64,6 +65,71 @@ func (h *Handler) CreateGroup(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	responseData["message"] = "Group created successfully"
 	responseData["response"] = "success"
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(responseData)
+}
+
+func (h *Handler) RequestGroupJoin(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("sending group join request")
+	CorsEnabler(w, r)
+	if r.Method == http.MethodOptions {
+		return
+	}
+	responseData := make(map[string]interface{})
+	if r.Method != http.MethodPost {
+		responseData["response"] = "failure"
+		responseData["message"] = "Method not allowed"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+	groupId, err := strconv.Atoi(r.PathValue("groupId"))
+	if err != nil {
+		responseData["response"] = "failure"
+		responseData["message"] = "Invalid url payload"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+
+	user, err := h.store.GetUserFromCookie(r)
+	if err != nil {
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+
+	group := models.Group{
+		UserId: user.Id,
+		Id:     groupId,
+	}
+
+	groupMembersTableId, err := h.store.AddGroupMember(group)
+	if err != nil {
+		responseData["response"] = "failure"
+		if sqliteErr, ok := err.(sqlite3.Error); ok && sqliteErr.Code == sqlite3.ErrConstraint {
+			responseData["message"] = "Already sent a request"
+		} else {
+			responseData["message"] = "Internal server error"
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+
+	if groupMembersTableId == 0 {
+		responseData["response"] = "failure"
+		responseData["message"] = "User already in the group"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+
+	responseData["response"] = "success"
+	responseData["message"] = "GroupJoinRequest successfully sent"
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(responseData)
 }

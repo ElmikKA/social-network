@@ -52,6 +52,7 @@ export const useRegister = () => {
         firstName: '',
         lastName: '',
         dateOfBirth: '',
+        privacy: 'public',
         avatar: null,
         nickname: '',
         aboutMe: ''
@@ -396,7 +397,7 @@ export const useAddFollow = (followId) => {
     return null
 }
 
-export const RespondFollow = (toUserId, response) => {
+export const useRespondFollow = (userId, response) => {
     // toUserId is the id of the person who sent you the follow request
     // pending is "completed" or "rejected" depending of if you want to accept or reject the follow
 
@@ -405,10 +406,10 @@ export const RespondFollow = (toUserId, response) => {
             const requestOptions = {
                 credentials: 'include',
                 method: "POST",
-                body: JSON.stringify({ pending: `${response}` })
+                body: JSON.stringify({ pending: `${response}`, userId: userId })
             }
             try {
-                const response = await fetch(`http://localhost:8080/api/respondFollow/${toUserId}`, requestOptions)
+                const response = await fetch('http://localhost:8080/api/respondFollow', requestOptions)
                 const data = await response.json()
                 console.log(data)
             } catch (err) {

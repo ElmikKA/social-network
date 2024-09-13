@@ -30,8 +30,10 @@ func (h *Handler) Routes() *http.ServeMux {
 	router.HandleFunc("/api/addComment", h.requireLogin(h.AddComment))
 	router.HandleFunc("/api/getComments/{postId}", h.requireLogin(h.GetComments))
 	router.HandleFunc("/api/addFollow/{userId}", h.requireLogin(h.AddFollow))
-	router.HandleFunc("/api/respondFollow/{userId}", h.requireLogin(h.RespondFollow))
+	router.HandleFunc("/api/respondFollow", h.requireLogin(h.RespondFollow))
 	router.HandleFunc("/api/createGroup", h.requireLogin(h.CreateGroup))
+	router.HandleFunc("/api/requestGroupJoin/{groupId}", h.requireLogin(h.RequestGroupJoin))
+	router.HandleFunc("/api/createEvent", h.requireLogin(h.CreateEvent))
 
 	router.HandleFunc("/api/websocket", h.requireLogin(h.Websocket))
 	// goroutine for webscocket connections

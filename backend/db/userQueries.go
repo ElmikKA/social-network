@@ -28,9 +28,9 @@ func (s *Store) AddUser(user models.Users) error {
 		return err
 	}
 	query := `
-		INSERT INTO users (name, email, password, firstName, lastName, dateOfBirth, avatar, nickname, aboutMe) VALUES (?,?,?,?,?,?,?,?,?)
+		INSERT INTO users (name, email, password, firstName, lastName, dateOfBirth, avatar, nickname, aboutMe, privacy) VALUES (?,?,?,?,?,?,?,?,?,?)
 	`
-	_, err = s.Db.Exec(query, user.Name, user.Email, hashedPassword, user.FirstName, user.LastName, user.DateOfBirth, user.Avatar, user.Nickname, user.AboutMe)
+	_, err = s.Db.Exec(query, user.Name, user.Email, hashedPassword, user.FirstName, user.LastName, user.DateOfBirth, user.Avatar, user.Nickname, user.AboutMe, user.Privacy)
 	if err != nil {
 		fmt.Println("error adding user", err)
 		return err
@@ -75,7 +75,7 @@ func (s *Store) GetUserFromCookie(r *http.Request) (models.Users, error) {
 
 	user := models.Users{}
 	query := `SELECT id, name, email, firstName, lastName, dateOfBirth, avatar, 
-	 nickname, aboutMe, online FROM users WHERE id = ?`
+	 nickname, aboutMe, online, privacy FROM users WHERE id = ?`
 	err = s.Db.QueryRow(query, session.Id).Scan(
 		&user.Id,
 		&user.Name,
@@ -87,6 +87,7 @@ func (s *Store) GetUserFromCookie(r *http.Request) (models.Users, error) {
 		&user.Nickname,
 		&user.AboutMe,
 		&user.Online,
+		&user.Privacy,
 	)
 	if err != nil {
 		fmt.Println("getuserfromcookie error", err)
@@ -97,7 +98,7 @@ func (s *Store) GetUserFromCookie(r *http.Request) (models.Users, error) {
 
 func (s *Store) GetUser(userId int) (models.Users, error) {
 	query := `SELECT id, name, email, firstName, lastName, dateOfBirth, avatar, 
-	 nickname, aboutMe, online FROM users WHERE id = ?`
+	 nickname, aboutMe, online, privacy FROM users WHERE id = ?`
 	var user models.Users
 	err := s.Db.QueryRow(query, userId).Scan(&user.Id,
 		&user.Name,
@@ -109,6 +110,7 @@ func (s *Store) GetUser(userId int) (models.Users, error) {
 		&user.Nickname,
 		&user.AboutMe,
 		&user.Online,
+		&user.Privacy,
 	)
 	if err != nil {
 		fmt.Println("error getting user", err)
@@ -120,7 +122,7 @@ func (s *Store) GetUser(userId int) (models.Users, error) {
 func (s *Store) GetAllUsers() ([]models.Users, error) {
 	query := `
 		SELECT id, name, email, firstName, lastName, dateOfBirth, avatar, 
-	 nickname, aboutMe, online FROM users
+	 nickname, aboutMe, online, priacy FROM users
 	`
 	rows, err := s.Db.Query(query)
 	if err != nil {
@@ -143,6 +145,7 @@ func (s *Store) GetAllUsers() ([]models.Users, error) {
 			&user.Nickname,
 			&user.AboutMe,
 			&user.Online,
+			&user.Privacy,
 		)
 		if err != nil {
 			fmt.Println("err scanning getallusers", err)

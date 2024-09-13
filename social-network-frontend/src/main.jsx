@@ -11,13 +11,17 @@ import CreatePost from './pages/CreatePost/CreatePost'
 import Comment from './components/Comment'
 import Follow from './addingStuff/Follow'
 import Groups from './addingStuff/Groups'
+import JoinGroup from './addingStuff/JoinGroup'
+import Event from './addingStuff/Event'
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
+  // <StrictMode>
+  <div>
+
 
     {/* <Register /> */}
     {/* <hr /> */}
-    <Login />
+    < Login />
     <hr />
     {/* <Profile /> */}
     {/* <hr /> */}
@@ -27,8 +31,11 @@ createRoot(document.getElementById('root')).render(
     {/* <hr /> */}
     {/* <CreatePost /> */}
     {/* <Follow /> */}
-    {/* <Groups /> */}
+    {/* < Groups /> */}
+    {/* <JoinGroup /> */}
+    < Event />
 
+  </ div>
 
-  </StrictMode>,
+  // </StrictMode >
 )

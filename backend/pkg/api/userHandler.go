@@ -41,6 +41,7 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 		DateOfBirth: r.FormValue("dateOfBirth"),
 		Nickname:    r.FormValue("nickname"),
 		AboutMe:     r.FormValue("aboutMe"),
+		Privacy:     r.FormValue("privacy"),
 	}
 
 	// check if user is already registered
@@ -64,12 +65,17 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 
 	filePath, err := utils.SaveFile(r, credentials.Name, "Avatar")
 	if err != nil {
-		fmt.Println("error saving file")
-		responseData["response"] = "failure"
-		responseData["message"] = "Internal server error"
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(responseData)
-		return
+		if filePath == "No avatar" {
+			fmt.Println("no avatar")
+		} else {
+
+			fmt.Println("error saving file")
+			responseData["response"] = "failure"
+			responseData["message"] = "Internal server error"
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(responseData)
+			return
+		}
 	}
 	credentials.Avatar = filePath
 

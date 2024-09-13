@@ -12,6 +12,7 @@ type Users struct {
 	Nickname    string `json:"nickname"`
 	AboutMe     string `json:"aboutMe"`
 	Online      string `json:"online"`
+	Privacy     string `json:"privacy"`
 }
 
 type LoginCredentials struct {

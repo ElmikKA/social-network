@@ -24,6 +24,12 @@ const Register = () => {
             <label htmlFor="dateOfBirth">Date of Birth</label>
             <input type="date" id="dateOfBirth" required value={registerData.dateOfBirth} onChange={handleChange} />
 
+            <select id="privacy" value={registerData.privacy} onChange={handleChange}>
+                <option value="public">public</option>
+                <option value="private">private</option>
+                <option value="almostPrivate">almost private</option>
+            </select>
+
             <label htmlFor="avatar">Avatar</label>
             <input type="file" id="avatar" accept="image/*" onChange={handleFileChange} />
 

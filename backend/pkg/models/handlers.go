@@ -29,5 +29,6 @@ type UserStore interface {
 	AddNotification(notification Notification) error
 	RespondFollow(userId, responseId int, answer string) error
 	AddGroup(group Group) (int, error)
-	AddGroupMember(group Group) error
+	AddGroupMember(group Group) (int, error)
+	AddEvent(event Event) error
 }

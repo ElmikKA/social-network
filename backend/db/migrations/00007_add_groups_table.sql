@@ -14,7 +14,9 @@ CREATE TABLE groupMembers (
     groupId INTEGER NOT NULL,
     role TEXT,
     pending TEXT CHECK(pending IN ('pending', 'completed','rejected')),
-    FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (groupId) REFERENCES groups(id) ON DELETE CASCADE,
+    CONSTRAINT unique_user_group UNIQUE (userId, groupId)
 );
 
 -- +goose Down
