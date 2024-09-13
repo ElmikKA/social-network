@@ -23,4 +23,7 @@ type UserStore interface {
 	GetAllPosts() ([]Post, error)
 	AddComment(comment Comment) error
 	GetComments(postId int) ([]Comment, error)
+	AddFollower(userId, following int, pending string) (int, error)
+	CheckUserPrivacyStatus(userId int) (string, error)
+	AddNotification(notification Notification) error
 }

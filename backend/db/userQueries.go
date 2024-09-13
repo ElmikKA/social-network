@@ -131,3 +131,14 @@ func (s *Store) GetAllUsers() ([]models.Users, error) {
 	}
 	return users, nil
 }
+
+func (s *Store) CheckUserPrivacyStatus(userId int) (string, error) {
+	query := `SELECT privacy FROM users WHERE id = ?`
+	var privacy string
+	err := s.Db.QueryRow(query, userId).Scan(&privacy)
+	if err != nil {
+		fmt.Println("error checking privacy status", err)
+		return "", err
+	}
+	return privacy, nil
+}

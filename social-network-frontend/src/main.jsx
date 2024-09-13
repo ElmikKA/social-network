@@ -17,11 +17,11 @@ createRoot(document.getElementById('root')).render(
     {/* <hr /> */}
     <Login />
     <hr />
-    <Profile />
+    {/* <Profile /> */}
     <hr />
-    {/* <Home /> */}
+    <Home />
     {/* <hr /> */}
-    <Comment />
+    {/* <Comment /> */}
     {/* <hr /> */}
     {/* <CreatePost /> */}
 

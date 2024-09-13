@@ -1,6 +1,7 @@
 package api
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -113,16 +114,24 @@ func (h *Handler) GetAllPosts(w http.ResponseWriter, r *http.Request) {
 
 	posts, err := h.store.GetAllPosts()
 	if err != nil {
+		if err == sql.ErrNoRows {
+			fmt.Println("no rows")
+			responseData := make(map[string]interface{})
+			responseData["response"] = "success"
+			responseData["message"] = "GetAllPosts success"
+			responseData["getAllPosts"] = nil
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(responseData)
+			return
+		}
 		fmt.Println("error getallposts", err)
 		http.Error(w, "internal server error", http.StatusInternalServerError)
 		return
 	}
-
 	responseData := make(map[string]interface{})
 	responseData["response"] = "success"
 	responseData["message"] = "GetAllPosts success"
 	responseData["getAllPosts"] = posts
-	fmt.Println(posts[0].Creator)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(responseData)
 }
