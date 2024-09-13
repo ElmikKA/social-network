@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"social-network/pkg/models"
 	"social-network/pkg/utils"
+	"strconv"
 )
 
 func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
@@ -13,18 +14,23 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodOptions {
 		return
 	}
+	responseData := make(map[string]interface{})
 	if r.Method != "POST" {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		responseData["response"] = "failure"
+		responseData["message"] = "Method not allowed"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
 		return
 	}
 
 	err := r.ParseMultipartForm(10 << 20)
 	if err != nil {
-		http.Error(w, "Unable to parse form", http.StatusBadRequest)
+		responseData["response"] = "failure"
+		responseData["message"] = "Invalid payload"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
 		return
 	}
-
-	responseData := make(map[string]interface{})
 
 	credentials := models.Users{
 		Name:        r.FormValue("name"),
@@ -36,8 +42,6 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 		Nickname:    r.FormValue("nickname"),
 		AboutMe:     r.FormValue("aboutMe"),
 	}
-
-	fmt.Println(credentials)
 
 	// check if user is already registered
 	exists, err := h.store.CheckUserExists(credentials)
@@ -58,19 +62,22 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// add user to db
 	filePath, err := utils.SaveFile(r, credentials.Name, "Avatar")
 	if err != nil {
 		fmt.Println("error saving file")
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
 	}
-	fmt.Println(filePath)
 	credentials.Avatar = filePath
 
 	err = h.store.AddUser(credentials)
 	if err != nil {
 		fmt.Println("register error adding new user", err)
 		responseData["response"] = "failure"
-		responseData["message"] = "db error"
+		responseData["message"] = "Internal server error"
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(responseData)
 	}
@@ -87,12 +94,14 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodOptions {
 		return
 	}
+	responseData := make(map[string]interface{})
 	if r.Method != "POST" {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		responseData["response"] = "failure"
+		responseData["message"] = "Method not allowed"
+		json.NewEncoder(w).Encode(responseData)
+		w.Header().Set("Content-Type", "application/json")
 		return
 	}
-
-	responseData := make(map[string]interface{})
 
 	credentials := models.LoginCredentials{}
 
@@ -125,7 +134,6 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(responseData)
 		return
 	}
-	fmt.Println("logged in with :", id)
 
 	// sessions
 	err = h.AddSession(w, r, id)
@@ -150,20 +158,30 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodOptions {
 		return
 	}
+	responseData := make(map[string]interface{})
 	if r.Method != "GET" {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		responseData["response"] = "failure"
+		responseData["message"] = "Method not allowed"
+		json.NewEncoder(w).Encode(responseData)
+		w.Header().Set("Content-Type", "application/json")
+		return
+	}
+	userId, err := strconv.Atoi(r.PathValue("userId"))
+	if err != nil {
+		fmt.Println("url error", err)
+		responseData["respone"] = "failure"
+		responseData["message"] = "Invalid url payload"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
 		return
 	}
 
-	// gets only the logged in user
+	user, err := h.store.GetUser(userId)
 
-	responseData := make(map[string]interface{})
-
-	user, err := h.store.GetUserFromCookie(r)
 	if err != nil {
 		fmt.Println("getUser handler err", err)
 		responseData["respone"] = "failure"
-		responseData["message"] = "Couldn't get user from cookie"
+		responseData["message"] = "Internal server error"
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(responseData)
 		return
@@ -180,22 +198,23 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetAllUsers(w http.ResponseWriter, r *http.Request) {
-	CorsEnabler(w, r)
-	// fmt.Println("getAllUsers")
+	fmt.Println("getAllUsers")
 
+	CorsEnabler(w, r)
+	responseData := make(map[string]interface{})
 	if r.Method != "GET" {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		responseData["response"] = "failure"
+		responseData["message"] = "Method not allowed"
+		json.NewEncoder(w).Encode(responseData)
+		w.Header().Set("Content-Type", "application/json")
 		return
 	}
-	// gets all users
-
-	responseData := make(map[string]interface{})
 
 	users, err := h.store.GetAllUsers()
 	if err != nil {
 		fmt.Println("getAllUsers handler err", err)
 		responseData["respone"] = "failure"
-		responseData["message"] = "Couldn't get all users"
+		responseData["message"] = "Internal server error"
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(responseData)
 		return

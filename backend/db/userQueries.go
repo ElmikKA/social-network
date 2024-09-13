@@ -27,7 +27,6 @@ func (s *Store) AddUser(user models.Users) error {
 		fmt.Println("error hashing password", err)
 		return err
 	}
-	fmt.Println("hashed pass:", hashedPassword)
 	query := `
 		INSERT INTO users (name, email, password, firstName, lastName, dateOfBirth, avatar, nickname, aboutMe) VALUES (?,?,?,?,?,?,?,?,?)
 	`
@@ -91,6 +90,28 @@ func (s *Store) GetUserFromCookie(r *http.Request) (models.Users, error) {
 	)
 	if err != nil {
 		fmt.Println("getuserfromcookie error", err)
+		return models.Users{}, err
+	}
+	return user, nil
+}
+
+func (s *Store) GetUser(userId int) (models.Users, error) {
+	query := `SELECT id, name, email, firstName, lastName, dateOfBirth, avatar, 
+	 nickname, aboutMe, online FROM users WHERE id = ?`
+	var user models.Users
+	err := s.Db.QueryRow(query, userId).Scan(&user.Id,
+		&user.Name,
+		&user.Email,
+		&user.FirstName,
+		&user.LastName,
+		&user.DateOfBirth,
+		&user.Avatar,
+		&user.Nickname,
+		&user.AboutMe,
+		&user.Online,
+	)
+	if err != nil {
+		fmt.Println("error getting user", err)
 		return models.Users{}, err
 	}
 	return user, nil

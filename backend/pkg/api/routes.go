@@ -21,7 +21,7 @@ func (h *Handler) Routes() *http.ServeMux {
 
 	router.HandleFunc("/api/register", h.Register)
 	router.HandleFunc("/api/login", h.Login)
-	router.HandleFunc("/api/getUser", h.requireLogin(h.GetUser))
+	router.HandleFunc("/api/getUser/{userId}", h.requireLogin(h.GetUser))
 	router.HandleFunc("/api/getAllUsers", h.requireLogin(h.GetAllUsers))
 	router.HandleFunc("/api/avatars/", h.ServeAvatar)
 	router.HandleFunc("/api/addPost", h.requireLogin(h.AddPost))

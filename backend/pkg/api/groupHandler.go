@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/http"
 	"social-network/pkg/models"
+
+	"github.com/mattn/go-sqlite3"
 )
 
 func (h *Handler) CreateGroup(w http.ResponseWriter, r *http.Request) {
@@ -13,8 +15,12 @@ func (h *Handler) CreateGroup(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodOptions {
 		return
 	}
+	responseData := make(map[string]interface{})
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		responseData["response"] = "failure"
+		responseData["message"] = "Method not allowed"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
 		return
 	}
 	var group models.Group
@@ -22,19 +28,26 @@ func (h *Handler) CreateGroup(w http.ResponseWriter, r *http.Request) {
 
 	user, err := h.store.GetUserFromCookie(r)
 	if err != nil {
-		http.Error(w, "internal server error", http.StatusInternalServerError)
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
 		return
 	}
 	group.UserId = user.Id
-	fmt.Println(group)
-
-	// create new group
 
 	groupId, err := h.store.AddGroup(group)
 	if err != nil {
-		fmt.Println("error adding group", err)
-		// if already exists then respond like that
-		w.WriteHeader(http.StatusConflict)
+		responseData["response"] = "failure"
+
+		if sqliteErr, ok := err.(sqlite3.Error); ok && sqliteErr.Code == sqlite3.ErrConstraint {
+			responseData["message"] = "Group already exists with that title"
+		} else {
+			responseData["message"] = "Internal server error"
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
 		return
 	}
 
@@ -42,8 +55,15 @@ func (h *Handler) CreateGroup(w http.ResponseWriter, r *http.Request) {
 
 	err = h.store.AddGroupMember(group)
 	if err != nil {
-		http.Error(w, "internal server error", http.StatusInternalServerError)
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
 		return
 	}
 	w.WriteHeader(http.StatusOK)
+	responseData["message"] = "Group created successfully"
+	responseData["response"] = "success"
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(responseData)
 }

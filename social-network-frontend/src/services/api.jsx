@@ -1,28 +1,26 @@
 import { useState, useEffect } from "react"
 
 export const useLogin = () => {
-
-
     const [loginData, setLoginData] = useState({
         name: '',
         password: ''
     })
 
-    const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(loginData)
-    }
-
     const handleSubmit = (e) => {
         e.preventDefault()
+
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(loginData)
+        }
+
         const submitLogin = async () => {
             try {
-
-                fetch('http://localhost:8080/api/login', requestOptions)
-                    .then(Response => Response.json())
-                    .then(data => console.log(data))
+                const response = await fetch('http://localhost:8080/api/login', requestOptions)
+                const data = await response.json()
+                console.log(data)
 
             } catch (err) {
                 console.log(err)
@@ -55,11 +53,9 @@ export const useRegister = () => {
         lastName: '',
         dateOfBirth: '',
         avatar: null,
-        // avatarMimeType: '',
         nickname: '',
         aboutMe: ''
     })
-
 
     const handleChange = (e) => {
         const { id, value } = e.target
@@ -79,7 +75,7 @@ export const useRegister = () => {
         }
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
 
         const formData = new FormData()
@@ -91,13 +87,14 @@ export const useRegister = () => {
         })
 
         try {
-            fetch('http://localhost:8080/api/register', {
+            const response = await fetch('http://localhost:8080/api/register', {
                 method: 'POST',
                 body: formData,
                 mode: 'cors'
             })
-                .then(Response => Response.json())
-                .then(data => console.log(data))
+            const data = await response.json()
+            console.log(data)
+
         } catch (err) {
             console.log(err)
         }
@@ -121,7 +118,7 @@ export const useCreatePost = () => {
         groupId: '0'
     })
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
         const formData = new FormData()
 
@@ -131,24 +128,20 @@ export const useCreatePost = () => {
         formData.append('groupId', postData.groupId)
 
         if (postData.avatar) {
-            console.log("adding avatar")
             formData.append('avatar', postData.avatar)
         }
 
+        const requestOptions = {
+            method: 'POST',
+            body: formData,
+            mode: 'cors',
+            credentials: 'include',
+        }
 
         try {
-            fetch('http://localhost:8080/api/addPost', {
-                method: 'POST',
-                body: formData,
-                mode: 'cors',
-                credentials: 'include'
-            })
-                .then(Response => {
-                    if (Response.ok) {
-                        Response.json()
-                    }
-                }
-                )
+            const response = await fetch('http://localhost:8080/api/addPost', requestOptions)
+            const data = await response.json()
+            console.log(data)
         } catch (err) {
             console.log(err)
         }
@@ -190,7 +183,6 @@ export const useGetAllUsers = () => {
         credentials: 'include'
     }
 
-
     useEffect(() => {
         const getAllUsers = async () => {
             try {
@@ -211,8 +203,7 @@ export const useGetAllUsers = () => {
 }
 
 
-export const useGetUser = () => {
-
+export const useGetUser = (id) => {
     // missing all user made posts and followers/following
 
     const [userData, setUserData] = useState({
@@ -237,7 +228,7 @@ export const useGetUser = () => {
     useEffect(() => {
         const getProfile = async () => {
             try {
-                let response = await fetch('http://localhost:8080/api/getUser', requestOptions)
+                let response = await fetch(`http://localhost:8080/api/getUser/${id}`, requestOptions)
                 let data = await response.json()
                 console.log(data)
                 if (data) {
@@ -306,8 +297,8 @@ export const useGetOnePost = (id) => {
                     credentials: 'include'
                 })
                 const data = await response.json()
-                console.log(data)
                 setPostData(data.post)
+                console.log(data)
             } catch (err) {
                 console.log(err)
             }
@@ -331,7 +322,7 @@ export const useSetComment = (postId) => {
     })
 
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
         const formData = new FormData()
 
@@ -343,18 +334,16 @@ export const useSetComment = (postId) => {
             formData.append('avatar', commentData.avatar)
         }
 
+        const requestOptions = {
+            method: 'POST',
+            body: formData,
+            credentials: 'include'
+        }
+
         try {
-            fetch('http://localhost:8080/api/addComment', {
-                method: 'POST',
-                body: formData,
-                credentials: 'include'
-            })
-                .then(Response => {
-                    if (Response.ok) {
-                        Response.json()
-                    }
-                }
-                )
+            const response = await fetch('http://localhost:8080/api/addComment', requestOptions)
+            const data = await response.json()
+            console.log(data)
         } catch (err) {
             console.log(err)
         }
@@ -388,11 +377,15 @@ export const useSetComment = (postId) => {
 export const useAddFollow = (followId) => {
     useEffect(() => {
         const addFollow = async () => {
+            const requestOptions = {
+                credentials: 'include',
+                method: "GET"
+            }
+
             try {
-                await fetch(`http://localhost:8080/api/addFollow/${followId}`, {
-                    credentials: 'include',
-                    method: "GET"
-                })
+                const response = await fetch(`http://localhost:8080/api/addFollow/${followId}`, requestOptions)
+                const data = await response.json()
+                console.log(data)
             } catch (err) {
                 console.log("error adding follower", err)
                 return err
@@ -403,19 +396,21 @@ export const useAddFollow = (followId) => {
     return null
 }
 
-export const RespondFollow = (toUserId, pending) => {
+export const RespondFollow = (toUserId, response) => {
     // toUserId is the id of the person who sent you the follow request
     // pending is "completed" or "rejected" depending of if you want to accept or reject the follow
 
     useEffect(() => {
         const acceptRejectFollow = async () => {
+            const requestOptions = {
+                credentials: 'include',
+                method: "POST",
+                body: JSON.stringify({ pending: `${response}` })
+            }
             try {
-                const response = await fetch(`http://localhost:8080/api/respondFollow/${toUserId}`, {
-                    credentials: 'include',
-                    method: "POST",
-                    body: JSON.stringify({ pending: `${pending}` })
-                })
-                console.log(response)
+                const response = await fetch(`http://localhost:8080/api/respondFollow/${toUserId}`, requestOptions)
+                const data = await response.json()
+                console.log(data)
             } catch (err) {
                 console.log("error confirm/reject follow", err)
                 return err
@@ -424,4 +419,47 @@ export const RespondFollow = (toUserId, pending) => {
         acceptRejectFollow()
     }, [])
     return null
+}
+
+export const useCreateGroup = () => {
+
+    const [groupData, setGroupData] = useState({
+        title: '',
+        description: ''
+    })
+
+    const handleChange = (e) => {
+        const { id, value } = e.target
+        setGroupData(prevState => ({
+            ...prevState,
+            [id]: value
+        }))
+    }
+    const handleSubmit = (e) => {
+        e.preventDefault()
+
+        const requestOptions = {
+            method: "POST",
+            credentials: "include",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(groupData)
+        }
+
+        const AddGroup = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/api/createGroup', requestOptions)
+                const data = await response.json()
+                console.log(data)
+            } catch (err) {
+                console.log(err)
+            }
+        }
+        AddGroup()
+    }
+
+    return {
+        groupData,
+        handleChange,
+        handleSubmit
+    }
 }

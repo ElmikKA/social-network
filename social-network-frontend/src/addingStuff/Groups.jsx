@@ -1,39 +1,9 @@
 import React, { useEffect, useState } from 'react'
+import { useCreateGroup } from '../services/api'
 
 const Groups = () => {
 
-    const [groupData, setGroupData] = useState({
-        title: '',
-        description: ''
-    })
-
-
-    const handleChange = (e) => {
-        const { id, value } = e.target
-        setGroupData(prevState => ({
-            ...prevState,
-            [id]: value
-        }))
-    }
-    const handleSubmit = (e) => {
-        e.preventDefault()
-        const AddGroup = async () => {
-            try {
-                data = await fetch('http://localhost:8080/api/createGroup', {
-                    method: "POST",
-                    credentials: 'include',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(groupData)
-                })
-                console.log(data)
-            } catch (err) {
-                console.log(err)
-                // status 409 conflict means group already exists
-            }
-        }
-        AddGroup()
-    }
-
+    const { groupData, handleChange, handleSubmit } = useCreateGroup()
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', maxWidth: '400px', margin: '0 auto' }}>

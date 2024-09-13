@@ -3,8 +3,11 @@ import { useGetUser } from '../../services/api';
 
 const Profile = () => {
 
-    const { userData } = useGetUser()
+    // send the id of the user
+    const userId = 1
+    const { userData } = useGetUser(userId)
 
+    // still needs to add:
     // all user made posts
     // all followers and following
 

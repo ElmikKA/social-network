@@ -10,6 +10,7 @@ type UserStore interface {
 	AddUser(user Users) error
 	CheckLogin(credentials LoginCredentials) (bool, int, error)
 	GetUserFromCookie(r *http.Request) (Users, error)
+	GetUser(userId int) (Users, error)
 	GetAllUsers() ([]Users, error)
 	GetSessionByCookie(cookie string) (Session, error)
 	CreateSession(session Session) error
