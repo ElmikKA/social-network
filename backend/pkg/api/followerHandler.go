@@ -84,35 +84,55 @@ func (h *Handler) RespondFollow(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodOptions {
 		return
 	}
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	responseData := make(map[string]interface{})
+	if r.Method != "POST" {
+		responseData["response"] = "failure"
+		responseData["message"] = "Method not allowed"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
 		return
 	}
 
 	responseId, err := strconv.Atoi(r.PathValue("userId"))
 	if err != nil {
-		http.Error(w, "invalid url type", http.StatusInternalServerError)
+		responseData["response"] = "failure"
+		responseData["message"] = "Invalid url payload"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
 		return
 	}
 
 	users, err := h.store.GetUserFromCookie(r)
 	if err != nil {
-		http.Error(w, "unable to get user", http.StatusInternalServerError)
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
 		return
 	}
 
 	var data models.FollowerResponse
 	err = json.NewDecoder(r.Body).Decode(&data)
 	if err != nil {
-		fmt.Println("err decoding followerResponse", err)
+		responseData["response"] = "failure"
+		responseData["message"] = "Invalid payload"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
 		return
 	}
 
 	err = h.store.RespondFollow(users.Id, responseId, data.Pending)
 	if err != nil {
 		fmt.Println("err responding to follow")
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
 		return
 	}
-	fmt.Println("finished responding")
+	responseData["response"] = "success"
+	responseData["message"] = "respondFollow success"
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(responseData)
 	w.WriteHeader(http.StatusOK)
 }
