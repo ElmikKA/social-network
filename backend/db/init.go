@@ -11,5 +11,8 @@ func InitDb() (*sql.DB, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	// add triggers if they don't exist
+
 	return Db, nil
 }

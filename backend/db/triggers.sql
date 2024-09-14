@@ -21,7 +21,7 @@ BEGIN
     SELECT
         NEW.following,
         (SELECT name FROM users WHERE id = NEW.userId) || ' has sent you a follow request',
-        'f_req',
+        'f_ref',
         NEW.id
     WHERE NEW.pending = 'pending';
 END;
@@ -36,6 +36,9 @@ END;
 
 
 
+
+-- groupMembers triggers
+
 CREATE TRIGGER delete_rejected_group_members
 AFTER UPDATE ON groupMembers
 FOR EACH ROW
@@ -43,6 +46,25 @@ WHEN NEW.pending = 'rejected'
 BEGIN
     DELETE FROM groupMembers WHERE id = NEW.id;
 END;
+
+
+CREATE TRIGGER add_completed_users_to_events_as_pending
+AFTER UPDATE ON groupMembers
+FOR EACH ROW
+WHEN NEW.pending = 'completed'
+BEGIN
+    INSERT INTO eventsStatus (eventId, userId, role, pending)
+    SELECT 
+        e.id,                
+        NEW.userId,          
+        'member',            
+        'pending'            
+    FROM events e
+    WHERE e.groupId = NEW.groupId; 
+END;
+
+
+
 
 CREATE TRIGGER set_groupMembers_role_and_pending_and_create_notification
 AFTER INSERT ON groupMembers
@@ -66,7 +88,7 @@ BEGIN
         (SELECT userId FROM groups WHERE id = NEW.groupId), 
         (SELECT name FROM users WHERE id = NEW.userId) || ' has sent a request to join your group ' || 
         (SELECT title FROM groups WHERE id = NEW.groupId),  
-        'g_req', 
+        'g_ref', 
         NEW.id  
     FROM groupMembers
     WHERE id = NEW.id AND pending = 'pending';  
@@ -82,47 +104,52 @@ END;
 
 
 
--- not yet added
+-- triggers for events and eventsStatus
 
-CREATE TRIGGER set_event_owner_as_member
+CREATE TRIGGER set_group_member_statuses
 AFTER INSERT ON events
 FOR EACH ROW
 BEGIN
     INSERT INTO eventsStatus (eventId, userId, role, pending)
     VALUES( 
-        NEW.id,
+        NEW.id,          
+        NEW.userId,    
+        'owner',        
+        'completed'    
+    );
+    
+    INSERT INTO eventsStatus (eventId, userId, role, pending)
+    SELECT 
+        NEW.id,                 
+        gm.userId,             
+        'member',              
+        'pending'              
+    FROM groupMembers gm
+    WHERE gm.groupId = NEW.groupId 
+    AND gm.pending = 'completed'  
+    AND gm.userId != NEW.userId;  
+END;
+
+
+CREATE TRIGGER send_new_event_notification
+AFTER INSERT ON eventsStatus
+FOR EACH ROW
+WHEN NEW.pending = 'pending'
+BEGIN
+    INSERT INTO notifications (userId, content, type, idRef)
+    VALUES (
         NEW.userId,
-        'owner',
-        'completed'
+        'New event',
+        "e_ref",
+        NEW.id
     );
 END;
 
 
-
-CREATE TRIGGER set_event_role_and_pending
-AFTER INSERT ON eventsStatus
+CREATE TRIGGER delete_notification_on_eventsStatus_update
+AFTER UPDATE OF pending ON eventsStatus
 FOR EACH ROW
+WHEN NEW.pending IN ('completed','rejected')
 BEGIN
-    UPDATE eventsStatus
-    SET role = CASE
-        WHEN (SELECT userId FROM events WHERE id = NEW.eventId) = NEW.userId
-        THEN 'owner'
-        ELSE 'member'
-    END,
-    pending = CASE
-        WHEN (SELECT userId FROM events WHERE id = NEW.eventId) = NEW.userId
-        THEN 'completed'
-        ELSE 'pending'
-    END
-    WHERE id = NEW.id;
+    DELETE FROM notifications WHERE idRef = NEW.id;
 END;
-
-
-CREATE TRIGGER delete_rejected_event_status
-AFTER UPDATE ON eventsStatus
-FOR EACH ROW
-WHEN NEW.pending = 'rejected'
-BEGIN
-    DELETE FROM eventsStatus WHERE id = NEW.id;
-END;
-

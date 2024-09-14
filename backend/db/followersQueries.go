@@ -33,12 +33,12 @@ func (s *Store) AddFollower(userId, follow int, pending string) (int, error) {
 	return int(newId), nil
 }
 
-func (s *Store) RespondFollow(userId, responseId int, answer string) error {
-	query := `UPDATE followers SET pending = ? WHERE userId = ? AND following = ?`
-	_, err := s.Db.Exec(query, answer, responseId, userId)
-	if err != nil {
-		fmt.Println("error responding followers", err)
-		return err
-	}
-	return nil
-}
+// func (s *Store) RespondFollow(userId, responseId int, answer string) error {
+// 	query := `UPDATE followers SET pending = ? WHERE userId = ? AND following = ?`
+// 	_, err := s.Db.Exec(query, answer, responseId, userId)
+// 	if err != nil {
+// 		fmt.Println("error responding followers", err)
+// 		return err
+// 	}
+// 	return nil
+// }

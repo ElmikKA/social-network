@@ -10,3 +10,9 @@ type Event struct {
 	Description string    `json:"description"`
 	Time        time.Time `json:"time"`
 }
+
+type EventResponse struct {
+	EventId int    `json:"eventId"`
+	UserId  int    `json:"userId"`
+	Pending string `json:"pending"`
+}
