@@ -13,6 +13,7 @@ import Follow from './addingStuff/Follow'
 import Groups from './addingStuff/Groups'
 import JoinGroup from './addingStuff/JoinGroup'
 import Event from './addingStuff/Event'
+import RespondNotification from './addingStuff/RespondNotification'
 
 createRoot(document.getElementById('root')).render(
   // <StrictMode>
@@ -33,7 +34,8 @@ createRoot(document.getElementById('root')).render(
     {/* <Follow /> */}
     {/* < Groups /> */}
     {/* <JoinGroup /> */}
-    < Event />
+    {/* < Event /> */}
+    {/* <RespondNotification /> */}
 
   </ div>
 

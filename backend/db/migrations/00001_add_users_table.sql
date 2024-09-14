@@ -9,7 +9,6 @@ CREATE TABLE users (
     lastName TEXT NOT NULL,
     dateOfBirth DATETIME NOT NULL,
     avatar TEXT DEFAULT '',
-    -- avatarMimeType TEXT DEFAULT '',
     nickname TEXT DEFAULT '',
     aboutMe TEXT DEFAULT '',
     online INTEGER DEFAULT -1,

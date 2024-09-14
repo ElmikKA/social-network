@@ -397,29 +397,33 @@ export const useAddFollow = (followId) => {
     return null
 }
 
-export const useRespondFollow = (userId, response) => {
-    // toUserId is the id of the person who sent you the follow request
-    // pending is "completed" or "rejected" depending of if you want to accept or reject the follow
+export const useRespondNotification = (idRef, type, response) => {
 
+    const responseData = {
+        type: type,
+        idRef: idRef,
+        response: response,
+    }
     useEffect(() => {
-        const acceptRejectFollow = async () => {
+
+        const sendNotificationResponse = async () => {
             const requestOptions = {
-                credentials: 'include',
                 method: "POST",
-                body: JSON.stringify({ pending: `${response}`, userId: userId })
+                credentials: "include",
+                body: JSON.stringify(responseData),
+                header: { 'Content-Type': 'application/json' }
             }
             try {
-                const response = await fetch('http://localhost:8080/api/respondFollow', requestOptions)
+                const response = await fetch('http://localhost:8080/api/respondNotification', requestOptions)
                 const data = await response.json()
                 console.log(data)
             } catch (err) {
-                console.log("error confirm/reject follow", err)
-                return err
+                console.log(err)
             }
         }
-        acceptRejectFollow()
+        sendNotificationResponse()
+
     }, [])
-    return null
 }
 
 export const useCreateGroup = () => {
@@ -460,6 +464,69 @@ export const useCreateGroup = () => {
 
     return {
         groupData,
+        handleChange,
+        handleSubmit
+    }
+}
+
+export const useSendGroupJoinRequest = (groupId) => {
+    useEffect(() => {
+        const sendGroupJoinRequest = async () => {
+            const requestOptions = {
+                method: 'POST',
+                credentials: 'include',
+            }
+            try {
+                const response = await fetch(`http://localhost:8080/api/requestGroupJoin/${groupId}`, requestOptions)
+                const data = await response.json()
+                console.log(data)
+            } catch (err) {
+                console.log(err)
+            }
+        }
+        sendGroupJoinRequest()
+    }, [])
+}
+
+
+export const useCreateEvent = (groupId) => {
+
+    const [eventData, setEventData] = useState({
+        groupId: groupId,
+        title: '',
+        description: '',
+        time: ''
+    })
+
+    const handleChange = (e) => {
+
+        const { id, value } = e.target
+        setEventData(prevState => ({
+            ...prevState,
+            [id]: value,
+        }))
+    }
+
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        const requestOptions = {
+            method: 'POST',
+            credentials: 'include',
+            header: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(eventData),
+        }
+
+        try {
+            const response = await fetch('http://localhost:8080/api/createEvent', requestOptions)
+            const data = await response.json()
+            console.log(data)
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    return {
+        eventData,
         handleChange,
         handleSubmit
     }

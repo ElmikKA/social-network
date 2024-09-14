@@ -28,9 +28,10 @@ type UserStore interface {
 	CheckUserPrivacyStatus(userId int) (string, error)
 	AddNotification(notification Notification) error
 	RespondNotification(response NotificationResponse) error
-	// RespondFollow(userId, responseId int, answer string) error
 	AddGroup(group Group) (int, error)
 	AddGroupMember(group Group) (int, error)
 	AddEvent(event Event) error
 	RespondEvent(userId, eventId int, answer string) error
+	AddMessage(msg Message) error
+	GetOnlineGroupMembers(userId int) ([]int, error)
 }
