@@ -26,7 +26,7 @@ createRoot(document.getElementById('root')).render(
     <hr />
     {/* <Profile /> */}
     {/* <hr /> */}
-    <Home />
+    {/* <Home /> */}
     {/* <hr /> */}
     {/* <Comment /> */}
     {/* <hr /> */}

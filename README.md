@@ -51,6 +51,7 @@ send private and group messages:
         notifications (todo)
 
         logout button (todo)
+            send DELETE request with credentials to url http://localhost:8080/api/logout
 
 
     left sidebar:
@@ -109,13 +110,22 @@ send private and group messages:
 
 
 ## /group/id:
-    fetch group data:
+    fetch group data: (getAllGroupPosts wip)
+        fetch request to url http://localhost:8080/api/getGroupData
+        body includes:
+        {
+            "groupId":1
+        }
+
         if part of the group:
+
             group id, title, description, owner, all members, all posts, all events
 
             crete event button
 
         if not part of the group:
+        response: "failure"
+        message: "User isn't part of the group"
             join group button:
                 useSendGroupJoinRequest(groupId)
 

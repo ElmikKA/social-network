@@ -110,13 +110,13 @@ export const useRegister = () => {
 
 }
 
-export const useCreatePost = () => {
+export const useCreatePost = (groupId) => {
     const [postData, setPostdata] = useState({
         title: '',
         content: '',
         avatar: null,
         privacy: 'public',
-        groupId: '0'
+        groupId: groupId
     })
 
     const handleSubmit = async (e) => {
@@ -259,6 +259,34 @@ export const useGetAllPosts = () => {
                 const response = await fetch('http://localhost:8080/api/getAllPosts', {
                     method: 'GET',
                     credentials: 'include'
+                })
+                const data = await response.json()
+                console.log(data)
+                if (data) {
+                    setAllposts(data.getAllPosts)
+                }
+            } catch (err) {
+                console.log(err)
+                return null
+            }
+        }
+        FetchAllPosts()
+    }, [])
+
+    return { allPosts }
+
+}
+export const useGetGroupData = (groupId) => {
+
+    const [allPosts, setAllposts] = useState([])
+
+    useEffect(() => {
+        const FetchAllPosts = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/api/getGroupData', {
+                    method: 'GET',
+                    credentials: 'include',
+                    body: JSON.stringify({ "groupId": groupId })
                 })
                 const data = await response.json()
                 console.log(data)

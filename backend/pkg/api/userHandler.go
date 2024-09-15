@@ -159,6 +159,46 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(responseData)
 }
 
+func (h *Handler) LogOut(w http.ResponseWriter, r *http.Request) {
+
+	CorsEnabler(w, r)
+	if r.Method == http.MethodOptions {
+		return
+	}
+	responseData := make(map[string]interface{})
+	if r.Method != "DELETE" {
+		responseData["response"] = "failure"
+		responseData["message"] = "Method not allowed"
+		json.NewEncoder(w).Encode(responseData)
+		w.Header().Set("Content-Type", "application/json")
+		return
+	}
+
+	user, err := h.store.GetUserFromCookie(r)
+	if err != nil {
+		fmt.Println("error getting user from cookie", err)
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		json.NewEncoder(w).Encode(responseData)
+		w.Header().Set("Content-Type", "application/json")
+		return
+	}
+
+	err = h.store.DeleteSession(user.Id)
+	if err != nil {
+		fmt.Println("error deleting session", err)
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		json.NewEncoder(w).Encode(responseData)
+		w.Header().Set("Content-Type", "application/json")
+		return
+	}
+	responseData["response"] = "success"
+	responseData["message"] = "User logged out successfully"
+	json.NewEncoder(w).Encode(responseData)
+	w.Header().Set("Content-Type", "application/json")
+}
+
 func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 	CorsEnabler(w, r)
 	if r.Method == http.MethodOptions {
