@@ -35,3 +35,24 @@ func (s *Store) RespondNotification(response models.NotificationResponse) error 
 	}
 	return nil
 }
+
+func (s *Store) GetNotifications(userId int) ([]models.Notification, error) {
+	query := `SELECT * FROM notifications WHERE userId = ?`
+	rows, err := s.Db.Query(query, userId)
+	var notifications []models.Notification
+	if err != nil {
+		fmt.Println("error getting notifications", err)
+		return notifications, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var noti models.Notification
+		err := rows.Scan(&noti.Id, &noti.UserId, &noti.Content, &noti.Type, &noti.IdRef, &noti.CreatedAt)
+		if err != nil {
+			fmt.Println("err scanning notifications", err)
+			return notifications, err
+		}
+		notifications = append(notifications, noti)
+	}
+	return notifications, nil
+}

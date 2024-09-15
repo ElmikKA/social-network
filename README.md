@@ -48,10 +48,11 @@ send private and group messages:
 
         search?
 
-        notifications (todo)
+        notifications
+            useGetNotifications() 
 
-        logout button (todo)
-            send DELETE request with credentials to url http://localhost:8080/api/logout
+        logout button
+            useLogout()
 
 
     left sidebar:
@@ -70,19 +71,18 @@ send private and group messages:
         fetch all public posts:
             const { allPosts } = useGetAllPosts()
         
-    notification bar: (todo)
+    notification bar:
         get all notifications
+            useGetNotifications()
 
-        add trigger to send new notification if user is online
+        add trigger to send new notification if user is online (todo)
 
-        follow requests
 
-        group requests
-
-        events
-    
     right sidebar:
         message buttons for people who are following you or you are following:
+
+            fetch all id, username, avatar of follows/followees (todo)
+
             fetch all messages (todo)
 
             send message button (todo)
@@ -110,12 +110,8 @@ send private and group messages:
 
 
 ## /group/id:
-    fetch group data: (getAllGroupPosts wip)
-        fetch request to url http://localhost:8080/api/getGroupData
-        body includes:
-        {
-            "groupId":1
-        }
+    fetch group data: 
+        getAllGroupPosts(groupId)
 
         if part of the group:
 

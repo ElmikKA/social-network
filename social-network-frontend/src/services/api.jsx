@@ -43,6 +43,28 @@ export const useLogin = () => {
     }
 }
 
+export const useLogout = () => {
+
+    useEffect(() => {
+
+        const sendLogout = async () => {
+            const requestOptions = {
+                method: "DELETE",
+                credentials: 'include'
+            }
+            try {
+                const response = await fetch('http://localhost:8080/api/logout', requestOptions)
+                const data = await response.json()
+                console.log(data)
+            } catch (err) {
+                console.log(err)
+            }
+        }
+        sendLogout()
+    }, [])
+
+}
+
 export const useRegister = () => {
 
     const [registerData, setRegisterData] = useState({
@@ -278,10 +300,10 @@ export const useGetAllPosts = () => {
 }
 export const useGetGroupData = (groupId) => {
 
-    const [allPosts, setAllposts] = useState([])
+    const [groupData, setGroupData] = useState([])
 
     useEffect(() => {
-        const FetchAllPosts = async () => {
+        const fetchGroupData = async () => {
             try {
                 const response = await fetch('http://localhost:8080/api/getGroupData', {
                     method: 'GET',
@@ -291,17 +313,17 @@ export const useGetGroupData = (groupId) => {
                 const data = await response.json()
                 console.log(data)
                 if (data) {
-                    setAllposts(data.getAllPosts)
+                    setGroupData(data.getAllPosts)
                 }
             } catch (err) {
                 console.log(err)
                 return null
             }
         }
-        FetchAllPosts()
+        fetchGroupData()
     }, [])
 
-    return { allPosts }
+    return { groupData }
 
 }
 
@@ -456,6 +478,29 @@ export const useRespondNotification = (idRef, type, response) => {
     }, [])
 }
 
+export const useGetNotifications = () => {
+
+    useEffect(() => {
+        const fetchNotifications = async () => {
+            const requestOptions = {
+                method: "GET",
+                credentials: "include"
+            }
+            try {
+                const response = await fetch('http://localhost:8080/api/getNotifications', requestOptions)
+                const data = await response.json()
+                console.log(data)
+                return data
+            } catch (err) {
+                console.log(err)
+                return err
+            }
+        }
+        fetchNotifications()
+    })
+
+}
+
 export const useCreateGroup = () => {
 
     const [groupData, setGroupData] = useState({
@@ -561,3 +606,7 @@ export const useCreateEvent = (groupId) => {
         handleSubmit
     }
 }
+
+export const useGetContacts = () => {
+
+} 

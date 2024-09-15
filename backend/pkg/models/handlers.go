@@ -38,4 +38,5 @@ type UserStore interface {
 	RespondEvent(userId, eventId int, answer string) error
 	AddMessage(msg Message) error
 	GetOnlineGroupMembers(userId int) ([]int, error)
+	GetNotifications(userId int) ([]Notification, error)
 }

@@ -38,6 +38,7 @@ func (h *Handler) Routes() *http.ServeMux {
 	router.HandleFunc("/api/createEvent", h.requireLogin(h.CreateEvent))
 	// router.HandleFunc("/api/respondEvent", h.requireLogin(h.RespondEvent))
 	router.HandleFunc("/api/respondNotification", h.requireLogin(h.RespondNotification))
+	router.HandleFunc("/api/getNotifications", h.requireLogin(h.GetNotifications))
 
 	router.HandleFunc("/api/websocket", h.requireLogin(h.Websocket))
 	// goroutine for webscocket connections
