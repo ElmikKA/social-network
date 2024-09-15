@@ -28,16 +28,16 @@ send private and group messages:
 }
 
 
-## /:
+# /:
     if not logged in /login
     if logged in /home
 
-## /login:
+# /login:
     button to /register
     const { loginData, handleChange, handleSubmit } = useLogin()
     if response: "success", go to /home
 
-## /register:
+# /register:
     button to /login
     const { registerData, handleChange, handleFileChange, handleSubmit } = useRegister()
     if response: "success", go to /login
@@ -53,27 +53,27 @@ send private and group messages:
         search?
 
  ##   left sidebar:
-        button to /home
+###        button to /home
 
-        button to profile /user/id:
+###        button to profile /user/id:
             const { userData } = useGetUser(userId) (wip) (private/public)
-        button to fetch all users: (todo)
+ ###       button to fetch all users: (todo)
 
-        button to fetch all groups: (todo)
-            button to request to join a group:
+###        button to fetch all groups: (todo)
+   ###         button to request to join a group:
                 useSendGroupJoinRequest(groupId) (change url to body)
 
-            button to create a group:
+###            button to create a group:
                 const { groupData, handleChange, handleSubmit } = useCreateGroup()
             
-            button to group page /group/id:
+   ###         button to group page /group/id:
                 fetch group data (todo)
 
   ##   main body:
-        create post: 
+###        create post: 
             const { postData, handleChange, handleFileChange, handleSubmit } = useCreatePost()
             
-        fetch all public posts including posts from your own groups:
+   ###     fetch all public posts including posts from your own groups:
             const { allPosts } = useGetAllPosts() (wip)
         
   ##   notification bar: (todo)
@@ -88,12 +88,12 @@ send private and group messages:
         events
     
   ##   right sidebar:
-        message buttons for people who are following you or you are following:
+###        message buttons for people who are following you or you are following:
             fetch all messages (todo)
 
             send message button (todo)
 
-        group chat buttons for each group you are in:
+###        group chat buttons for each group you are in:
             fetch all messages (todo)
 
             send message button (todo)
