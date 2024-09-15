@@ -42,8 +42,8 @@ send private and group messages:
     const { registerData, handleChange, handleFileChange, handleSubmit } = useRegister()
     if response: "success", go to /login
 
-## /home:
-   # nabar:
+# /home:
+   ## nabar:
         logo to /home
 
         notifications (todo)
@@ -52,7 +52,7 @@ send private and group messages:
 
         search?
 
- #   left sidebar:
+ ##   left sidebar:
         button to /home
 
         button to profile /user/id:
@@ -69,14 +69,14 @@ send private and group messages:
             button to group page /group/id:
                 fetch group data (todo)
 
-  #   main body:
+  ##   main body:
         create post: 
             const { postData, handleChange, handleFileChange, handleSubmit } = useCreatePost()
             
         fetch all public posts including posts from your own groups:
             const { allPosts } = useGetAllPosts() (wip)
         
-  #   notification bar: (todo)
+  ##   notification bar: (todo)
         get all notifications
 
         add trigger to send new notification if user is online
@@ -87,7 +87,7 @@ send private and group messages:
 
         events
     
-  #   right sidebar:
+  ##   right sidebar:
         message buttons for people who are following you or you are following:
             fetch all messages (todo)
 
