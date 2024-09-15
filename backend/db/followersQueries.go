@@ -71,3 +71,14 @@ func (s *Store) GetContacts(userId int) ([]models.Contacts, error) {
 
 	return contacts, nil
 }
+
+func (s *Store) IsFollowing(userId, followee int) (string, error) {
+	query := `SELECT pending FROM followers WHERE (userId = ? AND following = ?) OR (userId = ? AND following = ?)`
+	var pending string
+	err := s.Db.QueryRow(query, userId, followee, followee, userId).Scan(&pending)
+	if err != nil {
+		fmt.Println("err getting isfollowing", err)
+		return pending, err
+	}
+	return pending, nil
+}

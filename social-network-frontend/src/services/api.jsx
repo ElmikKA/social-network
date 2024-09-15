@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react"
+import { Navigate, useNavigate } from "react-router-dom"
 
 export const useLogin = () => {
     const [loginData, setLoginData] = useState({
         name: '',
         password: ''
     })
+
+    const navigate = useNavigate()
 
     const handleSubmit = (e) => {
         e.preventDefault()
@@ -21,6 +24,9 @@ export const useLogin = () => {
                 const response = await fetch('http://localhost:8080/api/login', requestOptions)
                 const data = await response.json()
                 console.log(data)
+                if (data.response === "success") {
+                    navigate('/home')
+                }
 
             } catch (err) {
                 console.log(err)
@@ -44,6 +50,7 @@ export const useLogin = () => {
 }
 
 export const useLogout = () => {
+    const navigate = useNavigate()
 
     useEffect(() => {
 
@@ -56,6 +63,9 @@ export const useLogout = () => {
                 const response = await fetch('http://localhost:8080/api/logout', requestOptions)
                 const data = await response.json()
                 console.log(data)
+                if (data.response === "success") {
+                    navigate('/login')
+                }
             } catch (err) {
                 console.log(err)
             }
@@ -97,6 +107,7 @@ export const useRegister = () => {
             }))
         }
     }
+    const navigate = useNavigate()
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -117,6 +128,9 @@ export const useRegister = () => {
             })
             const data = await response.json()
             console.log(data)
+            if (data.response === "success") {
+                navigate('/login')
+            }
 
         } catch (err) {
             console.log(err)
@@ -227,31 +241,69 @@ export const useGetAllUsers = () => {
 }
 
 
-export const useGetUser = (id) => {
+// export const useGetUser = (id) => {
 
-    const requestOptions = {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ "id": id })
-    }
+//     const requestOptions = {
+//         method: 'GET',
+//         headers: { 'Content-Type': 'application/json' },
+//         credentials: 'include',
+//         body: JSON.stringify({ "id": id })
+//     }
+//     console.log(requestOptions)
+
+//     useEffect(() => {
+//         const getProfile = async () => {
+
+//             try {
+//                 console.log('before fetch')
+//                 let response = await fetch('http://localhost:8080/api/getUser', requestOptions)
+//                 console.log('after fetch')
+//                 let data = await response.json()
+//                 console.log(data)
+//                 return data
+//             } catch (err) {
+//                 console.log(err)
+//             }
+//         }
+//         getProfile()
+//     }, [])
+
+// }
+
+
+
+export const useGetUser = (id) => {
+    const [userData, setUserData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const getProfile = async () => {
+            const requestOptions = {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+            };
 
             try {
-                let response = await fetch('http://localhost:8080/api/getUser', requestOptions)
-                let data = await response.json()
-                console.log(data)
+                let response = await fetch(`http://localhost:8080/api/getUser/${id}`, requestOptions);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch user data');
+                }
+                let data = await response.json();
+                setUserData(data);
             } catch (err) {
-                console.log(err)
-                return null
+                setError(err.message);
+            } finally {
+                setLoading(false);
             }
-        }
-        getProfile()
-    }, [])
+        };
+        getProfile();
+    }, [id]);
 
-}
+    return { userData, loading, error };
+};
+
 
 export const useGetAllPosts = () => {
 
@@ -393,26 +445,34 @@ export const useSetComment = (postId) => {
 }
 
 export const useAddFollow = (followId) => {
-    useEffect(() => {
-        const addFollow = async () => {
-            const requestOptions = {
-                credentials: 'include',
-                method: "GET",
-                body: JSON.stringify({ "id": followId })
-            }
 
-            try {
-                const response = await fetch('http://localhost:8080/api/addFollow', requestOptions)
-                const data = await response.json()
-                console.log(data)
-            } catch (err) {
-                console.log("error adding follower", err)
-                return err
-            }
+    const [isFollowing, setIsFollowing] = useState(false)
+    const addFollow = async () => {
+        const requestOptions = {
+            credentials: 'include',
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ "id": Number(followId) })
         }
-        addFollow()
-    }, [])
-    return null
+        console.log(requestOptions)
+        console.log(followId)
+
+        try {
+            const response = await fetch('http://localhost:8080/api/addFollow', requestOptions)
+            const data = await response.json()
+            console.log(data)
+            if (data.response === "success") {
+                setIsFollowing(true)
+            }
+        } catch (err) {
+            console.log("error adding follower", err)
+            return err
+        }
+    }
+    return {
+        isFollowing,
+        addFollow
+    }
 }
 
 export const useRespondNotification = (idRef, type, response) => {

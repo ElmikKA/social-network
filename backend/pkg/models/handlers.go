@@ -42,4 +42,5 @@ type UserStore interface {
 	GetNotifications(userId int) ([]Notification, error)
 	GetContacts(userId int) ([]Contacts, error)
 	GetMessages(userId, groupId int) ([]Message, error)
+	IsFollowing(userId, followee int) (string, error)
 }

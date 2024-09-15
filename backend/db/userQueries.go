@@ -157,6 +157,7 @@ func (s *Store) GetAllUsers() ([]models.Users, error) {
 }
 
 func (s *Store) CheckUserPrivacyStatus(userId int) (string, error) {
+	fmt.Println(userId)
 	query := `SELECT privacy FROM users WHERE id = ?`
 	var privacy string
 	err := s.Db.QueryRow(query, userId).Scan(&privacy)

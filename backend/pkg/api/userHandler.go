@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"social-network/pkg/models"
 	"social-network/pkg/utils"
+	"strconv"
 )
 
 func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
@@ -213,13 +214,9 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var data struct {
-		Id int `json:"id"`
-	}
-
-	err := json.NewDecoder(r.Body).Decode(&data)
+	userId, err := strconv.Atoi(r.PathValue("userId"))
 	if err != nil {
-		fmt.Println("error decoding getpost")
+		fmt.Println("err getuser url", err)
 		responseData["response"] = "failure"
 		responseData["message"] = "Invalid payload"
 		w.Header().Set("Content-Type", "application/json")
@@ -227,7 +224,7 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := h.store.GetUser(data.Id)
+	user, err := h.store.GetUser(userId)
 
 	if err != nil {
 		fmt.Println("getUser handler err", err)
@@ -259,6 +256,20 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 	}
 	if err != sql.ErrNoRows {
 		responseData["posts"] = posts
+	}
+
+	status, err := h.store.IsFollowing(h.id, userId)
+	if err != nil && err != sql.ErrNoRows {
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+	if err == sql.ErrNoRows {
+		responseData["following"] = "not following"
+	} else {
+		responseData["following"] = status
 	}
 
 	responseData["response"] = "success"

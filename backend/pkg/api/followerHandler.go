@@ -13,7 +13,7 @@ func (h *Handler) AddFollow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	responseData := make(map[string]interface{})
-	if r.Method != "GET" {
+	if r.Method != "POST" {
 		responseData["response"] = "failure"
 		responseData["message"] = "Method not allowed"
 		w.Header().Set("Content-Type", "application/json")
@@ -27,7 +27,7 @@ func (h *Handler) AddFollow(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&data)
 	if err != nil {
-		fmt.Println("error decoding getpost")
+		fmt.Println("error decoding addfollow")
 		responseData["response"] = "failure"
 		responseData["message"] = "Invalid payload"
 		w.Header().Set("Content-Type", "application/json")
@@ -57,7 +57,7 @@ func (h *Handler) AddFollow(w http.ResponseWriter, r *http.Request) {
 
 	if privacy == "public" {
 		fmt.Println("public user")
-		_, err := h.store.AddFollower(user.Id, data.Id, "completed")
+		exists, err := h.store.AddFollower(user.Id, data.Id, "completed")
 		if err != nil {
 			responseData["response"] = "failure"
 			responseData["message"] = "Internal server error"
@@ -65,7 +65,16 @@ func (h *Handler) AddFollow(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(responseData)
 			return
 		}
+		if exists == 0 {
+			fmt.Println("already following")
+			responseData["response"] = "failure"
+			responseData["message"] = "User is already followin them"
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(responseData)
+			return
+		}
 		responseData["response"] = "success"
+		responseData["following"] = "following"
 		responseData["message"] = "send Follow request success"
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(responseData)
@@ -83,7 +92,9 @@ func (h *Handler) AddFollow(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(responseData)
 		return
 	}
+	fmt.Println(followerTableId)
 	if followerTableId == 0 {
+		fmt.Println("already following")
 		// the user is already following them
 		responseData["response"] = "failure"
 		responseData["message"] = "User is already followin them"
@@ -91,7 +102,9 @@ func (h *Handler) AddFollow(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(responseData)
 		return
 	}
+
 	responseData["response"] = "success"
+	responseData["following"] = "pending"
 	responseData["message"] = "Sent a successful follow request"
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(responseData)

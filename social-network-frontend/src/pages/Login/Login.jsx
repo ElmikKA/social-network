@@ -1,6 +1,7 @@
 import React from 'react'
 
 import { useLogin } from '../../services/api'
+import { Link } from 'react-router-dom'
 
 function Login() {
     const { loginData, handleChange, handleSubmit } = useLogin()
@@ -12,7 +13,6 @@ function Login() {
 
             <label htmlFor="password">Password</label>
             <input type="text" id="password" required placeholder='password' value={loginData.password} onChange={handleChange} />
-
             <button type='submit'>LogIn</button>
         </form>
     )

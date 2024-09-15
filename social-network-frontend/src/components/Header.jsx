@@ -1,14 +1,9 @@
 function Header() {
 
     return (
-        <header>
-            <h1>Social-Network</h1>
+        <header className="navbar">
             <nav>
-                <ul>
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">Login</a></li>
-                    <li><a href="#">Register</a></li>
-                </ul>
+                home logo, search,notifications, logout
             </nav>
             <hr />
         </header>
