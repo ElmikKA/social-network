@@ -196,8 +196,8 @@ func (h *Handler) LogOut(w http.ResponseWriter, r *http.Request) {
 	}
 	responseData["response"] = "success"
 	responseData["message"] = "User logged out successfully"
-	json.NewEncoder(w).Encode(responseData)
 	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(responseData)
 }
 
 func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
@@ -311,5 +311,14 @@ func (h *Handler) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	responseData["getAllUsers"] = users
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(responseData)
+}
+
+func (h *Handler) CheckLogin(w http.ResponseWriter, r *http.Request) {
+	CorsEnabler(w, r)
+	responseData := make(map[string]interface{})
+	responseData["response"] = "success"
+	responseData["message"] = "logged in"
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(responseData)
 }

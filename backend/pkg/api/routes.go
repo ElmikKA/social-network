@@ -40,6 +40,7 @@ func (h *Handler) Routes() *http.ServeMux {
 	router.HandleFunc("/api/getContacts", h.requireLogin(h.GetContacts))
 	router.HandleFunc("/api/websocket", h.requireLogin(h.Websocket))
 	router.HandleFunc("/api/getMessages", h.requireLogin(h.GetMessages))
+	router.HandleFunc("/api/checkLogin", h.requireLogin(h.CheckLogin))
 
 	// goroutine for webscocket connections
 	go h.HandleWebsocketConnections()

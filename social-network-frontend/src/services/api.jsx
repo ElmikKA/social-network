@@ -696,3 +696,20 @@ export const useGetMessages = (userId = 0, groupId = 0) => {
         getMessages()
     }, [])
 }
+
+export const useCheckLoggedIn = () => {
+    const requestOptions = {
+        method: 'GET',
+        credentials: 'include',
+    }
+    const checkLoggedIn = async () => {
+        try {
+            const result = await fetch('http://localhost:8080/checkLogin', requestOptions)
+            const data = await result.json()
+            console.log(data)
+        } catch (err) {
+            console.log(err)
+        }
+    }
+    checkLoggedIn()
+}
