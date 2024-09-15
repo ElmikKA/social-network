@@ -3,7 +3,8 @@ import { useAddFollow } from '../services/api'
 
 const Follow = () => {
 
-    useAddFollow(2)
+    const userId = 2
+    useAddFollow(userId)
     return (
         <div>
             send follow request

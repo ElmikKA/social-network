@@ -46,35 +46,28 @@ send private and group messages:
     nabar:
         logo to /home
 
+        search?
+
         notifications (todo)
 
         logout button (todo)
 
-        search?
 
     left sidebar:
         button to /home
 
-        button to profile /user/id:
-            const { userData } = useGetUser(userId) (wip) (private/public)
-        button to fetch all users: (todo)
+        button to own profile /user/id
 
-        button to fetch all groups: (todo)
-            button to request to join a group:
-                useSendGroupJoinRequest(groupId) (change url to body)
+        button to all users /users
 
-            button to create a group:
-                const { groupData, handleChange, handleSubmit } = useCreateGroup()
-            
-            button to group page /group/id:
-                fetch group data (todo)
+        button to all groups /groups
 
     main body:
         create post: 
             const { postData, handleChange, handleFileChange, handleSubmit } = useCreatePost()
             
-        fetch all public posts including posts from your own groups:
-            const { allPosts } = useGetAllPosts() (wip)
+        fetch all public posts:
+            const { allPosts } = useGetAllPosts()
         
     notification bar: (todo)
         get all notifications
@@ -99,7 +92,47 @@ send private and group messages:
             send message button (todo)
 
 
+## /user/id:
+    follow button:
+        useAddFollow(userId)
 
+    public profile:
+        fetch user info (wip):
+            all user posts (non group)
+            followees
+            follows
+
+    private profile:
+        fetch private user info:
+            username
+            avatar
+
+
+## /group/id:
+    fetch group data:
+        if part of the group:
+            group id, title, description, owner, all members, all posts, all events
+
+            crete event button
+
+        if not part of the group:
+            join group button:
+                useSendGroupJoinRequest(groupId)
+
+
+## /groups:
+    searchbar
+
+    fetch all group names, id, member status
+    
+    join group button:
+        useSendGroupJoinRequest(groupId)
+
+
+## /users:
+    searchbar
+
+    fetch all names, id, following status
 
 
 
