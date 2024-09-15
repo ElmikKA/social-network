@@ -3,7 +3,8 @@ import { useSendGroupJoinRequest } from '../services/api'
 
 const JoinGroup = () => {
 
-    useSendGroupJoinRequest(1)
+    const groupId = 1
+    useSendGroupJoinRequest(groupId)
 
     return (
         <div>

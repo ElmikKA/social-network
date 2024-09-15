@@ -17,7 +17,7 @@ import RespondNotification from './addingStuff/RespondNotification'
 
 createRoot(document.getElementById('root')).render(
   // <StrictMode>
-  <div>
+  <main>
 
 
     {/* <Register /> */}
@@ -26,7 +26,7 @@ createRoot(document.getElementById('root')).render(
     <hr />
     {/* <Profile /> */}
     {/* <hr /> */}
-    {/* <Home /> */}
+    <Home />
     {/* <hr /> */}
     {/* <Comment /> */}
     {/* <hr /> */}
@@ -37,7 +37,7 @@ createRoot(document.getElementById('root')).render(
     {/* < Event /> */}
     {/* <RespondNotification /> */}
 
-  </ div>
+  </main>
 
   // </StrictMode >
 )
