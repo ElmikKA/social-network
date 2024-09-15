@@ -596,7 +596,7 @@ export const useGetContacts = () => {
 }
 
 
-const useGetComments = (postId) => {
+export const useGetComments = (postId) => {
     useEffect(() => {
         const getComments = async () => {
             const requestOptions = {
@@ -613,5 +613,26 @@ const useGetComments = (postId) => {
             }
         }
         getComments()
+    }, [])
+}
+
+export const useGetMessages = (userId = 0, groupId = 0) => {
+    useEffect(() => {
+
+        const getMessages = async () => {
+            const requestOptions = {
+                method: "GET",
+                credentials: 'include',
+                body: JSON.stringify({ "userId": userId, "groupId": groupId })
+            }
+            try {
+                const response = await fetch('http://localhost:8080/api/getMessages', requestOptions)
+                const data = await response.json()
+                console.log(data)
+            } catch (err) {
+                console.log(err)
+            }
+        }
+        getMessages()
     }, [])
 }

@@ -84,14 +84,16 @@ send private and group messages:
             fetch all id, username, avatar of follows/followees
                 useGetContacts()
 
-            fetch all messages (todo)
+            fetch all messages:
+                useGetMesages(userId, 0) 
 
-            send message button (todo)
+            send message button (todo) (use the websocket.send thing)
 
         group chat buttons for each group you are in:
-            fetch all messages (todo)
+            fetch all messages:
+                useGetMessages(0, groupId)
 
-            send message button (todo)
+            send message button (todo) (use websocket.send thing)
 
 
 ## /user/id:
@@ -102,8 +104,9 @@ send private and group messages:
         fetch user info:
             useGetUser(userId)
 
-    private profile:
+    private profile: 
         fetch private user info:
+            useGetUser(userId) (only display username, avatar)
             username
             avatar
 
