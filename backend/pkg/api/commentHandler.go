@@ -101,8 +101,13 @@ func (h *Handler) GetComments(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	postId, err := strconv.Atoi(r.PathValue("postId"))
+	var data struct {
+		Id int `json:"id"`
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&data)
 	if err != nil {
+		fmt.Println("error decoding getpost")
 		responseData["response"] = "failure"
 		responseData["message"] = "Invalid payload"
 		w.Header().Set("Content-Type", "application/json")
@@ -110,7 +115,7 @@ func (h *Handler) GetComments(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	comments, err := h.store.GetComments(postId)
+	comments, err := h.store.GetComments(data.Id)
 	if err != nil {
 		responseData["response"] = "failure"
 		responseData["message"] = "Internal server error"

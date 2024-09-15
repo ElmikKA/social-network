@@ -1,12 +1,12 @@
 package api
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"social-network/pkg/models"
 	"social-network/pkg/utils"
-	"strconv"
 )
 
 func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
@@ -212,17 +212,22 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		return
 	}
-	userId, err := strconv.Atoi(r.PathValue("userId"))
+
+	var data struct {
+		Id int `json:"id"`
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&data)
 	if err != nil {
-		fmt.Println("url error", err)
-		responseData["respone"] = "failure"
-		responseData["message"] = "Invalid url payload"
+		fmt.Println("error decoding getpost")
+		responseData["response"] = "failure"
+		responseData["message"] = "Invalid payload"
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(responseData)
 		return
 	}
 
-	user, err := h.store.GetUser(userId)
+	user, err := h.store.GetUser(data.Id)
 
 	if err != nil {
 		fmt.Println("getUser handler err", err)
@@ -233,9 +238,33 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// add followers,followings
+	contacts, err := h.store.GetContacts(user.Id)
+	if err != nil {
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+
+	// posts
+	posts, err := h.store.GetAllUserPosts(user.Id)
+	if err != nil && err != sql.ErrNoRows {
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+	if err != sql.ErrNoRows {
+		responseData["posts"] = posts
+	}
+
 	responseData["response"] = "success"
 	responseData["message"] = "Getuser successful"
 	responseData["getUser"] = user
+	responseData["followers"] = contacts
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)

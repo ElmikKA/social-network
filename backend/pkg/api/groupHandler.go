@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"social-network/pkg/models"
-	"strconv"
 
 	"github.com/mattn/go-sqlite3"
 )
@@ -83,10 +82,16 @@ func (h *Handler) RequestGroupJoin(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(responseData)
 		return
 	}
-	groupId, err := strconv.Atoi(r.PathValue("groupId"))
+
+	var data struct {
+		Id int `json:"id"`
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&data)
 	if err != nil {
+		fmt.Println("error decoding getpost")
 		responseData["response"] = "failure"
-		responseData["message"] = "Invalid url payload"
+		responseData["message"] = "Invalid payload"
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(responseData)
 		return
@@ -103,7 +108,7 @@ func (h *Handler) RequestGroupJoin(w http.ResponseWriter, r *http.Request) {
 
 	group := models.Group{
 		UserId: user.Id,
-		Id:     groupId,
+		Id:     data.Id,
 	}
 
 	groupMembersTableId, err := h.store.AddGroupMember(group)

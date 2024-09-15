@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"social-network/pkg/models"
 )
 
 func (s *Store) AddFollower(userId, follow int, pending string) (int, error) {
@@ -33,12 +34,40 @@ func (s *Store) AddFollower(userId, follow int, pending string) (int, error) {
 	return int(newId), nil
 }
 
-// func (s *Store) RespondFollow(userId, responseId int, answer string) error {
-// 	query := `UPDATE followers SET pending = ? WHERE userId = ? AND following = ?`
-// 	_, err := s.Db.Exec(query, answer, responseId, userId)
-// 	if err != nil {
-// 		fmt.Println("error responding followers", err)
-// 		return err
-// 	}
-// 	return nil
-// }
+func (s *Store) GetContacts(userId int) ([]models.Contacts, error) {
+	query := `
+	SELECT 
+	    u.id, 
+	    u.name, 
+	    u.avatar,
+	    CASE 
+	        WHEN f.userId = ? THEN 'following'
+	        WHEN f.following = ? THEN 'followee'
+	    END AS type
+	FROM followers f
+	JOIN users u ON (f.following = u.id OR f.userId = u.id)
+	WHERE (f.userId = ? OR f.following = ?) 
+	AND f.pending = 'completed'
+	AND u.id != ?;
+	`
+
+	rows, err := s.Db.Query(query, userId, userId, userId, userId, userId)
+	if err != nil {
+		fmt.Println("error getting contacts", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var contacts []models.Contacts
+	for rows.Next() {
+		var contact models.Contacts
+		err := rows.Scan(&contact.Id, &contact.Name, &contact.Avatar, &contact.Type)
+		if err != nil {
+			fmt.Println("error scanning contact info", err)
+			return nil, err
+		}
+		contacts = append(contacts, contact)
+	}
+
+	return contacts, nil
+}

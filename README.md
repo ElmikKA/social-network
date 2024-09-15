@@ -81,7 +81,8 @@ send private and group messages:
     right sidebar:
         message buttons for people who are following you or you are following:
 
-            fetch all id, username, avatar of follows/followees (todo)
+            fetch all id, username, avatar of follows/followees
+                useGetContacts()
 
             fetch all messages (todo)
 
@@ -98,10 +99,8 @@ send private and group messages:
         useAddFollow(userId)
 
     public profile:
-        fetch user info (wip):
-            all user posts (non group)
-            followees
-            follows
+        fetch user info:
+            useGetUser(userId)
 
     private profile:
         fetch private user info:
@@ -142,6 +141,9 @@ send private and group messages:
 
 
 
+## /post/id:
+    useGetOnePost(postId)
+    useGetComment(postId)
 
 
 

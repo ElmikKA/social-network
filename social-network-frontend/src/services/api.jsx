@@ -228,36 +228,21 @@ export const useGetAllUsers = () => {
 
 
 export const useGetUser = (id) => {
-    // missing all user made posts and followers/following
-
-    const [userData, setUserData] = useState({
-        name: '',
-        email: '',
-        password: '',
-        firstName: '',
-        lastName: '',
-        dateOfBirth: '',
-        avatar: '',
-        avatarMimeType: '',
-        nickname: '',
-        aboutMe: ''
-    })
 
     const requestOptions = {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include'
+        credentials: 'include',
+        body: JSON.stringify({ "id": id })
     }
 
     useEffect(() => {
         const getProfile = async () => {
+
             try {
-                let response = await fetch(`http://localhost:8080/api/getUser/${id}`, requestOptions)
+                let response = await fetch('http://localhost:8080/api/getUser', requestOptions)
                 let data = await response.json()
                 console.log(data)
-                if (data) {
-                    setUserData(data.getUser)
-                }
             } catch (err) {
                 console.log(err)
                 return null
@@ -266,9 +251,6 @@ export const useGetUser = (id) => {
         getProfile()
     }, [])
 
-    return {
-        userData
-    }
 }
 
 export const useGetAllPosts = () => {
@@ -329,28 +311,16 @@ export const useGetGroupData = (groupId) => {
 
 export const useGetOnePost = (id) => {
 
-
-    const [postData, setPostData] = useState({
-        id: '',
-        userId: '',
-        groupId: '',
-        creator: '',
-        title: '',
-        content: '',
-        avatar: '',
-        createdAt: '',
-        pricacy: ''
-    })
-
     useEffect(() => {
         const fetchPost = async () => {
+            const requestOptions = {
+                method: "GET",
+                credentials: 'include',
+                body: JSON.stringify({ "id": id })
+            }
             try {
-                const response = await fetch(`http://localhost:8080/api/getPost/${id}`, {
-                    method: "GET",
-                    credentials: 'include'
-                })
+                const response = await fetch('http://localhost:8080/api/getPost', requestOptions)
                 const data = await response.json()
-                setPostData(data.post)
                 console.log(data)
             } catch (err) {
                 console.log(err)
@@ -358,11 +328,6 @@ export const useGetOnePost = (id) => {
         }
         fetchPost()
     }, [])
-
-
-    return {
-        postData
-    }
 
 }
 
@@ -432,11 +397,12 @@ export const useAddFollow = (followId) => {
         const addFollow = async () => {
             const requestOptions = {
                 credentials: 'include',
-                method: "GET"
+                method: "GET",
+                body: JSON.stringify({ "id": followId })
             }
 
             try {
-                const response = await fetch(`http://localhost:8080/api/addFollow/${followId}`, requestOptions)
+                const response = await fetch('http://localhost:8080/api/addFollow', requestOptions)
                 const data = await response.json()
                 console.log(data)
             } catch (err) {
@@ -550,9 +516,10 @@ export const useSendGroupJoinRequest = (groupId) => {
             const requestOptions = {
                 method: 'POST',
                 credentials: 'include',
+                body: JSON.stringify({ "id": groupId })
             }
             try {
-                const response = await fetch(`http://localhost:8080/api/requestGroupJoin/${groupId}`, requestOptions)
+                const response = await fetch('http://localhost:8080/api/requestGroupJoin', requestOptions)
                 const data = await response.json()
                 console.log(data)
             } catch (err) {
@@ -609,4 +576,42 @@ export const useCreateEvent = (groupId) => {
 
 export const useGetContacts = () => {
 
-} 
+    useEffect(() => {
+        const getContacts = async () => {
+            const requestOptions = {
+                method: "GET",
+                credentials: "include"
+            }
+            try {
+                const response = await fetch('http://localhost:8080/api/getCredentials', requestOptions)
+                const data = response.json()
+                console.log(data)
+                return data
+            } catch (err) {
+                console.log(err)
+            }
+        }
+        getContacts()
+    }, [])
+}
+
+
+const useGetComments = (postId) => {
+    useEffect(() => {
+        const getComments = async () => {
+            const requestOptions = {
+                method: "GET",
+                credentials: "include",
+                body: JSON.stringify({ "id": postId })
+            }
+            try {
+                const response = await fetch("http://localhost:8080/api/getComments", requestOptions)
+                const data = await response.json()
+                console.log(data)
+            } catch (err) {
+                console.log(err)
+            }
+        }
+        getComments()
+    }, [])
+}

@@ -98,17 +98,22 @@ func (h *Handler) GetPost(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(responseData)
 		return
 	}
-	url, err := strconv.Atoi(r.PathValue("id"))
+
+	var data struct {
+		Id int `json:"id"`
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&data)
 	if err != nil {
-		fmt.Println("invalid url")
+		fmt.Println("error decoding getpost")
 		responseData["response"] = "failure"
 		responseData["message"] = "Invalid payload"
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(responseData)
 		return
 	}
-	fmt.Println(url)
-	post, err := h.store.GetPost(url)
+
+	post, err := h.store.GetPost(data.Id)
 
 	if err != nil {
 		responseData["response"] = "failure"

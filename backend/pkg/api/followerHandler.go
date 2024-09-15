@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strconv"
 )
 
 func (h *Handler) AddFollow(w http.ResponseWriter, r *http.Request) {
@@ -22,16 +21,21 @@ func (h *Handler) AddFollow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	follow, err := strconv.Atoi(r.PathValue("userId"))
+	var data struct {
+		Id int `json:"id"`
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&data)
 	if err != nil {
+		fmt.Println("error decoding getpost")
 		responseData["response"] = "failure"
-		responseData["message"] = "Invalid url payload"
+		responseData["message"] = "Invalid payload"
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(responseData)
 		return
 	}
 
-	privacy, err := h.store.CheckUserPrivacyStatus(follow)
+	privacy, err := h.store.CheckUserPrivacyStatus(data.Id)
 	if err != nil {
 		responseData["response"] = "failure"
 		responseData["message"] = "Internal server error"
@@ -53,7 +57,7 @@ func (h *Handler) AddFollow(w http.ResponseWriter, r *http.Request) {
 
 	if privacy == "public" {
 		fmt.Println("public user")
-		_, err := h.store.AddFollower(user.Id, follow, "completed")
+		_, err := h.store.AddFollower(user.Id, data.Id, "completed")
 		if err != nil {
 			responseData["response"] = "failure"
 			responseData["message"] = "Internal server error"
@@ -70,7 +74,7 @@ func (h *Handler) AddFollow(w http.ResponseWriter, r *http.Request) {
 	// user is private
 
 	// add follower as pending
-	followerTableId, err := h.store.AddFollower(user.Id, follow, "pending")
+	followerTableId, err := h.store.AddFollower(user.Id, data.Id, "pending")
 	if err != nil {
 		fmt.Println("err getting followertableId", err)
 		responseData["response"] = "failure"
@@ -93,53 +97,41 @@ func (h *Handler) AddFollow(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(responseData)
 }
 
-// func (h *Handler) RespondFollow(w http.ResponseWriter, r *http.Request) {
-// 	fmt.Println("responding to follow")
-// 	CorsEnabler(w, r)
-// 	if r.Method == http.MethodOptions {
-// 		return
-// 	}
-// 	responseData := make(map[string]interface{})
-// 	if r.Method != "POST" {
-// 		responseData["response"] = "failure"
-// 		responseData["message"] = "Method not allowed"
-// 		w.Header().Set("Content-Type", "application/json")
-// 		json.NewEncoder(w).Encode(responseData)
-// 		return
-// 	}
+func (h *Handler) GetContacts(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("getting contacts")
+	CorsEnabler(w, r)
+	if r.Method == http.MethodOptions {
+		return
+	}
+	responseData := make(map[string]interface{})
+	if r.Method != "GET" {
+		responseData["response"] = "failure"
+		responseData["message"] = "Method not allowed"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+	user, err := h.store.GetUserFromCookie(r)
+	if err != nil {
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
 
-// 	users, err := h.store.GetUserFromCookie(r)
-// 	if err != nil {
-// 		responseData["response"] = "failure"
-// 		responseData["message"] = "Internal server error"
-// 		w.Header().Set("Content-Type", "application/json")
-// 		json.NewEncoder(w).Encode(responseData)
-// 		return
-// 	}
+	contacts, err := h.store.GetContacts(user.Id)
+	if err != nil {
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
 
-// 	var data models.FollowerResponse
-// 	err = json.NewDecoder(r.Body).Decode(&data)
-// 	if err != nil {
-// 		fmt.Println("err decoding json respondfollow", err)
-// 		responseData["response"] = "failure"
-// 		responseData["message"] = "Invalid payload"
-// 		w.Header().Set("Content-Type", "application/json")
-// 		json.NewEncoder(w).Encode(responseData)
-// 		return
-// 	}
-// 	fmt.Println(data)
-
-// 	err = h.store.RespondFollow(users.Id, data.UserId, data.Pending)
-// 	if err != nil {
-// 		fmt.Println("err responding to follow")
-// 		responseData["response"] = "failure"
-// 		responseData["message"] = "Internal server error"
-// 		w.Header().Set("Content-Type", "application/json")
-// 		json.NewEncoder(w).Encode(responseData)
-// 		return
-// 	}
-// 	responseData["response"] = "success"
-// 	responseData["message"] = "respondFollow success"
-// 	w.Header().Set("Content-Type", "application/json")
-// 	json.NewEncoder(w).Encode(responseData)
-// }
+	responseData["response"] = "success"
+	responseData["message"] = "getContacts successful"
+	responseData["contacts"] = contacts
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(responseData)
+}

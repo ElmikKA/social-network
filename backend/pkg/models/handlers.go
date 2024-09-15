@@ -21,6 +21,7 @@ type UserStore interface {
 	GoOnline(id int) error
 	AddPost(post Post) error
 	GetPost(id int) (Post, error)
+	GetAllUserPosts(userId int) ([]Post, error)
 	GetAllNormalPosts() ([]Post, error)
 	GetAllGroupPosts(groupId int) ([]Post, error)
 	GetGroupMembers(groupId int) ([]GroupMember, error)
@@ -39,4 +40,5 @@ type UserStore interface {
 	AddMessage(msg Message) error
 	GetOnlineGroupMembers(userId int) ([]int, error)
 	GetNotifications(userId int) ([]Notification, error)
+	GetContacts(userId int) ([]Contacts, error)
 }
