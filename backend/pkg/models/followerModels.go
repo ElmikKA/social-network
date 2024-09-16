@@ -11,3 +11,8 @@ type Contacts struct {
 	Avatar string
 	Type   string
 }
+
+type GroupChats struct {
+	GroupId int
+	Title   string
+}

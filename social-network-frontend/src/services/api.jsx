@@ -669,27 +669,40 @@ export const useCreateEvent = (groupId) => {
 }
 
 export const useGetContacts = () => {
+    const [contacts, setContacts] = useState(null)
+    const [loading, setLoading] = useState(true)
     const navigate = useNavigate()
+
     useEffect(() => {
+
         const getContacts = async () => {
             const requestOptions = {
                 method: "GET",
                 credentials: "include"
             }
             try {
-                const response = await fetch('http://localhost:8080/api/getCredentials', requestOptions)
-                const data = response.json()
+                const response = await fetch('http://localhost:8080/api/getContacts', requestOptions)
+                const data = await response.json()
                 console.log(data)
                 if (!data.loggedIn) {
                     navigate('/login')
                 }
-                return data
+                if (data.response === "success") {
+                    setContacts(data)
+                }
             } catch (err) {
                 console.log(err)
+            } finally {
+                setLoading(false)
             }
+
         }
         getContacts()
-    }, [])
+    }, [navigate])
+    return {
+        contacts,
+        loading
+    }
 }
 
 

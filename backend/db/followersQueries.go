@@ -72,6 +72,37 @@ func (s *Store) GetContacts(userId int) ([]models.Contacts, error) {
 	return contacts, nil
 }
 
+func (s *Store) GetGroupChats(userId int) ([]models.GroupChats, error) {
+	query := `
+	SELECT
+		groupId,
+		title
+	FROM groups g
+	JOIN groupMembers gm ON g.id = gm.groupId
+	WHERE gm.userId = ?
+	`
+
+	rows, err := s.Db.Query(query, userId)
+	if err != nil {
+		fmt.Println("error getting group chats", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var groupChats []models.GroupChats
+	for rows.Next() {
+		var chat models.GroupChats
+		err := rows.Scan(&chat.GroupId, &chat.Title)
+		if err != nil {
+			fmt.Println("error scanning group chat info", err)
+			return nil, err
+		}
+		groupChats = append(groupChats, chat)
+	}
+
+	return groupChats, nil
+}
+
 func (s *Store) IsFollowing(userId, followee int) (string, error) {
 	query := `SELECT pending FROM followers WHERE (userId = ? AND following = ?) OR (userId = ? AND following = ?)`
 	var pending string

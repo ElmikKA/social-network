@@ -114,9 +114,6 @@ func (h *Handler) AddFollow(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) GetContacts(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("getting contacts")
 	CorsEnabler(w, r)
-	if r.Method == http.MethodOptions {
-		return
-	}
 	responseData := make(map[string]interface{})
 	responseData["loggedIn"] = true
 	if r.Method != "GET" {
@@ -126,6 +123,7 @@ func (h *Handler) GetContacts(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(responseData)
 		return
 	}
+	fmt.Println("getting contacts after get")
 	user, err := h.store.GetUserFromCookie(r)
 	if err != nil {
 		responseData["response"] = "failure"
@@ -143,10 +141,19 @@ func (h *Handler) GetContacts(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(responseData)
 		return
 	}
+	groupChats, err := h.store.GetGroupChats(user.Id)
+	if err != nil {
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
 
 	responseData["response"] = "success"
 	responseData["message"] = "getContacts successful"
 	responseData["contacts"] = contacts
+	responseData["groupChats"] = groupChats
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(responseData)
 }

@@ -9,9 +9,6 @@ import (
 func (h *Handler) GetMessages(w http.ResponseWriter, r *http.Request) {
 
 	CorsEnabler(w, r)
-	if r.Method == http.MethodOptions {
-		return
-	}
 	responseData := make(map[string]interface{})
 	responseData["loggedIn"] = true
 	if r.Method != http.MethodGet {

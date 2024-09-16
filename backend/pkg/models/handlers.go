@@ -41,6 +41,7 @@ type UserStore interface {
 	GetOnlineGroupMembers(userId int) ([]int, error)
 	GetNotifications(userId int) ([]Notification, error)
 	GetContacts(userId int) ([]Contacts, error)
+	GetGroupChats(userId int) ([]GroupChats, error)
 	GetMessages(userId, groupId int) ([]Message, error)
 	IsFollowing(userId, followee int) (string, error)
 }
