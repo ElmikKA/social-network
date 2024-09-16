@@ -12,9 +12,28 @@ type Users struct {
 	Nickname    string `json:"nickname"`
 	AboutMe     string `json:"aboutMe"`
 	Online      string `json:"online"`
+	Privacy     string `json:"privacy"`
 }
 
 type LoginCredentials struct {
 	Name string `json:"name"`
 	Pass string `json:"password"`
+}
+
+type GroupMember struct {
+	Id     int
+	Name   string
+	Avatar string
+	Role   string
+}
+
+type GroupEvents struct {
+	Id          int
+	OwnerId     int
+	GroupId     int
+	Title       string
+	Description string
+	Time        string
+	Status      string
+	Role        string
 }

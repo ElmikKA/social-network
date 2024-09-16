@@ -9,11 +9,10 @@ CREATE TABLE users (
     lastName TEXT NOT NULL,
     dateOfBirth DATETIME NOT NULL,
     avatar TEXT DEFAULT '',
-    -- avatarMimeType TEXT DEFAULT '',
     nickname TEXT DEFAULT '',
     aboutMe TEXT DEFAULT '',
     online INTEGER DEFAULT -1,
-    privacy TEXT NOT NULL DEFAULT "public"
+    privacy TEXT NOT NULL 
 );
 
 -- adds a default row to the users table

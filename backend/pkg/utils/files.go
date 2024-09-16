@@ -13,7 +13,7 @@ func SaveFile(r *http.Request, name string, method string) (string, error) {
 
 	if err != nil {
 		fmt.Println("Register error decoding json ", err)
-		return "", err
+		return "No avatar", err
 	}
 	defer file.Close()
 

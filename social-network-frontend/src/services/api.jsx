@@ -1,28 +1,33 @@
 import { useState, useEffect } from "react"
+import { Navigate, useNavigate } from "react-router-dom"
 
 export const useLogin = () => {
-
-
     const [loginData, setLoginData] = useState({
         name: '',
         password: ''
     })
 
-    const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(loginData)
-    }
+    const navigate = useNavigate()
 
     const handleSubmit = (e) => {
         e.preventDefault()
+
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(loginData)
+        }
+
         const submitLogin = async () => {
             try {
-
-                fetch('http://localhost:8080/api/login', requestOptions)
-                    .then(Response => Response.json())
-                    .then(data => console.log(data))
+                const response = await fetch('http://localhost:8080/api/login', requestOptions)
+                const data = await response.json()
+                console.log(data)
+                if (data.response === "success") {
+                    console.log("logged in, moving to home")
+                    navigate('/home')
+                }
 
             } catch (err) {
                 console.log(err)
@@ -45,6 +50,32 @@ export const useLogin = () => {
     }
 }
 
+export const useLogout = () => {
+    const navigate = useNavigate()
+
+    useEffect(() => {
+
+        const sendLogout = async () => {
+            const requestOptions = {
+                method: "DELETE",
+                credentials: 'include'
+            }
+            try {
+                const response = await fetch('http://localhost:8080/api/logout', requestOptions)
+                const data = await response.json()
+                console.log(data)
+                if (data.response === "success") {
+                    navigate('/login')
+                }
+            } catch (err) {
+                console.log(err)
+            }
+        }
+        sendLogout()
+    }, [])
+
+}
+
 export const useRegister = () => {
 
     const [registerData, setRegisterData] = useState({
@@ -54,12 +85,11 @@ export const useRegister = () => {
         firstName: '',
         lastName: '',
         dateOfBirth: '',
+        privacy: 'public',
         avatar: null,
-        // avatarMimeType: '',
         nickname: '',
         aboutMe: ''
     })
-
 
     const handleChange = (e) => {
         const { id, value } = e.target
@@ -78,8 +108,9 @@ export const useRegister = () => {
             }))
         }
     }
+    const navigate = useNavigate()
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
 
         const formData = new FormData()
@@ -91,16 +122,17 @@ export const useRegister = () => {
         })
 
         try {
-            fetch('http://localhost:8080/api/register', {
+            const response = await fetch('http://localhost:8080/api/register', {
                 method: 'POST',
                 body: formData,
                 mode: 'cors'
             })
-                .then(Response => Response.json())
-                .then(data =>  {
-                    console.log(data)
-                    return data
-        })
+            const data = await response.json()
+            console.log(data)
+            if (data.response === "success") {
+                navigate('/login')
+            }
+
         } catch (err) {
             console.log(err)
         }
@@ -115,16 +147,17 @@ export const useRegister = () => {
 
 }
 
-export const useCreatePost = () => {
+export const useCreatePost = (groupId) => {
     const [postData, setPostdata] = useState({
         title: '',
         content: '',
         avatar: null,
         privacy: 'public',
-        groupId: '0'
+        groupId: groupId
     })
 
-    const handleSubmit = (e) => {
+    const navigate = useNavigate()
+    const handleSubmit = async (e) => {
         e.preventDefault()
         const formData = new FormData()
 
@@ -134,24 +167,23 @@ export const useCreatePost = () => {
         formData.append('groupId', postData.groupId)
 
         if (postData.avatar) {
-            console.log("adding avatar")
             formData.append('avatar', postData.avatar)
         }
 
+        const requestOptions = {
+            method: 'POST',
+            body: formData,
+            mode: 'cors',
+            credentials: 'include',
+        }
 
         try {
-            fetch('http://localhost:8080/api/addPost', {
-                method: 'POST',
-                body: formData,
-                mode: 'cors',
-                credentials: 'include'
-            })
-                .then(Response => {
-                    if (Response.ok) {
-                        Response.json()
-                    }
-                }
-                )
+            const response = await fetch('http://localhost:8080/api/addPost', requestOptions)
+            const data = await response.json()
+            console.log(data)
+            if (!data.loggedIn) {
+                navigate('/login')
+            }
         } catch (err) {
             console.log(err)
         }
@@ -192,13 +224,17 @@ export const useGetAllUsers = () => {
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include'
     }
-
+    const navigate = useNavigate()
 
     useEffect(() => {
         const getAllUsers = async () => {
             try {
                 let response = await fetch('http://localhost:8080/api/getAllUsers', requestOptions)
                 let data = await response.json()
+                console.log(data)
+                if (!data.loggedIn) {
+                    navigate('/')
+                }
                 setAllUsers(data.getAllUsers)
             } catch (err) {
                 console.log(err)
@@ -214,54 +250,48 @@ export const useGetAllUsers = () => {
 }
 
 
-export const useGetUser = () => {
 
-    // missing all user made posts and followers/following
-
-    const [userData, setUserData] = useState({
-        name: '',
-        email: '',
-        password: '',
-        firstName: '',
-        lastName: '',
-        dateOfBirth: '',
-        avatar: '',
-        avatarMimeType: '',
-        nickname: '',
-        aboutMe: ''
-    })
-
-    const requestOptions = {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include'
-    }
+export const useGetUser = (id) => {
+    const [userData, setUserData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const navigate = useNavigate()
 
     useEffect(() => {
         const getProfile = async () => {
-            try {
-                let response = await fetch('http://localhost:8080/api/getUser', requestOptions)
-                let data = await response.json()
-                console.log(data)
-                if (data) {
-                    setUserData(data.getUser)
-                }
-            } catch (err) {
-                console.log(err)
-                return null
-            }
-        }
-        getProfile()
-    }, [])
+            const requestOptions = {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+            };
 
-    return {
-        userData
-    }
-}
+            try {
+                let response = await fetch(`http://localhost:8080/api/getUser/${id}`, requestOptions);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch user data');
+                }
+                let data = await response.json();
+                if (!data.loggedIn) {
+                    navigate('/login')
+                }
+                setUserData(data);
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+        getProfile();
+    }, [id]);
+
+    return { userData, loading, error };
+};
+
 
 export const useGetAllPosts = () => {
 
     const [allPosts, setAllposts] = useState([])
+    const navigate = useNavigate()
 
     useEffect(() => {
         const FetchAllPosts = async () => {
@@ -271,6 +301,10 @@ export const useGetAllPosts = () => {
                     credentials: 'include'
                 })
                 const data = await response.json()
+                console.log(data)
+                if (!data.loggedIn) {
+                    navigate('/login')
+                }
                 if (data) {
                     setAllposts(data.getAllPosts)
                 }
@@ -285,43 +319,62 @@ export const useGetAllPosts = () => {
     return { allPosts }
 
 }
+export const useGetGroupData = (groupId) => {
 
-export const useGetOnePost = (id) => {
-
-
-    const [postData, setPostData] = useState({
-        id: '',
-        userId: '',
-        groupId: '',
-        creator: '',
-        title: '',
-        content: '',
-        avatar: '',
-        createdAt: '',
-        pricacy: ''
-    })
+    const [groupData, setGroupData] = useState([])
+    const navigate = useNavigate()
 
     useEffect(() => {
-        const fetchPost = async () => {
+        const fetchGroupData = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/api/getPost/${id}`, {
-                    method: "GET",
-                    credentials: 'include'
+                const response = await fetch('http://localhost:8080/api/getGroupData', {
+                    method: 'GET',
+                    credentials: 'include',
+                    body: JSON.stringify({ "groupId": groupId })
                 })
                 const data = await response.json()
                 console.log(data)
-                setPostData(data.post)
+                if (!data.loggedIn) {
+                    navigate('/login')
+                }
+                if (data) {
+                    setGroupData(data.getAllPosts)
+                }
+            } catch (err) {
+                console.log(err)
+                return null
+            }
+        }
+        fetchGroupData()
+    }, [])
+
+    return { groupData }
+
+}
+
+export const useGetOnePost = (id) => {
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        const fetchPost = async () => {
+            const requestOptions = {
+                method: "GET",
+                credentials: 'include',
+                body: JSON.stringify({ "id": id })
+            }
+            try {
+                const response = await fetch('http://localhost:8080/api/getPost', requestOptions)
+                const data = await response.json()
+                console.log(data)
+                if (!data.loggedIn) {
+                    navigate('/login')
+                }
             } catch (err) {
                 console.log(err)
             }
         }
         fetchPost()
     }, [])
-
-
-    return {
-        postData
-    }
 
 }
 
@@ -333,8 +386,9 @@ export const useSetComment = (postId) => {
         avatar: null,
     })
 
+    const navigate = useNavigate()
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
         const formData = new FormData()
 
@@ -346,18 +400,19 @@ export const useSetComment = (postId) => {
             formData.append('avatar', commentData.avatar)
         }
 
+        const requestOptions = {
+            method: 'POST',
+            body: formData,
+            credentials: 'include'
+        }
+
         try {
-            fetch('http://localhost:8080/api/addComment', {
-                method: 'POST',
-                body: formData,
-                credentials: 'include'
-            })
-                .then(Response => {
-                    if (Response.ok) {
-                        Response.json()
-                    }
-                }
-                )
+            const response = await fetch('http://localhost:8080/api/addComment', requestOptions)
+            const data = await response.json()
+            console.log(data)
+            if (!data.loggedIn) {
+                navigate('/login')
+            }
         } catch (err) {
             console.log(err)
         }
@@ -389,42 +444,350 @@ export const useSetComment = (postId) => {
 }
 
 export const useAddFollow = (followId) => {
-    useEffect(() => {
-        const addFollow = async () => {
-            try {
-                await fetch(`http://localhost:8080/api/addFollow/${followId}`, {
-                    credentials: 'include',
-                    method: "GET"
-                })
-            } catch (err) {
-                console.log("error adding follower", err)
-                return err
-            }
+
+    const [isFollowing, setIsFollowing] = useState(false)
+    const navigate = useNavigate()
+    const addFollow = async () => {
+        const requestOptions = {
+            credentials: 'include',
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ "id": Number(followId) })
         }
-        addFollow()
-    }, [])
-    return null
+        console.log(requestOptions)
+        console.log(followId)
+
+        try {
+            const response = await fetch('http://localhost:8080/api/addFollow', requestOptions)
+            const data = await response.json()
+            console.log(data)
+            if (!data.loggedIn) {
+                navigate('/login')
+            }
+            if (data.response === "success") {
+                setIsFollowing(true)
+            }
+        } catch (err) {
+            console.log("error adding follower", err)
+            return err
+        }
+    }
+    return {
+        isFollowing,
+        addFollow
+    }
 }
 
-export const RespondFollow = (toUserId, pending) => {
-    // toUserId is the id of the person who sent you the follow request
-    // pending is "completed" or "rejected" depending of if you want to accept or reject the follow
+export const useRespondNotification = () => {
+
+    const navigate = useNavigate()
+
+    const sendNotificationResponse = async (idRef, type, response) => {
+        console.log(idRef)
+        const responseData = {
+            type: type,
+            idRef: idRef,
+            response: response,
+        }
+        const requestOptions = {
+            method: "POST",
+            credentials: "include",
+            body: JSON.stringify(responseData),
+            header: { 'Content-Type': 'application/json' }
+        }
+        try {
+            const response = await fetch('http://localhost:8080/api/respondNotification', requestOptions)
+            const data = await response.json()
+            console.log(data)
+            if (!data.loggedIn) {
+                navigate('/login')
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+    return sendNotificationResponse
+
+}
+
+export const useGetNotifications = () => {
+    const [notificationData, setNotificationData] = useState(null)
+    const [loading, setLoading] = useState(true)
+    const navigate = useNavigate()
 
     useEffect(() => {
-        const acceptRejectFollow = async () => {
+        const fetchNotifications = async () => {
+            const requestOptions = {
+                method: "GET",
+                credentials: "include"
+            }
             try {
-                const response = await fetch(`http://localhost:8080/api/respondFollow/${toUserId}`, {
-                    credentials: 'include',
-                    method: "POST",
-                    body: JSON.stringify({ pending: `${pending}` })
-                })
-                console.log(response)
+                const response = await fetch('http://localhost:8080/api/getNotifications', requestOptions)
+                const data = await response.json()
+                console.log(data)
+                if (!data.loggedIn) {
+                    navigate('/login')
+                }
+                if (data.response === "success") {
+                    setNotificationData(data)
+                }
+                return data
             } catch (err) {
-                console.log("error confirm/reject follow", err)
+                console.log(err)
                 return err
+            } finally {
+                setLoading(false)
             }
         }
-        acceptRejectFollow()
+        fetchNotifications()
+    }, [navigate])
+
+    return {
+        notificationData,
+        loading
+    }
+
+}
+
+export const useCreateGroup = () => {
+
+    const [groupData, setGroupData] = useState({
+        title: '',
+        description: ''
+    })
+
+    const navigate = useNavigate()
+    const handleChange = (e) => {
+        const { id, value } = e.target
+        setGroupData(prevState => ({
+            ...prevState,
+            [id]: value
+        }))
+    }
+    const handleSubmit = (e) => {
+        e.preventDefault()
+
+        const requestOptions = {
+            method: "POST",
+            credentials: "include",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(groupData)
+        }
+
+        const AddGroup = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/api/createGroup', requestOptions)
+                const data = await response.json()
+                console.log(data)
+                if (!data.loggedIn) {
+                    navigate('/login')
+                }
+            } catch (err) {
+                console.log(err)
+            }
+        }
+        AddGroup()
+    }
+
+    return {
+        groupData,
+        handleChange,
+        handleSubmit
+    }
+}
+
+export const useSendGroupJoinRequest = (groupId) => {
+    const navigate = useNavigate()
+    useEffect(() => {
+        const sendGroupJoinRequest = async () => {
+            const requestOptions = {
+                method: 'POST',
+                credentials: 'include',
+                body: JSON.stringify({ "id": groupId })
+            }
+            try {
+                const response = await fetch('http://localhost:8080/api/requestGroupJoin', requestOptions)
+                const data = await response.json()
+                console.log(data)
+                if (!data.loggedIn) {
+                    navigate('/login')
+                }
+            } catch (err) {
+                console.log(err)
+            }
+        }
+        sendGroupJoinRequest()
     }, [])
-    return null
+}
+
+
+export const useCreateEvent = (groupId) => {
+
+    const [eventData, setEventData] = useState({
+        groupId: groupId,
+        title: '',
+        description: '',
+        time: ''
+    })
+    const navigate = useNavigate()
+
+    const handleChange = (e) => {
+
+        const { id, value } = e.target
+        setEventData(prevState => ({
+            ...prevState,
+            [id]: value,
+        }))
+    }
+
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        const requestOptions = {
+            method: 'POST',
+            credentials: 'include',
+            header: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(eventData),
+        }
+
+        try {
+            const response = await fetch('http://localhost:8080/api/createEvent', requestOptions)
+            const data = await response.json()
+            console.log(data)
+            if (!data.loggedIn) {
+                navigate('/login')
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    return {
+        eventData,
+        handleChange,
+        handleSubmit
+    }
+}
+
+export const useGetContacts = () => {
+    const [contacts, setContacts] = useState(null)
+    const [loading, setLoading] = useState(true)
+    const navigate = useNavigate()
+
+    useEffect(() => {
+
+        const getContacts = async () => {
+            const requestOptions = {
+                method: "GET",
+                credentials: "include"
+            }
+            try {
+                const response = await fetch('http://localhost:8080/api/getContacts', requestOptions)
+                const data = await response.json()
+                console.log(data)
+                if (!data.loggedIn) {
+                    navigate('/login')
+                }
+                if (data.response === "success") {
+                    setContacts(data)
+                }
+            } catch (err) {
+                console.log(err)
+            } finally {
+                setLoading(false)
+            }
+
+        }
+        getContacts()
+    }, [navigate])
+    return {
+        contacts,
+        loading
+    }
+}
+
+
+export const useGetComments = (postId) => {
+    const navigate = useNavigate()
+    useEffect(() => {
+        const getComments = async () => {
+            const requestOptions = {
+                method: "GET",
+                credentials: "include",
+                body: JSON.stringify({ "id": postId })
+            }
+            try {
+                const response = await fetch("http://localhost:8080/api/getComments", requestOptions)
+                const data = await response.json()
+                console.log(data)
+                if (!data.loggedIn) {
+                    navigate('/login')
+                }
+            } catch (err) {
+                console.log(err)
+            }
+        }
+        getComments()
+    }, [])
+}
+
+export const useGetMessages = (userId = 0, groupId = 0) => {
+    const navigate = useNavigate()
+    useEffect(() => {
+
+        const getMessages = async () => {
+            const requestOptions = {
+                method: "GET",
+                credentials: 'include',
+                body: JSON.stringify({ "userId": userId, "groupId": groupId })
+            }
+            try {
+                const response = await fetch('http://localhost:8080/api/getMessages', requestOptions)
+                const data = await response.json()
+                console.log(data)
+                if (!data.loggedIn) {
+                    navigate('/login')
+                }
+            } catch (err) {
+                console.log(err)
+            }
+        }
+        getMessages()
+    }, [])
+}
+
+export const useCheckLoggedIn = () => {
+
+    const [userData, setUserData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate()
+    const requestOptions = {
+        method: 'GET',
+        credentials: 'include',
+    }
+
+    useEffect(() => {
+        const checkLoggedIn = async () => {
+            try {
+                const result = await fetch('http://localhost:8080/api/checkLogin', requestOptions)
+                const data = await result.json()
+                console.log(data)
+                if (!data.loggedIn) {
+                    navigate('/login')
+                }
+                if (data.response === "success") {
+                    setUserData(data)
+                }
+            } catch (err) {
+                console.log(err)
+            } finally {
+                setLoading(false)
+            }
+        }
+        checkLoggedIn()
+    }, [navigate])
+
+    return {
+        userData,
+        loading
+    }
 }

@@ -32,7 +32,8 @@ func (h *Handler) requireLogin(handler http.HandlerFunc) http.HandlerFunc {
 		}
 		fmt.Println("middleware: not logged in")
 		responseData := make(map[string]interface{})
-		responseData["requireLogin"] = "failure"
+		responseData["response"] = "failure"
+		responseData["loggedIn"] = false
 		responseData["message"] = "not logged in"
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(responseData)

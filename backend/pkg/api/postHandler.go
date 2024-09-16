@@ -16,21 +16,32 @@ func (h *Handler) AddPost(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodOptions {
 		return
 	}
+	responseData := make(map[string]interface{})
+	responseData["loggedIn"] = true
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		responseData["response"] = "failure"
+		responseData["message"] = "Method not allowed"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
 		return
 	}
 
 	err := r.ParseMultipartForm(10 << 20)
 	if err != nil {
-		http.Error(w, "unable to parse form", http.StatusBadRequest)
+		responseData["response"] = "failure"
+		responseData["message"] = "Invalid payload"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
 		return
 	}
 
 	var user models.Users
 	user, err = h.store.GetUserFromCookie(r)
 	if err != nil {
-		http.Error(w, "addpost unable to get user", http.StatusInternalServerError)
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
 		return
 	}
 
@@ -51,7 +62,11 @@ func (h *Handler) AddPost(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("has avatar")
 		filepath, err := utils.SaveFile(r, post.Creator, "Post")
 		if err != nil {
-			fmt.Println("error saving file", err)
+			responseData["response"] = "failure"
+			responseData["message"] = "Internal server error"
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(responseData)
+			return
 		}
 		post.Avatar = filepath
 	} else {
@@ -63,8 +78,8 @@ func (h *Handler) AddPost(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unable to add post", http.StatusInternalServerError)
 		return
 	}
-	responseData := make(map[string]interface{})
 	responseData["response"] = "success"
+	responseData["message"] = "successfully added post"
 	responseData["post"] = post
 
 	w.Header().Set("Content-Type", "application/json")
@@ -76,29 +91,45 @@ func (h *Handler) GetPost(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodOptions {
 		return
 	}
+	responseData := make(map[string]interface{})
+	responseData["loggedIn"] = true
 	if r.Method != http.MethodGet {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		responseData["response"] = "failure"
+		responseData["message"] = "Method not allowed"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
 		return
 	}
-	url, err := strconv.Atoi(r.PathValue("id"))
-	if err != nil {
-		fmt.Println("")
+
+	var data struct {
+		Id int `json:"id"`
 	}
-	fmt.Println(url)
-	post, err := h.store.GetPost(url)
+
+	err := json.NewDecoder(r.Body).Decode(&data)
+	if err != nil {
+		fmt.Println("error decoding getpost")
+		responseData["response"] = "failure"
+		responseData["message"] = "Invalid payload"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+
+	post, err := h.store.GetPost(data.Id)
 
 	if err != nil {
-		http.Error(w, "Invalid url path", http.StatusBadRequest)
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
 		return
 	}
-	responseData := make(map[string]interface{})
 
 	responseData["response"] = "success"
 	responseData["message"] = "GetPost success"
 	responseData["post"] = post
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(responseData)
-
 }
 
 func (h *Handler) GetAllPosts(w http.ResponseWriter, r *http.Request) {
@@ -107,16 +138,20 @@ func (h *Handler) GetAllPosts(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodOptions {
 		return
 	}
+	responseData := make(map[string]interface{})
+	responseData["loggedIn"] = true
 	if r.Method != http.MethodGet {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		responseData["response"] = "failure"
+		responseData["message"] = "Method not allowed"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
 		return
 	}
 
-	posts, err := h.store.GetAllPosts()
+	posts, err := h.store.GetAllNormalPosts()
 	if err != nil {
 		if err == sql.ErrNoRows {
 			fmt.Println("no rows")
-			responseData := make(map[string]interface{})
 			responseData["response"] = "success"
 			responseData["message"] = "GetAllPosts success"
 			responseData["getAllPosts"] = nil
@@ -125,13 +160,114 @@ func (h *Handler) GetAllPosts(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		fmt.Println("error getallposts", err)
-		http.Error(w, "internal server error", http.StatusInternalServerError)
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		responseData["getAllPosts"] = nil
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
 		return
 	}
-	responseData := make(map[string]interface{})
 	responseData["response"] = "success"
 	responseData["message"] = "GetAllPosts success"
 	responseData["getAllPosts"] = posts
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(responseData)
+}
+
+func (h *Handler) GetGroupData(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("getallpost")
+	CorsEnabler(w, r)
+	if r.Method == http.MethodOptions {
+		return
+	}
+	responseData := make(map[string]interface{})
+	responseData["loggedIn"] = true
+
+	if r.Method != http.MethodGet {
+		responseData["response"] = "failure"
+		responseData["message"] = "Method not allowed"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+
+	var response struct {
+		GroupId int `json:"groupId"`
+	}
+	err := json.NewDecoder(r.Body).Decode(&response)
+	if err != nil {
+		fmt.Println("error decoding group post", err)
+		responseData["response"] = "failure"
+		responseData["message"] = "Invalid payload"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+
+	// check if part of group
+
+	partOfGroup, err := h.store.GetIsPartOfGroup(response.GroupId, h.id)
+
+	if err != nil {
+		fmt.Println("err getting ispartofgroup", err)
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+	if !partOfGroup {
+		fmt.Println("User isn't part of the group", err)
+		responseData["response"] = "failure"
+		responseData["message"] = "User isn't part of the group"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+
+	posts, err := h.store.GetAllGroupPosts(response.GroupId)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			responseData["groupPosts"] = nil
+		} else {
+
+			fmt.Println("error getallposts", err)
+			responseData["response"] = "failure"
+			responseData["message"] = "Internal server error"
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(responseData)
+			return
+		}
+	}
+
+	// owner, all member, all events
+
+	groupMembers, err := h.store.GetGroupMembers(response.GroupId)
+	if err != nil {
+		fmt.Println("error getting groupmembers", err)
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+
+	events, err := h.store.GetGroupEvents(response.GroupId, h.id)
+	if err != nil {
+		fmt.Println("error getting group events", err)
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+
+	responseData["response"] = "success"
+	responseData["message"] = "GetAllPosts success"
+	responseData["groupPosts"] = posts
+	responseData["groupMembers"] = groupMembers
+	responseData["groupEvents"] = events
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(responseData)
 }

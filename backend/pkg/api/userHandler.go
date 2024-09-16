@@ -1,11 +1,13 @@
 package api
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"social-network/pkg/models"
 	"social-network/pkg/utils"
+	"strconv"
 )
 
 func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
@@ -13,18 +15,24 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodOptions {
 		return
 	}
+	responseData := make(map[string]interface{})
+	responseData["loggedIn"] = true
 	if r.Method != "POST" {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		responseData["response"] = "failure"
+		responseData["message"] = "Method not allowed"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
 		return
 	}
 
 	err := r.ParseMultipartForm(10 << 20)
 	if err != nil {
-		http.Error(w, "Unable to parse form", http.StatusBadRequest)
+		responseData["response"] = "failure"
+		responseData["message"] = "Invalid payload"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
 		return
 	}
-
-	responseData := make(map[string]interface{})
 
 	credentials := models.Users{
 		Name:        r.FormValue("name"),
@@ -35,9 +43,8 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 		DateOfBirth: r.FormValue("dateOfBirth"),
 		Nickname:    r.FormValue("nickname"),
 		AboutMe:     r.FormValue("aboutMe"),
+		Privacy:     r.FormValue("privacy"),
 	}
-
-	fmt.Println(credentials)
 
 	// check if user is already registered
 	exists, err := h.store.CheckUserExists(credentials)
@@ -58,19 +65,29 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// add user to db
 	filePath, err := utils.SaveFile(r, credentials.Name, "Avatar")
 	if err != nil {
-		fmt.Println("error saving file")
+		if filePath == "No avatar" {
+			fmt.Println("no avatar")
+		} else {
+
+			fmt.Println("error saving file")
+			responseData["response"] = "failure"
+			responseData["message"] = "Internal server error"
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(responseData)
+			return
+		}
 	}
-	fmt.Println(filePath)
-	credentials.Avatar = filePath
+	if filePath != "No avatar" {
+		credentials.Avatar = filePath
+	}
 
 	err = h.store.AddUser(credentials)
 	if err != nil {
 		fmt.Println("register error adding new user", err)
 		responseData["response"] = "failure"
-		responseData["message"] = "db error"
+		responseData["message"] = "Internal server error"
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(responseData)
 	}
@@ -83,17 +100,22 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("login")
 	CorsEnabler(w, r)
-	if r.Method == http.MethodOptions {
-		return
-	}
-	if r.Method != "POST" {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
+	fmt.Println("after cors")
+	fmt.Println("after options")
 	responseData := make(map[string]interface{})
+	responseData["loggedIn"] = true
+	if r.Method != "POST" {
+		fmt.Println("inside not post")
+		responseData["response"] = "failure"
+		responseData["message"] = "Method not allowed"
+		json.NewEncoder(w).Encode(responseData)
+		w.Header().Set("Content-Type", "application/json")
+		return
+	}
 
+	fmt.Println("2")
 	credentials := models.LoginCredentials{}
 
 	err := json.NewDecoder(r.Body).Decode(&credentials)
@@ -106,6 +128,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	fmt.Println("3")
 	// check if credentials match
 	loggedIn, id, err := h.store.CheckLogin(credentials)
 	if err != nil {
@@ -125,8 +148,8 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(responseData)
 		return
 	}
-	fmt.Println("logged in with :", id)
 
+	fmt.Println("4")
 	// sessions
 	err = h.AddSession(w, r, id)
 	if err != nil {
@@ -145,33 +168,129 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(responseData)
 }
 
+func (h *Handler) LogOut(w http.ResponseWriter, r *http.Request) {
+
+	CorsEnabler(w, r)
+	if r.Method == http.MethodOptions {
+		return
+	}
+	responseData := make(map[string]interface{})
+	responseData["loggedIn"] = true
+	if r.Method != "DELETE" {
+		responseData["response"] = "failure"
+		responseData["message"] = "Method not allowed"
+		json.NewEncoder(w).Encode(responseData)
+		w.Header().Set("Content-Type", "application/json")
+		return
+	}
+
+	user, err := h.store.GetUserFromCookie(r)
+	if err != nil {
+		fmt.Println("error getting user from cookie", err)
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		json.NewEncoder(w).Encode(responseData)
+		w.Header().Set("Content-Type", "application/json")
+		return
+	}
+
+	err = h.store.DeleteSession(user.Id)
+	if err != nil {
+		fmt.Println("error deleting session", err)
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		json.NewEncoder(w).Encode(responseData)
+		w.Header().Set("Content-Type", "application/json")
+		return
+	}
+	responseData["response"] = "success"
+	responseData["message"] = "User logged out successfully"
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(responseData)
+}
+
 func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 	CorsEnabler(w, r)
 	if r.Method == http.MethodOptions {
 		return
 	}
+	responseData := make(map[string]interface{})
+	responseData["loggedIn"] = true
 	if r.Method != "GET" {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		responseData["response"] = "failure"
+		responseData["message"] = "Method not allowed"
+		json.NewEncoder(w).Encode(responseData)
+		w.Header().Set("Content-Type", "application/json")
 		return
 	}
 
-	// gets only the logged in user
-
-	responseData := make(map[string]interface{})
-
-	user, err := h.store.GetUserFromCookie(r)
+	userId, err := strconv.Atoi(r.PathValue("userId"))
 	if err != nil {
-		fmt.Println("getUser handler err", err)
-		responseData["respone"] = "failure"
-		responseData["message"] = "Couldn't get user from cookie"
+		fmt.Println("err getuser url", err)
+		responseData["response"] = "failure"
+		responseData["message"] = "Invalid payload"
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(responseData)
 		return
 	}
 
+	user, err := h.store.GetUser(userId)
+
+	if err != nil {
+		fmt.Println("getUser handler err", err)
+		responseData["respone"] = "failure"
+		responseData["message"] = "Internal server error"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+
+	// add followers,followings
+	contacts, err := h.store.GetContacts(user.Id)
+	if err != nil {
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+
+	// posts
+	posts, err := h.store.GetAllUserPosts(user.Id)
+	if err != nil && err != sql.ErrNoRows {
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+	if err != sql.ErrNoRows {
+		responseData["posts"] = posts
+	}
+
+	status, err := h.store.IsFollowing(h.id, userId)
+	if err != nil && err != sql.ErrNoRows {
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+	if h.id == userId {
+		responseData["following"] = "self"
+		responseData["ownPage"] = true
+	} else if err == sql.ErrNoRows {
+		responseData["following"] = "not following"
+		responseData["ownPage"] = false
+	} else {
+		responseData["following"] = status
+		responseData["ownPage"] = false
+	}
+
 	responseData["response"] = "success"
 	responseData["message"] = "Getuser successful"
 	responseData["getUser"] = user
+	responseData["followers"] = contacts
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
@@ -180,22 +299,24 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetAllUsers(w http.ResponseWriter, r *http.Request) {
-	CorsEnabler(w, r)
-	// fmt.Println("getAllUsers")
+	fmt.Println("getAllUsers")
 
+	CorsEnabler(w, r)
+	responseData := make(map[string]interface{})
+	responseData["loggedIn"] = true
 	if r.Method != "GET" {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		responseData["response"] = "failure"
+		responseData["message"] = "Method not allowed"
+		json.NewEncoder(w).Encode(responseData)
+		w.Header().Set("Content-Type", "application/json")
 		return
 	}
-	// gets all users
-
-	responseData := make(map[string]interface{})
 
 	users, err := h.store.GetAllUsers()
 	if err != nil {
 		fmt.Println("getAllUsers handler err", err)
 		responseData["respone"] = "failure"
-		responseData["message"] = "Couldn't get all users"
+		responseData["message"] = "Internal server error"
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(responseData)
 		return
@@ -206,5 +327,16 @@ func (h *Handler) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	responseData["getAllUsers"] = users
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(responseData)
+}
+
+func (h *Handler) CheckLogin(w http.ResponseWriter, r *http.Request) {
+	CorsEnabler(w, r)
+	responseData := make(map[string]interface{})
+	responseData["loggedIn"] = true
+	responseData["userId"] = h.id
+	responseData["response"] = "success"
+	responseData["message"] = "logged in"
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(responseData)
 }

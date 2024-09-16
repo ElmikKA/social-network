@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"social-network/pkg/models"
+	"social-network/pkg/utils"
 	"sync"
 
 	"github.com/gorilla/websocket"
@@ -15,10 +16,11 @@ var upgrader = websocket.Upgrader{
 }
 
 var (
-	connections = make(map[*websocket.Conn]map[string]interface{})
+	connections = make(map[*websocket.Conn]models.Connection)
 	mu          sync.Mutex
 )
-var broadcast = make(chan interface{})
+
+var broadcast = make(chan models.Message)
 
 func (h *Handler) Websocket(w http.ResponseWriter, r *http.Request) {
 	CorsEnabler(w, r)
@@ -58,9 +60,9 @@ func (h *Handler) Websocket(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// adds new connection to the connections map
-	connections[conn] = map[string]interface{}{
-		"id":       h.id,
-		"username": h.username,
+	connections[conn] = models.Connection{
+		Id:       h.id,
+		Username: h.username,
 	}
 	mu.Unlock()
 
@@ -72,9 +74,12 @@ func (h *Handler) Websocket(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("err reading websocket message", err)
 			return
 		}
+		msg.UserId = connections[conn].Id
+
 		fmt.Println("got a readJSON")
 		fmt.Println("message:", msg.Message)
 		fmt.Println("receiverId:", msg.ReceiverId)
+		fmt.Println(msg)
 		broadcast <- msg
 	}
 }
@@ -82,28 +87,77 @@ func (h *Handler) Websocket(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) HandleWebsocketConnections() {
 	for msg := range broadcast {
 		fmt.Println("got a broadcast")
-		sendPrivateMessage(msg)
+		fmt.Println(msg.ReceiverId)
+		if msg.ReceiverId != 0 {
+			h.sendPrivateMessage(msg)
+		} else {
+			h.sendGroupMessage(msg)
+		}
+	}
+}
+func (h *Handler) sendGroupMessage(msg models.Message) {
+	fmt.Println(msg)
+	fmt.Println("group message")
+
+	mu.Lock()
+	defer mu.Unlock()
+
+	// add to db
+	err := h.store.AddMessage(msg)
+	if err != nil {
+		fmt.Println("err addin group message", err)
+		return
+	}
+
+	// send message to all group members
+	responseData := make(map[string]interface{})
+	onlineMembers, err := h.store.GetOnlineGroupMembers(msg.UserId)
+	fmt.Println(onlineMembers)
+	if err != nil {
+		fmt.Println("err getting online group members", err)
+		return
+	}
+	for msgConn, value := range connections {
+		if utils.ContainsInt(onlineMembers, value.Id) {
+			// send message
+			responseData["response"] = msg.Message
+			responseData["username"] = value.Username
+			if err := msgConn.WriteJSON(responseData); err != nil {
+				fmt.Println("error writing onlineresponse message", err)
+			}
+		}
 	}
 }
 
-func sendPrivateMessage(msg interface{}) {
+func (h *Handler) sendPrivateMessage(msg models.Message) {
+	fmt.Println("private message")
 	fmt.Println(msg)
 	mu.Lock()
 	defer mu.Unlock()
 	// add to db
 
-	// send message to receiver
-	// sends to every connection right now
-	for msgConn, value := range connections {
-		responseData := make(map[string]interface{})
-		responseData["response"] = "hello world"
-		responseData["id"] = value["id"]
-		responseData["username"] = value["username"]
+	err := h.store.AddMessage(msg)
+	if err != nil {
+		fmt.Println("error adding message", err)
+		return
+	}
 
-		if err := msgConn.WriteJSON(responseData); err != nil {
-			fmt.Println("error writing onlineresponse message", err)
+	// send message to receiver
+
+	responseData := make(map[string]interface{})
+	for msgConn, value := range connections {
+		if value.Id == msg.ReceiverId {
+			// send message
+			responseData["response"] = msg.Message
+			responseData["id"] = value.Id
+			responseData["username"] = value.Username
+			if err := msgConn.WriteJSON(responseData); err != nil {
+				fmt.Println("error writing onlineresponse message", err)
+			}
+			return
 		}
 	}
+	fmt.Println("receiver not online")
 }
 
 func (h *Handler) CloseSocket(conn *websocket.Conn) {
@@ -113,16 +167,17 @@ func (h *Handler) CloseSocket(conn *websocket.Conn) {
 
 	delete(connections, conn)
 	conn.Close()
+	user := connections[conn]
 
 	// change online status
-	h.store.GoOffline(h.id)
+	h.store.GoOffline(user.Id)
 
 	// send every connection a status change
 	for msgConn := range connections {
 		onlineResponse := make(map[string]interface{})
 		onlineResponse["statusChange"] = true
-		onlineResponse["id"] = h.id
-		onlineResponse["username"] = h.username
+		onlineResponse["id"] = user.Id
+		onlineResponse["username"] = user.Username
 		onlineResponse["online"] = -1
 
 		if err := msgConn.WriteJSON(onlineResponse); err != nil {

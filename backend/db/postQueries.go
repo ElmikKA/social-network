@@ -29,12 +29,52 @@ func (s *Store) GetPost(id int) (models.Post, error) {
 	}
 	return post, nil
 }
+func (s *Store) GetAllUserPosts(userId int) ([]models.Post, error) {
 
-func (s *Store) GetAllPosts() ([]models.Post, error) {
 	query := `
-		SELECT * FROM POSTS
+		SELECT * FROM posts WHERE id =?
+	`
+	rows, err := s.Db.Query(query, userId)
+	if err != nil {
+		fmt.Println("error getting all posts", err)
+		return []models.Post{}, err
+	}
+	defer rows.Close()
+
+	var posts []models.Post
+	for rows.Next() {
+		var post models.Post
+		rows.Scan(&post.Id, &post.UserId, &post.GroupId, &post.Creator, &post.Title, &post.Content, &post.Avatar, &post.CreatedAt, &post.Privacy)
+		posts = append(posts, post)
+	}
+	return posts, nil
+}
+
+func (s *Store) GetAllNormalPosts() ([]models.Post, error) {
+	query := `
+		SELECT * FROM POSTS WHERE groupId = 0
 	`
 	rows, err := s.Db.Query(query)
+	if err != nil {
+		fmt.Println("error getting all posts", err)
+		return []models.Post{}, err
+	}
+	defer rows.Close()
+
+	var posts []models.Post
+	for rows.Next() {
+		var post models.Post
+		rows.Scan(&post.Id, &post.UserId, &post.GroupId, &post.Creator, &post.Title, &post.Content, &post.Avatar, &post.CreatedAt, &post.Privacy)
+		posts = append(posts, post)
+	}
+	return posts, nil
+}
+
+func (s *Store) GetAllGroupPosts(groupId int) ([]models.Post, error) {
+	query := `
+		SELECT * FROM POSTS WHERE groupId = ?
+	`
+	rows, err := s.Db.Query(query, groupId)
 	if err != nil {
 		fmt.Println("error getting all posts", err)
 		return []models.Post{}, err

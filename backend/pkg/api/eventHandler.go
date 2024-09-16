@@ -5,12 +5,10 @@ import (
 	"fmt"
 	"net/http"
 	"social-network/pkg/models"
-
-	"github.com/mattn/go-sqlite3"
 )
 
-func (h *Handler) CreateGroup(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("creating group")
+func (h *Handler) CreateEvent(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("creating event")
 	CorsEnabler(w, r)
 	if r.Method == http.MethodOptions {
 		return
@@ -24,8 +22,9 @@ func (h *Handler) CreateGroup(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(responseData)
 		return
 	}
-	var group models.Group
-	json.NewDecoder(r.Body).Decode(&group)
+	var event models.Event
+	json.NewDecoder(r.Body).Decode(&event)
+	fmt.Println(event)
 
 	user, err := h.store.GetUserFromCookie(r)
 	if err != nil {
@@ -35,26 +34,9 @@ func (h *Handler) CreateGroup(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(responseData)
 		return
 	}
-	group.UserId = user.Id
+	event.UserId = user.Id
 
-	groupId, err := h.store.AddGroup(group)
-	if err != nil {
-		responseData["response"] = "failure"
-
-		if sqliteErr, ok := err.(sqlite3.Error); ok && sqliteErr.Code == sqlite3.ErrConstraint {
-			responseData["message"] = "Group already exists with that title"
-		} else {
-			responseData["message"] = "Internal server error"
-		}
-
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(responseData)
-		return
-	}
-
-	group.Id = groupId
-
-	_, err = h.store.AddGroupMember(group)
+	err = h.store.AddEvent(event)
 	if err != nil {
 		responseData["response"] = "failure"
 		responseData["message"] = "Internal server error"
@@ -62,22 +44,27 @@ func (h *Handler) CreateGroup(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(responseData)
 		return
 	}
-	w.WriteHeader(http.StatusOK)
-	responseData["message"] = "Group created successfully"
+	// add trigger to set all group members to pending
+	// add trigger to add any new members who join to pending
+	// add notification to every member
+	// remove notification when it's completed/rejected
+
 	responseData["response"] = "success"
+	responseData["message"] = "successfully created event"
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(responseData)
 }
 
-func (h *Handler) RequestGroupJoin(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("sending group join request")
+func (h *Handler) RespondEvent(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println("responding to event")
 	CorsEnabler(w, r)
 	if r.Method == http.MethodOptions {
 		return
 	}
 	responseData := make(map[string]interface{})
 	responseData["loggedIn"] = true
-	if r.Method != http.MethodPost {
+	if r.Method != "POST" {
 		responseData["response"] = "failure"
 		responseData["message"] = "Method not allowed"
 		w.Header().Set("Content-Type", "application/json")
@@ -85,58 +72,38 @@ func (h *Handler) RequestGroupJoin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var data struct {
-		Id int `json:"id"`
+	users, err := h.store.GetUserFromCookie(r)
+	if err != nil {
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
 	}
 
-	err := json.NewDecoder(r.Body).Decode(&data)
+	var data models.EventResponse
+	err = json.NewDecoder(r.Body).Decode(&data)
 	if err != nil {
-		fmt.Println("error decoding getpost")
+		fmt.Println("err decoding json respondfollow", err)
 		responseData["response"] = "failure"
 		responseData["message"] = "Invalid payload"
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(responseData)
 		return
 	}
+	fmt.Println(data)
 
-	user, err := h.store.GetUserFromCookie(r)
+	err = h.store.RespondEvent(users.Id, data.UserId, data.Pending)
 	if err != nil {
+		fmt.Println("err responding to follow")
 		responseData["response"] = "failure"
 		responseData["message"] = "Internal server error"
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(responseData)
 		return
 	}
-
-	group := models.Group{
-		UserId: user.Id,
-		Id:     data.Id,
-	}
-
-	groupMembersTableId, err := h.store.AddGroupMember(group)
-	if err != nil {
-		responseData["response"] = "failure"
-		if sqliteErr, ok := err.(sqlite3.Error); ok && sqliteErr.Code == sqlite3.ErrConstraint {
-			responseData["message"] = "Already sent a request"
-		} else {
-			responseData["message"] = "Internal server error"
-		}
-
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(responseData)
-		return
-	}
-
-	if groupMembersTableId == 0 {
-		responseData["response"] = "failure"
-		responseData["message"] = "User already in the group"
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(responseData)
-		return
-	}
-
 	responseData["response"] = "success"
-	responseData["message"] = "GroupJoinRequest successfully sent"
+	responseData["message"] = "respondFollow success"
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(responseData)
 }

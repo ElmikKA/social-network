@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react'
-import { RespondFollow } from '../services/api'
+import { useAddFollow } from '../services/api'
 
 const Follow = () => {
 
-    RespondFollow(2, "completed")
+    const userId = 2
+    useAddFollow(userId)
     return (
         <div>
-            accept/reject follow
-
+            send follow request
         </div>
     )
 }
