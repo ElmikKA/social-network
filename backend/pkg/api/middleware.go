@@ -29,7 +29,6 @@ func (h *Handler) requireLogin(handler http.HandlerFunc) http.HandlerFunc {
 				return
 			}
 		}
-		fmt.Println("middleware: not logged in")
 		responseData := make(map[string]interface{})
 		responseData["response"] = "failure"
 		responseData["loggedIn"] = false

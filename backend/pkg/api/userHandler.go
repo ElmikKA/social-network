@@ -293,7 +293,6 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetAllUsers(w http.ResponseWriter, r *http.Request) {
-
 	CorsEnabler(w, r)
 	responseData := make(map[string]interface{})
 	responseData["loggedIn"] = true

@@ -108,6 +108,9 @@ func (s *Store) IsFollowing(userId, followee int) (string, error) {
 	var pending string
 	err := s.Db.QueryRow(query, userId, followee, followee, userId).Scan(&pending)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return "", nil
+		}
 		fmt.Println("err getting isfollowing", err)
 		return pending, err
 	}
