@@ -79,7 +79,9 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	credentials.Avatar = filePath
+	if filePath != "No avatar" {
+		credentials.Avatar = filePath
+	}
 
 	err = h.store.AddUser(credentials)
 	if err != nil {
@@ -274,10 +276,15 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(responseData)
 		return
 	}
-	if err == sql.ErrNoRows {
+	if h.id == userId {
+		responseData["following"] = "self"
+		responseData["ownPage"] = true
+	} else if err == sql.ErrNoRows {
 		responseData["following"] = "not following"
+		responseData["ownPage"] = false
 	} else {
 		responseData["following"] = status
+		responseData["ownPage"] = false
 	}
 
 	responseData["response"] = "success"

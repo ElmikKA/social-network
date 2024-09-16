@@ -255,6 +255,7 @@ export const useGetUser = (id) => {
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const navigate = useNavigate()
 
     useEffect(() => {
         const getProfile = async () => {
@@ -263,7 +264,6 @@ export const useGetUser = (id) => {
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
             };
-            const navigate = useNavigate()
 
             try {
                 let response = await fetch(`http://localhost:8080/api/getUser/${id}`, requestOptions);
@@ -446,6 +446,7 @@ export const useSetComment = (postId) => {
 export const useAddFollow = (followId) => {
 
     const [isFollowing, setIsFollowing] = useState(false)
+    const navigate = useNavigate()
     const addFollow = async () => {
         const requestOptions = {
             credentials: 'include',
@@ -455,7 +456,6 @@ export const useAddFollow = (followId) => {
         }
         console.log(requestOptions)
         console.log(followId)
-        const navigate = useNavigate()
 
         try {
             const response = await fetch('http://localhost:8080/api/addFollow', requestOptions)

@@ -15,24 +15,28 @@ const Profile = () => {
     return (
         <div className='profile'>
             <h2>Profile Page</h2>
-            <p>Name: {userData.name}</p>
-            <p>Email: {userData.email}</p>
-            <p>First Name: {userData.firstName}</p>
-            <p>Last Name: {userData.lastName}</p>
-            {userData.avatar ? (
-                <div>
-                    <h3>Profile picture</h3>
-                    <img
-                        src={`http://localhost:8080/api/avatars/${userData.avatar}`}
-                        alt="Profile Avatar"
-                        style={{ width: '150px', height: '150px', borderRadius: '50%' }}
-                    />
-                </div>
-            ) : (
-                <p>No profile picture available</p>
-            )}
-            {userData.following !== 'not following' ? <p className='followButton'>{userData.following}</p> :
-                <FollowButton userId={id} />}
+            <p>Name: {userData.getUser.name}</p>
+            <p>Email: {userData.getUser.email}</p>
+            <p>First Name: {userData.getUser.firstName}</p>
+            <p>Last Name: {userData.getUser.lastName}</p>
+
+            <div>
+                <h3>Profile picture</h3>
+                <img
+                    src={`http://localhost:8080/api/avatars/${userData.getUser.avatar ? userData.getUser.avatar : '/db/assets /default.webp'}`}
+                    alt="Profile Avatar"
+                    style={{ width: '100px', height: '100px', borderRadius: '50%' }}
+                />
+            </div>
+
+            {!userData.ownPage && <div>
+
+                {
+                    userData.following !== 'not following' ? <p className='followButton'>following</p> :
+                        <FollowButton userId={id} />
+                }
+            </div>
+            }
         </div>
     );
 };
