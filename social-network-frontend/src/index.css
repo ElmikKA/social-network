@@ -50,11 +50,11 @@
 }
 
 .homePosts {
-    width: 75%;
+    width: 100%;
     background-color: gray;
 }
 
-.homeNotifications {
+.notifications {
     width: 25%;
     background-color: lightgray;
 }
@@ -105,4 +105,23 @@
 
 .homePage {
     display: flex;
+}
+
+.createGroupPage {
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+}
+
+.groupEventDiv {
+    border: solid gray 1px;
+}
+
+.groupEventBox {
+    padding: 10px;
+    border: solid black 1px;
+}
+
+.createEventDiv {
+    border: solid black 1px;
 }

@@ -12,7 +12,7 @@ import Comment from './components/Comment'
 import Follow from './addingStuff/Follow'
 import Groups from './addingStuff/Groups'
 import JoinGroup from './addingStuff/JoinGroup'
-import Event from './addingStuff/Event'
+import Event from './addingStuff/CreateEvent'
 import RespondNotification from './addingStuff/RespondNotification'
 import LeftSidebar from './components/LeftSidebar'
 import {
@@ -27,6 +27,7 @@ import Footer from './components/Footer'
 import Users from './pages/usersPage/Users'
 import GroupsPage from './pages/groupsPage/GroupsPage'
 import GroupPage from './pages/GroupPage/GroupPage'
+import CreateGroupPage from './pages/CreateGroupPage/CreateGroupPage'
 
 const Layout = () => {
   return (
@@ -35,6 +36,7 @@ const Layout = () => {
       <div className='main' style={{ display: "flex" }}>
         <LeftSidebar />
         <Outlet />
+        <Notifications />
         <RightSidebar />
       </div>
       <Footer />
@@ -78,7 +80,11 @@ const router = createBrowserRouter([
       {
         path: '/group/:id',
         element: <GroupPage />
-      }
+      },
+      {
+        path: '/createGroup',
+        element: <CreateGroupPage />
+      },
     ]
   },
 ]);

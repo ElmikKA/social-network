@@ -31,7 +31,6 @@ const Home = () => {
                     <p>no posts</p>
                 )}
             </div>
-            <div className='homeNotifications' ><Notifications /></div>
         </div>
     )
 }

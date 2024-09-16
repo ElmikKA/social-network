@@ -1,6 +1,8 @@
 import React from 'react'
 import { useGetGroupData } from '../../services/api'
 import { useParams } from 'react-router-dom'
+import EventBox from '../../components/EventBox'
+import CreateEvent from '../../addingStuff/CreateEvent'
 
 const GroupPage = () => {
     const { id } = useParams("id")
@@ -19,8 +21,10 @@ const GroupPage = () => {
             <h2>Group page</h2>
             <p>{groupData.groupData.title}</p>
             <p>description:{groupData.groupData.description}</p>
+            <EventBox events={groupData.groupEvents} />
+            <CreateEvent />
 
-        </div>
+        </div >
     )
 }
 

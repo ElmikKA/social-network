@@ -1,6 +1,7 @@
 package api
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -65,6 +66,7 @@ func (h *Handler) CreateGroup(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	responseData["message"] = "Group created successfully"
 	responseData["response"] = "success"
+	responseData["groupId"] = groupId
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(responseData)
 }
@@ -137,6 +139,117 @@ func (h *Handler) RequestGroupJoin(w http.ResponseWriter, r *http.Request) {
 
 	responseData["response"] = "success"
 	responseData["message"] = "GroupJoinRequest successfully sent"
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(responseData)
+}
+
+func (h *Handler) GetGroupData(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("get group data")
+	CorsEnabler(w, r)
+	if r.Method == http.MethodOptions {
+		return
+	}
+	responseData := make(map[string]interface{})
+	responseData["loggedIn"] = true
+
+	if r.Method != http.MethodPost {
+		responseData["response"] = "failure"
+		responseData["message"] = "Method not allowed"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+
+	var response struct {
+		GroupId int `json:"groupId"`
+	}
+	err := json.NewDecoder(r.Body).Decode(&response)
+	if err != nil {
+		fmt.Println("error decoding group post", err)
+		responseData["response"] = "failure"
+		responseData["message"] = "Invalid payload"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+
+	fmt.Println("groupId", response.GroupId)
+	// check if part of group
+
+	partOfGroup, err := h.store.GetIsPartOfGroup(response.GroupId, h.id)
+
+	if err != nil {
+		fmt.Println("err getting ispartofgroup", err)
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+	if !partOfGroup {
+		fmt.Println("not a member")
+		responseData["member"] = false
+	} else {
+		fmt.Println("member")
+		responseData["member"] = true
+	}
+
+	posts, err := h.store.GetAllGroupPosts(response.GroupId)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			responseData["groupPosts"] = nil
+		} else {
+
+			fmt.Println("error getallposts", err)
+			responseData["response"] = "failure"
+			responseData["message"] = "Internal server error"
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(responseData)
+			return
+		}
+	}
+
+	// owner, all member, all events
+
+	groupMembers, err := h.store.GetGroupMembers(response.GroupId)
+	if err != nil {
+		fmt.Println("error getting groupmembers", err)
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+
+	events, err := h.store.GetGroupEvents(response.GroupId, h.id)
+	if err != nil {
+		fmt.Println("error getting group events", err)
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+
+	group, err := h.store.GetGroup(response.GroupId)
+	if err != nil {
+		fmt.Println("error getting group events", err)
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+
+	responseData["response"] = "success"
+	responseData["message"] = "GetAllPosts success"
+	responseData["groupPosts"] = posts
+	responseData["groupMembers"] = groupMembers
+	responseData["groupEvents"] = events
+	responseData["groupData"] = group
+	fmt.Println("get group data success")
+	fmt.Println(responseData)
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(responseData)
 }

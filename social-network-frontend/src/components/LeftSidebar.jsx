@@ -19,6 +19,7 @@ const LeftSidebar = () => {
             <button className='leftSidebarButton' onClick={() => navigate(`/user/${userData.userId}`)}>User Profile</button>
             <button className='leftSidebarButton' onClick={() => navigate('/users')}>Users</button>
             <button className='leftSidebarButton' onClick={() => navigate('/groups')}>Groups</button>
+            <button className='leftSidebarButton' onClick={() => navigate('/createGroup')}>create a group</button>
         </div>
     )
 }

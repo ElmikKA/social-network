@@ -598,6 +598,9 @@ export const useCreateGroup = () => {
                 if (!data.loggedIn) {
                     navigate('/login')
                 }
+                if (data.response === "success") {
+                    navigate(`/group/${data.groupId}`)
+                }
             } catch (err) {
                 console.log(err)
             }
