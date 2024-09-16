@@ -105,6 +105,7 @@
 
 .homePage {
     display: flex;
+    flex-direction: column;
 }
 
 .createGroupPage {
@@ -123,5 +124,9 @@
 }
 
 .createEventDiv {
+    border: solid black 1px;
+}
+
+.createPost {
     border: solid black 1px;
 }

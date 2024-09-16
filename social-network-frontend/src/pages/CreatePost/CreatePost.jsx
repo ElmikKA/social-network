@@ -2,8 +2,7 @@ import React, { useState } from 'react'
 
 import { useCreatePost } from '../../services/api'
 
-const CreatePost = () => {
-    const groupId = 1 // 0 for normal post, any other int for the group you're posting in
+const CreatePost = ({ groupId }) => {
 
     const { postData, handleChange, handleFileChange, handleSubmit } = useCreatePost(groupId)
 

@@ -2,10 +2,10 @@ import React, { useState } from 'react'
 
 import { useCreatePost } from '../../services/api'
 
-const CreateGroupPost = () => {
+const CreateGroupPost = ({ groupId }) => {
 
 
-    const { postData, handleChange, handleFileChange, handleSubmit } = useCreatePost()
+    const { postData, handleChange, handleFileChange, handleSubmit } = useCreatePost(groupId)
 
 
     return (

@@ -4,14 +4,10 @@ import { useCheckLoggedIn } from '../services/api'
 
 const LeftSidebar = () => {
     const navigate = useNavigate()
-    const userId = 1
     const { userData, loading } = useCheckLoggedIn()
 
     if (loading) {
         return <div>Loading...</div>
-    }
-    if (userData) {
-        console.log(userData)
     }
     return (
         <div className='leftSidebar'>

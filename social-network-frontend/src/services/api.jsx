@@ -362,7 +362,7 @@ export const useGetGroupData = (groupId) => {
             }
         }
         fetchGroupData()
-    }, [])
+    }, [groupId])
 
     return { groupData, loading }
 
@@ -390,7 +390,7 @@ export const useGetOnePost = (id) => {
             }
         }
         fetchPost()
-    }, [])
+    }, [id])
 
 }
 
@@ -615,28 +615,30 @@ export const useCreateGroup = () => {
     }
 }
 
-export const useSendGroupJoinRequest = (groupId) => {
-    const navigate = useNavigate()
-    useEffect(() => {
-        const sendGroupJoinRequest = async () => {
-            const requestOptions = {
-                method: 'POST',
-                credentials: 'include',
-                body: JSON.stringify({ "id": groupId })
-            }
-            try {
-                const response = await fetch('http://localhost:8080/api/requestGroupJoin', requestOptions)
-                const data = await response.json()
-                console.log(data)
-                if (!data.loggedIn) {
-                    navigate('/login')
-                }
-            } catch (err) {
-                console.log(err)
-            }
+
+
+export const useSendGroupJoinRequest = () => {
+    const navigate = useNavigate();
+
+    const sendGroupJoinRequest = async (groupId) => {
+        const requestOptions = {
+            method: 'POST',
+            credentials: 'include',
+            body: JSON.stringify({ "id": groupId })
         }
-        sendGroupJoinRequest()
-    }, [])
+        try {
+            const response = await fetch('http://localhost:8080/api/requestGroupJoin', requestOptions)
+            const data = await response.json()
+            console.log(data)
+            if (!data.loggedIn) {
+                navigate('/login')
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    return sendGroupJoinRequest;
 }
 
 
@@ -746,7 +748,7 @@ export const useGetComments = (postId) => {
             }
         }
         getComments()
-    }, [])
+    }, [postId])
 }
 
 export const useGetMessages = (userId = 0, groupId = 0) => {
@@ -771,7 +773,7 @@ export const useGetMessages = (userId = 0, groupId = 0) => {
             }
         }
         getMessages()
-    }, [])
+    }, [userId, groupId])
 }
 
 export const useCheckLoggedIn = () => {

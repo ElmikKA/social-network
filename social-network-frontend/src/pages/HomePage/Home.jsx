@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import { useGetAllPosts } from '../../services/api'
 import Notifications from '../../components/Notifications'
+import CreatePost from '../CreatePost/CreatePost'
 
 const Home = () => {
 
     const { allPosts } = useGetAllPosts()
     return (
         <div className='homePage'>
+            <div className='createPost'>
+                <CreatePost groupId={0} />
+            </div>
             <div className='homePosts'>
                 <h1>All Posts</h1>
                 {allPosts && allPosts.length > 0 ? (

@@ -1,8 +1,7 @@
 import React from 'react'
 import { useCreateEvent } from '../services/api'
 
-const CreateEvent = () => {
-    const groupId = 1
+const CreateEvent = ({ groupId }) => {
     const { eventData, handleChange, handleSubmit } = useCreateEvent(groupId)
 
     return (
