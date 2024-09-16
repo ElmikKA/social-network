@@ -44,4 +44,6 @@ type UserStore interface {
 	GetGroupChats(userId int) ([]GroupChats, error)
 	GetMessages(userId, groupId int) ([]Message, error)
 	IsFollowing(userId, followee int) (string, error)
+	GetAllGroups() ([]Group, error)
+	GetGroup(groupId int) (Group, error)
 }

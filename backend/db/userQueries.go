@@ -122,7 +122,7 @@ func (s *Store) GetUser(userId int) (models.Users, error) {
 func (s *Store) GetAllUsers() ([]models.Users, error) {
 	query := `
 		SELECT id, name, email, firstName, lastName, dateOfBirth, avatar, 
-	 nickname, aboutMe, online, priacy FROM users
+	 nickname, aboutMe, online, privacy FROM users
 	`
 	rows, err := s.Db.Query(query)
 	if err != nil {

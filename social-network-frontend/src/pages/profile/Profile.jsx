@@ -32,7 +32,7 @@ const Profile = () => {
             {!userData.ownPage && <div>
 
                 {
-                    userData.following !== 'not following' ? <p className='followButton'>following</p> :
+                    userData.following !== 'not following' ? <p className='followButton'>{userData.following === "completed" ? 'following' : userData.following}</p> :
                         <FollowButton userId={id} />
                 }
             </div>

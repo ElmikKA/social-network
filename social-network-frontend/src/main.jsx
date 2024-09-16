@@ -24,6 +24,9 @@ import Header from './components/Header'
 import RightSidebar from './components/RightSidebar'
 import Notifications from './components/Notifications'
 import Footer from './components/Footer'
+import Users from './pages/usersPage/Users'
+import GroupsPage from './pages/groupsPage/GroupsPage'
+import GroupPage from './pages/GroupPage/GroupPage'
 
 const Layout = () => {
   return (
@@ -65,8 +68,16 @@ const router = createBrowserRouter([
         element: <Profile />
       },
       {
+        path: '/users',
+        element: <Users />
+      },
+      {
         path: '/groups',
-        element: <h1>groups</h1>
+        element: <GroupsPage />
+      },
+      {
+        path: '/group/:id',
+        element: <GroupPage />
       }
     ]
   },

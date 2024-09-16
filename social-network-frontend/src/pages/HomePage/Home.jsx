@@ -6,7 +6,7 @@ const Home = () => {
 
     const { allPosts } = useGetAllPosts()
     return (
-        <div className='homePage' style={{ display: "flex" }}>
+        <div className='homePage'>
             <div className='homePosts'>
                 <h1>All Posts</h1>
                 {allPosts && allPosts.length > 0 ? (

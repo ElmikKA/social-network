@@ -29,6 +29,7 @@ func (h *Handler) Routes() *http.ServeMux {
 	router.HandleFunc("/api/getPost", h.requireLogin(h.GetPost))
 	router.HandleFunc("/api/getAllPosts", h.requireLogin(h.GetAllPosts))
 	router.HandleFunc("/api/getGroupData", h.requireLogin(h.GetGroupData))
+	router.HandleFunc("/api/getAllGroups", h.requireLogin(h.GetAllGroups))
 	router.HandleFunc("/api/addComment", h.requireLogin(h.AddComment))
 	router.HandleFunc("/api/getComments", h.requireLogin(h.GetComments))
 	router.HandleFunc("/api/addFollow", h.requireLogin(h.AddFollow))

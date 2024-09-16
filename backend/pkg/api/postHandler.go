@@ -175,7 +175,7 @@ func (h *Handler) GetAllPosts(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetGroupData(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("getallpost")
+	fmt.Println("get group data")
 	CorsEnabler(w, r)
 	if r.Method == http.MethodOptions {
 		return
@@ -183,7 +183,7 @@ func (h *Handler) GetGroupData(w http.ResponseWriter, r *http.Request) {
 	responseData := make(map[string]interface{})
 	responseData["loggedIn"] = true
 
-	if r.Method != http.MethodGet {
+	if r.Method != http.MethodPost {
 		responseData["response"] = "failure"
 		responseData["message"] = "Method not allowed"
 		w.Header().Set("Content-Type", "application/json")
@@ -225,6 +225,7 @@ func (h *Handler) GetGroupData(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	responseData["member"] = true
 	posts, err := h.store.GetAllGroupPosts(response.GroupId)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -262,11 +263,54 @@ func (h *Handler) GetGroupData(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	group, err := h.store.GetGroup(response.GroupId)
+	if err != nil {
+		fmt.Println("error getting group events", err)
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+
 	responseData["response"] = "success"
 	responseData["message"] = "GetAllPosts success"
 	responseData["groupPosts"] = posts
 	responseData["groupMembers"] = groupMembers
 	responseData["groupEvents"] = events
+	responseData["groupData"] = group
+	fmt.Println("get group data success")
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(responseData)
+}
+
+func (h *Handler) GetAllGroups(w http.ResponseWriter, r *http.Request) {
+	CorsEnabler(w, r)
+	fmt.Println("getallgroups")
+
+	responseData := make(map[string]interface{})
+	responseData["loggedIn"] = true
+	if r.Method != http.MethodGet {
+		responseData["response"] = "failure"
+		responseData["message"] = "Method not allowed"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+
+	groupData, err := h.store.GetAllGroups()
+	if err != nil {
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+
+	responseData["response"] = "success"
+	responseData["message"] = "GetAllGroups success"
+	responseData["groupData"] = groupData
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(responseData)

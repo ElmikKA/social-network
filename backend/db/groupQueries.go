@@ -178,3 +178,35 @@ func (s *Store) GetIsPartOfGroup(groupId, userId int) (bool, error) {
 	}
 	return count > 0, nil
 }
+
+func (s *Store) GetAllGroups() ([]models.Group, error) {
+	query := `SELECT * FROM groups`
+	rows, err := s.Db.Query(query)
+	var groups []models.Group
+	if err != nil {
+		fmt.Println("err getting all groups", err)
+		return groups, err
+	}
+	defer rows.Close()
+	var group models.Group
+	for rows.Next() {
+		err := rows.Scan(&group.Id, &group.UserId, &group.Title, &group.Description)
+		if err != nil {
+			fmt.Println("err scanning all groups", err)
+			return groups, err
+		}
+		groups = append(groups, group)
+	}
+	return groups, nil
+}
+
+func (s *Store) GetGroup(groupId int) (models.Group, error) {
+	query := `SELECT * FROM groups WHERE id = ?`
+	var group models.Group
+	err := s.Db.QueryRow(query, groupId).Scan(&group.Id, &group.UserId, &group.Title, &group.Description)
+	if err != nil {
+		fmt.Println("err getting group", err)
+		return group, err
+	}
+	return group, nil
+}

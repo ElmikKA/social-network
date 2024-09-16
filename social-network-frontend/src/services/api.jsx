@@ -53,27 +53,25 @@ export const useLogin = () => {
 export const useLogout = () => {
     const navigate = useNavigate()
 
-    useEffect(() => {
+    // const logout = 
 
-        const sendLogout = async () => {
-            const requestOptions = {
-                method: "DELETE",
-                credentials: 'include'
-            }
-            try {
-                const response = await fetch('http://localhost:8080/api/logout', requestOptions)
-                const data = await response.json()
-                console.log(data)
-                if (data.response === "success") {
-                    navigate('/login')
-                }
-            } catch (err) {
-                console.log(err)
-            }
+    const sendLogout = async () => {
+        const requestOptions = {
+            method: "DELETE",
+            credentials: 'include'
         }
-        sendLogout()
-    }, [])
-
+        try {
+            const response = await fetch('http://localhost:8080/api/logout', requestOptions)
+            const data = await response.json()
+            console.log(data)
+            if (data.response === "success") {
+                navigate('/login')
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+    sendLogout()
 }
 
 export const useRegister = () => {
@@ -218,6 +216,7 @@ export const useCreatePost = (groupId) => {
 export const useGetAllUsers = () => {
 
     const [allUsers, setAllUsers] = useState([])
+    const [loading, setLoading] = useState(true)
 
     const requestOptions = {
         method: "GET",
@@ -239,13 +238,16 @@ export const useGetAllUsers = () => {
             } catch (err) {
                 console.log(err)
                 return null
+            } finally {
+                setLoading(false)
             }
         }
         getAllUsers()
     }, [])
 
     return {
-        allUsers
+        allUsers,
+        loading
     }
 }
 
@@ -322,33 +324,37 @@ export const useGetAllPosts = () => {
 export const useGetGroupData = (groupId) => {
 
     const [groupData, setGroupData] = useState([])
+    const [loading, setLoading] = useState(true)
     const navigate = useNavigate()
 
     useEffect(() => {
         const fetchGroupData = async () => {
+
+            const requestOptions = {
+                method: 'POST',
+                credentials: 'include',
+                body: JSON.stringify({ "groupId": groupId })
+            }
             try {
-                const response = await fetch('http://localhost:8080/api/getGroupData', {
-                    method: 'GET',
-                    credentials: 'include',
-                    body: JSON.stringify({ "groupId": groupId })
-                })
+                const response = await fetch('http://localhost:8080/api/getGroupData', requestOptions)
                 const data = await response.json()
                 console.log(data)
                 if (!data.loggedIn) {
                     navigate('/login')
                 }
                 if (data) {
-                    setGroupData(data.getAllPosts)
+                    setGroupData(data)
                 }
             } catch (err) {
                 console.log(err)
-                return null
+            } finally {
+                setLoading(false)
             }
         }
         fetchGroupData()
     }, [])
 
-    return { groupData }
+    return { groupData, loading }
 
 }
 
@@ -788,6 +794,41 @@ export const useCheckLoggedIn = () => {
 
     return {
         userData,
+        loading
+    }
+}
+
+export const useGetAllGroups = () => {
+    const [groupData, setGroupData] = useState([])
+    const [loading, setLoading] = useState(true)
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        const fetchGroupData = async () => {
+            const requestOptions = {
+                method: 'GET',
+                credentials: 'include'
+            }
+            try {
+                const response = await fetch('http://localhost:8080/api/getAllGroups', requestOptions)
+                const data = await response.json()
+                console.log(data)
+                if (!data.loggedIn) {
+                    navigate('/login')
+                }
+                if (data.response === "success") {
+                    setGroupData(data)
+                }
+            } catch (err) {
+                console.log(err)
+            } finally {
+                setLoading(false)
+            }
+        }
+        fetchGroupData()
+    }, [])
+    return {
+        groupData,
         loading
     }
 }

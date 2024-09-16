@@ -82,3 +82,27 @@
     border: solid black 2px;
     padding: 5px;
 }
+
+.usersMain {
+    width: 70%;
+}
+
+.userBox {
+    padding: 10px;
+}
+
+.groupsMain {
+    width: 70%;
+}
+
+.groupBox {
+    padding: 10px;
+}
+
+.groupPage {
+    width: 70%;
+}
+
+.homePage {
+    display: flex;
+}
