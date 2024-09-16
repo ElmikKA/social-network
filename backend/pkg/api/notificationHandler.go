@@ -15,6 +15,7 @@ func (h *Handler) RespondNotification(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	responseData := make(map[string]interface{})
+	responseData["loggedIn"] = true
 	if r.Method != "POST" {
 		responseData["response"] = "failure"
 		responseData["message"] = "Method not allowed"
@@ -72,6 +73,7 @@ func (h *Handler) GetNotifications(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	responseData := make(map[string]interface{})
+	responseData["loggedIn"] = true
 	if r.Method != "GET" {
 		responseData["response"] = "failure"
 		responseData["message"] = "Method not allowed"

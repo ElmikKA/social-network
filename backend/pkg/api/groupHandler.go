@@ -16,6 +16,7 @@ func (h *Handler) CreateGroup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	responseData := make(map[string]interface{})
+	responseData["loggedIn"] = true
 	if r.Method != http.MethodPost {
 		responseData["response"] = "failure"
 		responseData["message"] = "Method not allowed"
@@ -75,6 +76,7 @@ func (h *Handler) RequestGroupJoin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	responseData := make(map[string]interface{})
+	responseData["loggedIn"] = true
 	if r.Method != http.MethodPost {
 		responseData["response"] = "failure"
 		responseData["message"] = "Method not allowed"

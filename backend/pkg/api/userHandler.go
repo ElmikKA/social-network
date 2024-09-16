@@ -16,6 +16,7 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	responseData := make(map[string]interface{})
+	responseData["loggedIn"] = true
 	if r.Method != "POST" {
 		responseData["response"] = "failure"
 		responseData["message"] = "Method not allowed"
@@ -102,6 +103,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	responseData := make(map[string]interface{})
+	responseData["loggedIn"] = true
 	if r.Method != "POST" {
 		responseData["response"] = "failure"
 		responseData["message"] = "Method not allowed"
@@ -167,6 +169,7 @@ func (h *Handler) LogOut(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	responseData := make(map[string]interface{})
+	responseData["loggedIn"] = true
 	if r.Method != "DELETE" {
 		responseData["response"] = "failure"
 		responseData["message"] = "Method not allowed"
@@ -206,6 +209,7 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	responseData := make(map[string]interface{})
+	responseData["loggedIn"] = true
 	if r.Method != "GET" {
 		responseData["response"] = "failure"
 		responseData["message"] = "Method not allowed"
@@ -288,6 +292,7 @@ func (h *Handler) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 
 	CorsEnabler(w, r)
 	responseData := make(map[string]interface{})
+	responseData["loggedIn"] = true
 	if r.Method != "GET" {
 		responseData["response"] = "failure"
 		responseData["message"] = "Method not allowed"
@@ -317,6 +322,7 @@ func (h *Handler) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) CheckLogin(w http.ResponseWriter, r *http.Request) {
 	CorsEnabler(w, r)
 	responseData := make(map[string]interface{})
+	responseData["loggedIn"] = true
 	responseData["response"] = "success"
 	responseData["message"] = "logged in"
 	w.Header().Set("Content-Type", "application/json")

@@ -13,6 +13,7 @@ func (h *Handler) GetMessages(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	responseData := make(map[string]interface{})
+	responseData["loggedIn"] = true
 	if r.Method != http.MethodGet {
 		responseData["response"] = "failure"
 		responseData["message"] = "Internal server error"

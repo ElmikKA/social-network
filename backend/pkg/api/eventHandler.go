@@ -14,6 +14,7 @@ func (h *Handler) CreateEvent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	responseData := make(map[string]interface{})
+	responseData["loggedIn"] = true
 	if r.Method != http.MethodPost {
 		responseData["response"] = "failure"
 		responseData["message"] = "Method not allowed"
@@ -62,6 +63,7 @@ func (h *Handler) RespondEvent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	responseData := make(map[string]interface{})
+	responseData["loggedIn"] = true
 	if r.Method != "POST" {
 		responseData["response"] = "failure"
 		responseData["message"] = "Method not allowed"

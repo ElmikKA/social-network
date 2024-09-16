@@ -25,6 +25,7 @@ export const useLogin = () => {
                 const data = await response.json()
                 console.log(data)
                 if (data.response === "success") {
+                    console.log("logged in, moving to home")
                     navigate('/home')
                 }
 
@@ -155,6 +156,7 @@ export const useCreatePost = (groupId) => {
         groupId: groupId
     })
 
+    const navigate = useNavigate()
     const handleSubmit = async (e) => {
         e.preventDefault()
         const formData = new FormData()
@@ -179,6 +181,9 @@ export const useCreatePost = (groupId) => {
             const response = await fetch('http://localhost:8080/api/addPost', requestOptions)
             const data = await response.json()
             console.log(data)
+            if (!data.loggedIn) {
+                navigate('/login')
+            }
         } catch (err) {
             console.log(err)
         }
@@ -219,6 +224,7 @@ export const useGetAllUsers = () => {
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include'
     }
+    const navigate = useNavigate()
 
     useEffect(() => {
         const getAllUsers = async () => {
@@ -226,6 +232,9 @@ export const useGetAllUsers = () => {
                 let response = await fetch('http://localhost:8080/api/getAllUsers', requestOptions)
                 let data = await response.json()
                 console.log(data)
+                if (!data.loggedIn) {
+                    navigate('/')
+                }
                 setAllUsers(data.getAllUsers)
             } catch (err) {
                 console.log(err)
@@ -241,36 +250,6 @@ export const useGetAllUsers = () => {
 }
 
 
-// export const useGetUser = (id) => {
-
-//     const requestOptions = {
-//         method: 'GET',
-//         headers: { 'Content-Type': 'application/json' },
-//         credentials: 'include',
-//         body: JSON.stringify({ "id": id })
-//     }
-//     console.log(requestOptions)
-
-//     useEffect(() => {
-//         const getProfile = async () => {
-
-//             try {
-//                 console.log('before fetch')
-//                 let response = await fetch('http://localhost:8080/api/getUser', requestOptions)
-//                 console.log('after fetch')
-//                 let data = await response.json()
-//                 console.log(data)
-//                 return data
-//             } catch (err) {
-//                 console.log(err)
-//             }
-//         }
-//         getProfile()
-//     }, [])
-
-// }
-
-
 
 export const useGetUser = (id) => {
     const [userData, setUserData] = useState(null);
@@ -284,6 +263,7 @@ export const useGetUser = (id) => {
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
             };
+            const navigate = useNavigate()
 
             try {
                 let response = await fetch(`http://localhost:8080/api/getUser/${id}`, requestOptions);
@@ -291,6 +271,9 @@ export const useGetUser = (id) => {
                     throw new Error('Failed to fetch user data');
                 }
                 let data = await response.json();
+                if (!data.loggedIn) {
+                    navigate('/login')
+                }
                 setUserData(data);
             } catch (err) {
                 setError(err.message);
@@ -308,6 +291,7 @@ export const useGetUser = (id) => {
 export const useGetAllPosts = () => {
 
     const [allPosts, setAllposts] = useState([])
+    const navigate = useNavigate()
 
     useEffect(() => {
         const FetchAllPosts = async () => {
@@ -318,6 +302,9 @@ export const useGetAllPosts = () => {
                 })
                 const data = await response.json()
                 console.log(data)
+                if (!data.loggedIn) {
+                    navigate('/login')
+                }
                 if (data) {
                     setAllposts(data.getAllPosts)
                 }
@@ -335,6 +322,7 @@ export const useGetAllPosts = () => {
 export const useGetGroupData = (groupId) => {
 
     const [groupData, setGroupData] = useState([])
+    const navigate = useNavigate()
 
     useEffect(() => {
         const fetchGroupData = async () => {
@@ -346,6 +334,9 @@ export const useGetGroupData = (groupId) => {
                 })
                 const data = await response.json()
                 console.log(data)
+                if (!data.loggedIn) {
+                    navigate('/login')
+                }
                 if (data) {
                     setGroupData(data.getAllPosts)
                 }
@@ -362,6 +353,7 @@ export const useGetGroupData = (groupId) => {
 }
 
 export const useGetOnePost = (id) => {
+    const navigate = useNavigate()
 
     useEffect(() => {
         const fetchPost = async () => {
@@ -374,6 +366,9 @@ export const useGetOnePost = (id) => {
                 const response = await fetch('http://localhost:8080/api/getPost', requestOptions)
                 const data = await response.json()
                 console.log(data)
+                if (!data.loggedIn) {
+                    navigate('/login')
+                }
             } catch (err) {
                 console.log(err)
             }
@@ -391,6 +386,7 @@ export const useSetComment = (postId) => {
         avatar: null,
     })
 
+    const navigate = useNavigate()
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -414,6 +410,9 @@ export const useSetComment = (postId) => {
             const response = await fetch('http://localhost:8080/api/addComment', requestOptions)
             const data = await response.json()
             console.log(data)
+            if (!data.loggedIn) {
+                navigate('/login')
+            }
         } catch (err) {
             console.log(err)
         }
@@ -456,11 +455,15 @@ export const useAddFollow = (followId) => {
         }
         console.log(requestOptions)
         console.log(followId)
+        const navigate = useNavigate()
 
         try {
             const response = await fetch('http://localhost:8080/api/addFollow', requestOptions)
             const data = await response.json()
             console.log(data)
+            if (!data.loggedIn) {
+                navigate('/login')
+            }
             if (data.response === "success") {
                 setIsFollowing(true)
             }
@@ -482,6 +485,7 @@ export const useRespondNotification = (idRef, type, response) => {
         idRef: idRef,
         response: response,
     }
+    const navigate = useNavigate()
     useEffect(() => {
 
         const sendNotificationResponse = async () => {
@@ -495,6 +499,9 @@ export const useRespondNotification = (idRef, type, response) => {
                 const response = await fetch('http://localhost:8080/api/respondNotification', requestOptions)
                 const data = await response.json()
                 console.log(data)
+                if (!data.loggedIn) {
+                    navigate('/login')
+                }
             } catch (err) {
                 console.log(err)
             }
@@ -505,6 +512,7 @@ export const useRespondNotification = (idRef, type, response) => {
 }
 
 export const useGetNotifications = () => {
+    const navigate = useNavigate()
 
     useEffect(() => {
         const fetchNotifications = async () => {
@@ -516,6 +524,9 @@ export const useGetNotifications = () => {
                 const response = await fetch('http://localhost:8080/api/getNotifications', requestOptions)
                 const data = await response.json()
                 console.log(data)
+                if (!data.loggedIn) {
+                    navigate('/login')
+                }
                 return data
             } catch (err) {
                 console.log(err)
@@ -534,6 +545,7 @@ export const useCreateGroup = () => {
         description: ''
     })
 
+    const navigate = useNavigate()
     const handleChange = (e) => {
         const { id, value } = e.target
         setGroupData(prevState => ({
@@ -556,6 +568,9 @@ export const useCreateGroup = () => {
                 const response = await fetch('http://localhost:8080/api/createGroup', requestOptions)
                 const data = await response.json()
                 console.log(data)
+                if (!data.loggedIn) {
+                    navigate('/login')
+                }
             } catch (err) {
                 console.log(err)
             }
@@ -571,6 +586,7 @@ export const useCreateGroup = () => {
 }
 
 export const useSendGroupJoinRequest = (groupId) => {
+    const navigate = useNavigate()
     useEffect(() => {
         const sendGroupJoinRequest = async () => {
             const requestOptions = {
@@ -582,6 +598,9 @@ export const useSendGroupJoinRequest = (groupId) => {
                 const response = await fetch('http://localhost:8080/api/requestGroupJoin', requestOptions)
                 const data = await response.json()
                 console.log(data)
+                if (!data.loggedIn) {
+                    navigate('/login')
+                }
             } catch (err) {
                 console.log(err)
             }
@@ -599,6 +618,7 @@ export const useCreateEvent = (groupId) => {
         description: '',
         time: ''
     })
+    const navigate = useNavigate()
 
     const handleChange = (e) => {
 
@@ -622,6 +642,9 @@ export const useCreateEvent = (groupId) => {
             const response = await fetch('http://localhost:8080/api/createEvent', requestOptions)
             const data = await response.json()
             console.log(data)
+            if (!data.loggedIn) {
+                navigate('/login')
+            }
         } catch (err) {
             console.log(err)
         }
@@ -635,7 +658,7 @@ export const useCreateEvent = (groupId) => {
 }
 
 export const useGetContacts = () => {
-
+    const navigate = useNavigate()
     useEffect(() => {
         const getContacts = async () => {
             const requestOptions = {
@@ -646,6 +669,9 @@ export const useGetContacts = () => {
                 const response = await fetch('http://localhost:8080/api/getCredentials', requestOptions)
                 const data = response.json()
                 console.log(data)
+                if (!data.loggedIn) {
+                    navigate('/login')
+                }
                 return data
             } catch (err) {
                 console.log(err)
@@ -657,6 +683,7 @@ export const useGetContacts = () => {
 
 
 export const useGetComments = (postId) => {
+    const navigate = useNavigate()
     useEffect(() => {
         const getComments = async () => {
             const requestOptions = {
@@ -668,6 +695,9 @@ export const useGetComments = (postId) => {
                 const response = await fetch("http://localhost:8080/api/getComments", requestOptions)
                 const data = await response.json()
                 console.log(data)
+                if (!data.loggedIn) {
+                    navigate('/login')
+                }
             } catch (err) {
                 console.log(err)
             }
@@ -677,6 +707,7 @@ export const useGetComments = (postId) => {
 }
 
 export const useGetMessages = (userId = 0, groupId = 0) => {
+    const navigate = useNavigate()
     useEffect(() => {
 
         const getMessages = async () => {
@@ -689,6 +720,9 @@ export const useGetMessages = (userId = 0, groupId = 0) => {
                 const response = await fetch('http://localhost:8080/api/getMessages', requestOptions)
                 const data = await response.json()
                 console.log(data)
+                if (!data.loggedIn) {
+                    navigate('/login')
+                }
             } catch (err) {
                 console.log(err)
             }
@@ -702,11 +736,15 @@ export const useCheckLoggedIn = () => {
         method: 'GET',
         credentials: 'include',
     }
+    const navigate = useNavigate()
     const checkLoggedIn = async () => {
         try {
             const result = await fetch('http://localhost:8080/checkLogin', requestOptions)
             const data = await result.json()
             console.log(data)
+            if (!data.loggedIn) {
+                navigate('/login')
+            }
         } catch (err) {
             console.log(err)
         }
