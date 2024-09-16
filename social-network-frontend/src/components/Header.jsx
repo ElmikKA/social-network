@@ -8,7 +8,8 @@ function Header() {
         <header className="navbar">
             <nav>
                 <button className='leftSidebarButton' onClick={() => navigate('/home')} >Home Page</button>
-                home logo, search,notifications, logout
+                search?
+                notifications?
                 <LogoutButton />
             </nav>
             <hr />

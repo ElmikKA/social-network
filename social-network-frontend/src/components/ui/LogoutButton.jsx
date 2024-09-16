@@ -1,12 +1,12 @@
 import React from 'react'
-import { useLogout } from '../../services/api'
+import { useLogOut } from '../../services/api'
 
 const LogoutButton = () => {
-    const handleLogOut = () => {
-        useLogout()
-    }
+
+    const handleLogOut = useLogOut()
+
     return (
-        <button onClick={() => handleLogOut()}>Logout</button>
+        <button onClick={handleLogOut}>Logout</button>
     )
 }
 
