@@ -18,7 +18,7 @@ createRoot(document.getElementById('root')).render(
     {/* <Register /> */}
     {/* <hr /> */}
     <Login />
-    <hr />
+    {/* <hr /> */}
     {/* <Profile /> */}
     {/* <hr /> */}
     {/* <Home /> */}
@@ -27,7 +27,7 @@ createRoot(document.getElementById('root')).render(
     {/* <hr /> */}
     {/* <CreatePost /> */}
     {/* <Follow /> */}
-    <Groups />
+    {/* <Groups /> */}
 
 
   </StrictMode>,
