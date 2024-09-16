@@ -79,6 +79,9 @@ send private and group messages:
 
 
     right sidebar:
+
+    TODO: add message boxes, with send message function
+
         message buttons for people who are following you or you are following:
 
             fetch all id, username, avatar of follows/followees

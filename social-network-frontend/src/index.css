@@ -70,3 +70,15 @@
     padding: 5px;
     text-align: center;
 }
+
+.contactChatList {
+    height: 50px;
+    border: solid black 2px;
+    padding: 5px;
+}
+
+.groupChatList {
+    height: 50px;
+    border: solid black 2px;
+    padding: 5px;
+}

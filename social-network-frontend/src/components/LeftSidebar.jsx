@@ -16,7 +16,7 @@ const LeftSidebar = () => {
     return (
         <div className='leftSidebar'>
             <button className='leftSidebarButton' onClick={() => navigate('/home')} >Home Page</button>
-            <button className='leftSidebarButton' onClick={() => navigate(`/users/${userData.userId}`)}>User Profile</button>
+            <button className='leftSidebarButton' onClick={() => navigate(`/user/${userData.userId}`)}>User Profile</button>
             <button className='leftSidebarButton' onClick={() => navigate('/users')}>Users</button>
             <button className='leftSidebarButton' onClick={() => navigate('/groups')}>Groups</button>
         </div>
