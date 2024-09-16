@@ -46,4 +46,5 @@ type UserStore interface {
 	IsFollowing(userId, followee int) (string, error)
 	GetAllGroups() ([]Group, error)
 	GetGroup(groupId int) (Group, error)
+	GetGroupJoinStatus(groupId, userId int) (string, error)
 }

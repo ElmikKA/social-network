@@ -11,7 +11,6 @@ import (
 )
 
 func (h *Handler) AddPost(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("adding post")
 	CorsEnabler(w, r)
 	if r.Method == http.MethodOptions {
 		return
@@ -55,7 +54,6 @@ func (h *Handler) AddPost(w http.ResponseWriter, r *http.Request) {
 		UserId:  user.Id,
 		GroupId: GroupId,
 	}
-	fmt.Println(post)
 
 	_, _, err = r.FormFile("avatar")
 	if err == nil {
@@ -69,8 +67,6 @@ func (h *Handler) AddPost(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		post.Avatar = filepath
-	} else {
-		fmt.Println("no avatar")
 	}
 
 	err = h.store.AddPost(post)
@@ -133,7 +129,6 @@ func (h *Handler) GetPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetAllPosts(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("getallpost")
 	CorsEnabler(w, r)
 	if r.Method == http.MethodOptions {
 		return
@@ -176,7 +171,6 @@ func (h *Handler) GetAllPosts(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) GetAllGroups(w http.ResponseWriter, r *http.Request) {
 	CorsEnabler(w, r)
-	fmt.Println("getallgroups")
 
 	responseData := make(map[string]interface{})
 	responseData["loggedIn"] = true

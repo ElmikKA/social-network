@@ -16,7 +16,6 @@ func (h *Handler) requireLogin(handler http.HandlerFunc) http.HandlerFunc {
 			_, err = h.store.GetSessionByCookie(cookie.Value)
 			if err == nil {
 				// logged in
-				fmt.Println("middleware: logged in")
 				var err error
 				var user models.Users
 				user, err = h.store.GetUserFromCookie(r)

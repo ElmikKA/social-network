@@ -11,7 +11,6 @@ import (
 )
 
 func (h *Handler) CreateGroup(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("creating group")
 	CorsEnabler(w, r)
 	if r.Method == http.MethodOptions {
 		return
@@ -72,7 +71,6 @@ func (h *Handler) CreateGroup(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) RequestGroupJoin(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("sending group join request")
 	CorsEnabler(w, r)
 	if r.Method == http.MethodOptions {
 		return
@@ -144,7 +142,6 @@ func (h *Handler) RequestGroupJoin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetGroupData(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("get group data")
 	CorsEnabler(w, r)
 	if r.Method == http.MethodOptions {
 		return
@@ -173,7 +170,6 @@ func (h *Handler) GetGroupData(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("groupId", response.GroupId)
 	// check if part of group
 
 	partOfGroup, err := h.store.GetIsPartOfGroup(response.GroupId, h.id)
@@ -187,10 +183,8 @@ func (h *Handler) GetGroupData(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if !partOfGroup {
-		fmt.Println("not a member")
 		responseData["member"] = false
 	} else {
-		fmt.Println("member")
 		responseData["member"] = true
 	}
 
@@ -209,8 +203,6 @@ func (h *Handler) GetGroupData(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// owner, all member, all events
-
 	groupMembers, err := h.store.GetGroupMembers(response.GroupId)
 	if err != nil {
 		fmt.Println("error getting groupmembers", err)
@@ -220,6 +212,17 @@ func (h *Handler) GetGroupData(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(responseData)
 		return
 	}
+
+	pending, err := h.store.GetGroupJoinStatus(response.GroupId, h.id)
+	if err != nil {
+		fmt.Println("err getting group join status", err)
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+	responseData["joinStatus"] = pending
 
 	events, err := h.store.GetGroupEvents(response.GroupId, h.id)
 	if err != nil {
@@ -247,8 +250,6 @@ func (h *Handler) GetGroupData(w http.ResponseWriter, r *http.Request) {
 	responseData["groupMembers"] = groupMembers
 	responseData["groupEvents"] = events
 	responseData["groupData"] = group
-	fmt.Println("get group data success")
-	fmt.Println(responseData)
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(responseData)

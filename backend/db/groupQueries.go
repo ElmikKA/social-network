@@ -210,3 +210,18 @@ func (s *Store) GetGroup(groupId int) (models.Group, error) {
 	}
 	return group, nil
 }
+
+func (s *Store) GetGroupJoinStatus(groupId, userId int) (string, error) {
+	query := `SELECT pending FROM groupMembers WHERE groupId = ? AND userId = ?`
+	var status string
+	err := s.Db.QueryRow(query, groupId, userId).Scan(&status)
+	if err == sql.ErrNoRows {
+		return "", nil
+	}
+	if err != nil {
+		fmt.Println("err getting group join status", err)
+		return status, err
+	}
+	return status, nil
+
+}
