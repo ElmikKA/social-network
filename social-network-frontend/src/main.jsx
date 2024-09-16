@@ -1,5 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import Root from './Root'
 
 import './index.css'
@@ -17,7 +18,7 @@ createRoot(document.getElementById('root')).render(
 
     {/* <Register /> */}
     {/* <hr /> */}
-    <Login />
+    {/* <Root></Root> */}
     {/* <hr /> */}
     {/* <Profile /> */}
     {/* <hr /> */}
@@ -29,6 +30,13 @@ createRoot(document.getElementById('root')).render(
     {/* <Follow /> */}
     {/* <Groups /> */}
 
+    <Router>
+      <Routes>
+          <Route path='/' element={<Login />} />
+          <Route path='/register' element={<Register />} />
+      </Routes>
+    </Router>
 
-  </StrictMode>,
+
+  </StrictMode>
 )

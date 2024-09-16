@@ -1,16 +1,23 @@
 import React from 'react';
 import { useLogin } from '../../services/api';
-import './Login.css';
+import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/vibley-logo.png';
+import './Login.css';
 
 function Login() {
     const { loginData, handleChange, handleSubmit } = useLogin()
+
+    const navigate = useNavigate();
+
+    const handleRegisterClick = () => {
+        navigate('/register');
+    };
 
     return (
         <div className='singin-section'>
             <div className='signin-container'>
                 <div className='left-panel'>
-                    <img src={logo} alt="Vibley Logo" className="logo" /> 
+                    <img src={logo} alt="vibley logo" className="logo" /> 
                     <div className='welcome-message'>
                         <h1>Welcome to Vibley</h1>
                         <p>Sign in to continue access</p>
@@ -42,7 +49,11 @@ function Login() {
                         </div>
                         <button type="submit" className="btn continue-btn">Continue</button>
                         <div className="or-separator">Or</div>
-                        <button type="button" className="btn register-btn">Register</button>
+                        <button 
+                            type="button" 
+                            className="btn register-btn"
+                            onClick={handleRegisterClick}
+                        > Register</button>
                     </form>
                 </div>
             </div>

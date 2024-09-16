@@ -97,7 +97,10 @@ export const useRegister = () => {
                 mode: 'cors'
             })
                 .then(Response => Response.json())
-                .then(data => console.log(data))
+                .then(data =>  {
+                    console.log(data)
+                    return data
+        })
         } catch (err) {
             console.log(err)
         }
