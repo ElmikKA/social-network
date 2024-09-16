@@ -34,6 +34,7 @@ func (h *Handler) RespondNotification(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var data models.NotificationResponse
+	fmt.Println("data before", data)
 	err = json.NewDecoder(r.Body).Decode(&data)
 	if err != nil {
 		fmt.Println("err decoding json respondfollow", err)
@@ -43,9 +44,11 @@ func (h *Handler) RespondNotification(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(responseData)
 		return
 	}
+	fmt.Println("data after", data)
 	fmt.Println(data)
 	fmt.Println(user)
 	data.UserId = user.Id
+	fmt.Println(data)
 
 	// add function to check if logged in user is the notification owner
 

@@ -1,7 +1,6 @@
 import React from 'react'
 
 import { useLogin } from '../../services/api'
-import { Link } from 'react-router-dom'
 
 function Login() {
     const { loginData, handleChange, handleSubmit } = useLogin()

@@ -17,6 +17,7 @@ func CorsEnabler(w http.ResponseWriter, r *http.Request) {
 	// 		break
 	// 	}
 	// }
+
 	isAllowed := true
 	if isAllowed {
 		w.Header().Set("Access-Control-Allow-Origin", origin)

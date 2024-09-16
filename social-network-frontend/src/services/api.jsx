@@ -478,40 +478,41 @@ export const useAddFollow = (followId) => {
     }
 }
 
-export const useRespondNotification = (idRef, type, response) => {
+export const useRespondNotification = () => {
 
-    const responseData = {
-        type: type,
-        idRef: idRef,
-        response: response,
-    }
     const navigate = useNavigate()
-    useEffect(() => {
 
-        const sendNotificationResponse = async () => {
-            const requestOptions = {
-                method: "POST",
-                credentials: "include",
-                body: JSON.stringify(responseData),
-                header: { 'Content-Type': 'application/json' }
-            }
-            try {
-                const response = await fetch('http://localhost:8080/api/respondNotification', requestOptions)
-                const data = await response.json()
-                console.log(data)
-                if (!data.loggedIn) {
-                    navigate('/login')
-                }
-            } catch (err) {
-                console.log(err)
-            }
+    const sendNotificationResponse = async (idRef, type, response) => {
+        console.log(idRef)
+        const responseData = {
+            type: type,
+            idRef: idRef,
+            response: response,
         }
-        sendNotificationResponse()
+        const requestOptions = {
+            method: "POST",
+            credentials: "include",
+            body: JSON.stringify(responseData),
+            header: { 'Content-Type': 'application/json' }
+        }
+        try {
+            const response = await fetch('http://localhost:8080/api/respondNotification', requestOptions)
+            const data = await response.json()
+            console.log(data)
+            if (!data.loggedIn) {
+                navigate('/login')
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+    return sendNotificationResponse
 
-    }, [])
 }
 
 export const useGetNotifications = () => {
+    const [notificationData, setNotificationData] = useState(null)
+    const [loading, setLoading] = useState(true)
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -527,14 +528,24 @@ export const useGetNotifications = () => {
                 if (!data.loggedIn) {
                     navigate('/login')
                 }
+                if (data.response === "success") {
+                    setNotificationData(data)
+                }
                 return data
             } catch (err) {
                 console.log(err)
                 return err
+            } finally {
+                setLoading(false)
             }
         }
         fetchNotifications()
-    })
+    }, [navigate])
+
+    return {
+        notificationData,
+        loading
+    }
 
 }
 
@@ -732,22 +743,38 @@ export const useGetMessages = (userId = 0, groupId = 0) => {
 }
 
 export const useCheckLoggedIn = () => {
+
+    const [userData, setUserData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate()
     const requestOptions = {
         method: 'GET',
         credentials: 'include',
     }
-    const navigate = useNavigate()
-    const checkLoggedIn = async () => {
-        try {
-            const result = await fetch('http://localhost:8080/checkLogin', requestOptions)
-            const data = await result.json()
-            console.log(data)
-            if (!data.loggedIn) {
-                navigate('/login')
+
+    useEffect(() => {
+        const checkLoggedIn = async () => {
+            try {
+                const result = await fetch('http://localhost:8080/api/checkLogin', requestOptions)
+                const data = await result.json()
+                console.log(data)
+                if (!data.loggedIn) {
+                    navigate('/login')
+                }
+                if (data.response === "success") {
+                    setUserData(data)
+                }
+            } catch (err) {
+                console.log(err)
+            } finally {
+                setLoading(false)
             }
-        } catch (err) {
-            console.log(err)
         }
+        checkLoggedIn()
+    }, [navigate])
+
+    return {
+        userData,
+        loading
     }
-    checkLoggedIn()
 }

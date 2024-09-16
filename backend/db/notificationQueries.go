@@ -24,6 +24,7 @@ func (s *Store) RespondNotification(response models.NotificationResponse) error 
 		query = `UPDATE groupMembers SET pending = ? WHERE id = ?`
 		fmt.Println("g_ref")
 	case "f_ref":
+		fmt.Println("follow ref")
 		query = `UPDATE followers SET pending = ? WHERE id = ?`
 	case "e_ref":
 		query = `UPDATE eventsStatus SET pending = ? WHERE id = ?`

@@ -63,6 +63,10 @@ const router = createBrowserRouter([
       {
         path: '/user/:id',
         element: <Profile />
+      },
+      {
+        path: '/groups',
+        element: <h1>groups</h1>
       }
     ]
   },

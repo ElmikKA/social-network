@@ -28,8 +28,15 @@
 }
 
 .leftSidebar {
+    display: flex;
+    flex-direction: column;
     width: 15%;
     background-color: lightblue;
+}
+
+.leftSidebarButton {
+    margin: 5px;
+    padding: 5px;
 }
 
 
