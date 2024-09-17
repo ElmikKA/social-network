@@ -13,6 +13,9 @@ import (
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
 }
 
 var (
@@ -74,13 +77,17 @@ func (h *Handler) Websocket(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("err reading websocket message", err)
 			return
 		}
-		msg.UserId = connections[conn].Id
+		if msg.Opened {
+			fmt.Println("opened a new websocket")
+		} else {
+			msg.UserId = connections[conn].Id
 
-		fmt.Println("got a readJSON")
-		fmt.Println("message:", msg.Message)
-		fmt.Println("receiverId:", msg.ReceiverId)
-		fmt.Println(msg)
-		broadcast <- msg
+			fmt.Println("got a readJSON")
+			fmt.Println("message:", msg.Message)
+			fmt.Println("receiverId:", msg.ReceiverId)
+			fmt.Println(msg)
+			broadcast <- msg
+		}
 	}
 }
 
@@ -141,23 +148,33 @@ func (h *Handler) sendPrivateMessage(msg models.Message) {
 		fmt.Println("error adding message", err)
 		return
 	}
+	user, err := h.store.GetUser(msg.UserId)
+	if err != nil {
+		fmt.Println("err gettin user for pm", err)
+	}
 
-	// send message to receiver
+	// send message to receiver and self
 
 	responseData := make(map[string]interface{})
 	for msgConn, value := range connections {
-		if value.Id == msg.ReceiverId {
+		if value.Id == msg.ReceiverId || value.Id == msg.UserId {
 			// send message
-			responseData["response"] = msg.Message
-			responseData["id"] = value.Id
-			responseData["username"] = value.Username
+			responseData["response"] = "success"
+			responseData["userId"] = value.Id
+			responseData["senderId"] = msg.UserId
+			responseData["name"] = user.Name
+			responseData["message"] = msg.Message
+			responseData["type"] = "message"
+			if value.Id == msg.UserId {
+				responseData["partnerId"] = msg.ReceiverId
+			} else {
+				responseData["partnerId"] = msg.UserId
+			}
 			if err := msgConn.WriteJSON(responseData); err != nil {
 				fmt.Println("error writing onlineresponse message", err)
 			}
-			return
 		}
 	}
-	fmt.Println("receiver not online")
 }
 
 func (h *Handler) CloseSocket(conn *websocket.Conn) {

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useGetUser } from '../../services/api';
+import { useGetUser } from '../../api';
 import FollowButton from '../../components/ui/FollowButton';
 import { useParams } from 'react-router-dom';
 

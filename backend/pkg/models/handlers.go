@@ -42,7 +42,7 @@ type UserStore interface {
 	GetNotifications(userId int) ([]Notification, error)
 	GetContacts(userId int) ([]Contacts, error)
 	GetGroupChats(userId int) ([]GroupChats, error)
-	GetMessages(userId, groupId int) ([]Message, error)
+	GetMessages(partner, groupId, userId int) ([]Message, error)
 	IsFollowing(userId, followee int) (string, error)
 	GetAllGroups() ([]Group, error)
 	GetGroup(groupId int) (Group, error)

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useGetAllPosts } from '../../services/api'
+import { useGetAllPosts } from '../../api'
 import Notifications from '../../components/Notifications'
 import CreatePost from '../CreatePost/CreatePost'
 

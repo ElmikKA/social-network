@@ -1,5 +1,5 @@
 import React from 'react'
-import { useCreateEvent } from '../services/api'
+import { useCreateEvent } from '../api'
 
 const CreateEvent = ({ groupId }) => {
     const { eventData, handleChange, handleSubmit } = useCreateEvent(groupId)

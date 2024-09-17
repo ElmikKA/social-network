@@ -38,9 +38,7 @@ func (h *Handler) AddSession(w http.ResponseWriter, r *http.Request, id int) err
 		// Cookie exiss
 		session, err := h.store.GetSessionByCookie(cookie.Value)
 		if err != nil {
-			fmt.Println("no session with that cookie in db")
 			// no session with that cookie in db
-			fmt.Println("no session with that cookie in db")
 			cookie = &http.Cookie{
 				Name:     "session",
 				Value:    uuid.New().String(),

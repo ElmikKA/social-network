@@ -45,9 +45,11 @@
     background-color: lightblue;
 }
 
-.homePage {
+.outletBody {
     width: 70%;
 }
+
+.homePage {}
 
 .homePosts {
     width: 100%;
@@ -60,7 +62,6 @@
 }
 
 .profile {
-    width: 75%;
     background-color: gray;
 }
 
@@ -84,7 +85,7 @@
 }
 
 .usersMain {
-    width: 70%;
+    /* width: 70%; */
 }
 
 .userBox {
@@ -92,7 +93,7 @@
 }
 
 .groupsMain {
-    width: 70%;
+    /* width: 70%; */
 }
 
 .groupBox {
@@ -100,7 +101,7 @@
 }
 
 .groupPage {
-    width: 70%;
+    /* width: 70%; */
 }
 
 .homePage {
@@ -109,7 +110,7 @@
 }
 
 .createGroupPage {
-    width: 70%;
+    /* width: 70%; */
     display: flex;
     flex-direction: column;
 }

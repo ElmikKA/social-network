@@ -1,5 +1,5 @@
 import React from 'react'
-import { useGetGroupData, useSendGroupJoinRequest } from '../../services/api'
+import { useGetGroupData, useSendGroupJoinRequest } from '../../api'
 import { useParams } from 'react-router-dom'
 import EventBox from '../../components/EventBox'
 import CreateEvent from '../../addingStuff/CreateEvent'

@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { useLogin } from '../../services/api'
+import { useLogin } from '../../api'
 
 function Login() {
     const { loginData, handleChange, handleSubmit } = useLogin()

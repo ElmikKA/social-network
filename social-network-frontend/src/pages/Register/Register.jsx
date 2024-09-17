@@ -1,5 +1,5 @@
 import React from 'react'
-import { useRegister } from '../../services/api'
+import { useRegister } from '../../api'
 
 const Register = () => {
     const { registerData, handleChange, handleFileChange, handleSubmit } = useRegister()

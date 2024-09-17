@@ -1,5 +1,5 @@
 import React from 'react'
-import { useGetNotifications } from '../services/api'
+import { useGetNotifications } from '../api'
 import RespondNotificationButton from './ui/RespondNotificationButton'
 
 const Notifications = () => {

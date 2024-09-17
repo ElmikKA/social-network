@@ -1,5 +1,5 @@
 import React from 'react'
-import { useCreateGroup } from '../../services/api'
+import { useCreateGroup } from '../../api'
 
 const CreateGroupPage = () => {
 

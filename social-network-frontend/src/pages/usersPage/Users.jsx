@@ -1,5 +1,5 @@
 import React from 'react'
-import { useGetAllUsers } from '../../services/api'
+import { useGetAllUsers } from '../../api'
 import UserBox from '../../components/UserBox'
 
 const Users = () => {

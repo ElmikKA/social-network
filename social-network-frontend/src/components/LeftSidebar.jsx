@@ -1,6 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useCheckLoggedIn } from '../services/api'
+import { useCheckLoggedIn } from '../api'
 
 const LeftSidebar = () => {
     const navigate = useNavigate()

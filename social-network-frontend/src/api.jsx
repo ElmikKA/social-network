@@ -1,5 +1,7 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, createContext, useContext, useRef } from "react"
 import { Navigate, useNavigate } from "react-router-dom"
+
+
 
 export const useLogin = () => {
     const [loginData, setLoginData] = useState({
@@ -751,13 +753,16 @@ export const useGetComments = (postId) => {
     }, [postId])
 }
 
-export const useGetMessages = (userId = 0, groupId = 0) => {
+export const useGetMessages = (userId) => {
+    const groupId = 0
     const navigate = useNavigate()
+    const [messages, setMessages] = useState([])
+    const [loading, setLoading] = useState(true)
+    console.log(userId)
     useEffect(() => {
-
         const getMessages = async () => {
             const requestOptions = {
-                method: "GET",
+                method: "POST",
                 credentials: 'include',
                 body: JSON.stringify({ "userId": userId, "groupId": groupId })
             }
@@ -768,12 +773,57 @@ export const useGetMessages = (userId = 0, groupId = 0) => {
                 if (!data.loggedIn) {
                     navigate('/login')
                 }
+                if (data.response === "success") {
+                    setMessages(data)
+                }
+
             } catch (err) {
                 console.log(err)
+            } finally {
+                setLoading(false)
             }
         }
         getMessages()
-    }, [userId, groupId])
+    }, [userId])
+    return {
+        messages,
+        loading
+    }
+}
+export const useGetGroupMessages = (groupId) => {
+    const userId = 0
+    const navigate = useNavigate()
+    const [messages, setMessages] = useState([])
+    const [loading, setLoading] = useState(true)
+    useEffect(() => {
+        const getMessages = async () => {
+            const requestOptions = {
+                method: "POST",
+                credentials: 'include',
+                body: JSON.stringify({ "userId": userId, "groupId": groupId })
+            }
+            try {
+                const response = await fetch('http://localhost:8080/api/getMessages', requestOptions)
+                const data = await response.json()
+                console.log(data)
+                if (!data.loggedIn) {
+                    navigate('/login')
+                }
+                if (data.response === "success") {
+                    setMessages(data)
+                }
+            } catch (err) {
+                console.log(err)
+            } finally {
+                setLoading(false)
+            }
+        }
+        getMessages()
+    }, [groupId])
+    return {
+        messages,
+        loading
+    }
 }
 
 export const useCheckLoggedIn = () => {

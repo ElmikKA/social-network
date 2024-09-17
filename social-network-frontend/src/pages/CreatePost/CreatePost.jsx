@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import { useCreatePost } from '../../services/api'
+import { useCreatePost } from '../../api'
 
 const CreatePost = ({ groupId }) => {
 

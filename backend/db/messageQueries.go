@@ -15,7 +15,7 @@ func (s *Store) AddMessage(msg models.Message) error {
 	return nil
 }
 
-func (s *Store) GetMessages(userId, groupId int) ([]models.Message, error) {
+func (s *Store) GetMessages(partner, groupId, userId int) ([]models.Message, error) {
 	query := `
 	SELECT 
 	    m.userId, 
@@ -28,14 +28,14 @@ func (s *Store) GetMessages(userId, groupId int) ([]models.Message, error) {
 	JOIN 
 	    users u ON m.userId = u.id
 	WHERE 
-	    (m.userId = ? OR m.receiverId = ?) 
+	    (m.userId = ? AND m.receiverId = ?) OR (m.userId = ? AND m.receiverId = ?) 
 	AND 
 	    m.groupId = ?
 	ORDER BY 
 	    m.createdAt;
 	`
 
-	rows, err := s.Db.Query(query, userId, userId, groupId)
+	rows, err := s.Db.Query(query, userId, partner, partner, userId, groupId)
 	if err != nil {
 		fmt.Println("error getting messages", err)
 		return nil, err

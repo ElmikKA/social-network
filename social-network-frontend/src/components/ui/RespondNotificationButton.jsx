@@ -1,5 +1,5 @@
 import React from 'react'
-import { useRespondNotification } from '../../services/api'
+import { useRespondNotification } from '../../api'
 
 const RespondNotificationButton = ({ idRef, type, response }) => {
 
