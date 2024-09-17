@@ -1,31 +1,33 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import RespondNotificationButton from './ui/RespondNotificationButton'
 import { useGetNotifications } from '../api'
 import { GetSocket } from '../WebSocket'
 
 const Notifications = () => {
+    const [refreshTrigger, setRefreshTrigger] = useState(false)
 
-    const { notificationData, loading } = useGetNotifications()
+    const { notificationData, loading } = useGetNotifications(refreshTrigger)
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            setRefreshTrigger(prev => !prev)
+        }, 5000);
+        return () => clearInterval(intervalId)
+    }, [])
+
     if (loading) {
         return <div>Loading...</div>
     }
-
-
-    const socket = GetSocket()
-
-
-
-
     return (
-        <div className='notifications'>
+        <div>
             {notificationData?.notifications?.length > 0 ? (
                 <ul>
                     {notificationData.notifications.map((notification) => (
                         <li key={notification.id}>
                             {notification.content}
-                            <RespondNotificationButton idRef={notification.idRef} type={notification.type} response="completed" ></RespondNotificationButton >
-                            <RespondNotificationButton idRef={notification.idRef} type={notification.type} response="rejected" ></RespondNotificationButton >
+                            <RespondNotificationButton setRefreshTrigger={setRefreshTrigger} idRef={notification.idRef} type={notification.type} response="completed" ></RespondNotificationButton >
+                            <RespondNotificationButton setRefreshTrigger={setRefreshTrigger} idRef={notification.idRef} type={notification.type} response="rejected" ></RespondNotificationButton >
 
                         </li>
                     ))}

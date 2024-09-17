@@ -267,7 +267,7 @@ export const useGetAllUsers = () => {
 
 
 
-export const useGetUser = (id) => {
+export const useGetUser = (id, refreshTrigger) => {
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -298,7 +298,7 @@ export const useGetUser = (id) => {
             }
         };
         getProfile();
-    }, [id]);
+    }, [id, refreshTrigger]);
 
     return { userData, loading, error };
 };
@@ -335,7 +335,7 @@ export const useGetAllPosts = () => {
     return { allPosts }
 
 }
-export const useGetGroupData = (groupId) => {
+export const useGetGroupData = (groupId, refreshTrigger) => {
 
     const [groupData, setGroupData] = useState([])
     const [loading, setLoading] = useState(true)
@@ -366,7 +366,7 @@ export const useGetGroupData = (groupId) => {
             }
         }
         fetchGroupData()
-    }, [groupId])
+    }, [groupId, refreshTrigger])
 
     return { groupData, loading }
 
@@ -463,7 +463,7 @@ export const useSetComment = (postId) => {
     }
 }
 
-export const useAddFollow = (followId) => {
+export const useAddFollow = (followId, useContactCreated) => {
 
     const [isFollowing, setIsFollowing] = useState(false)
     const navigate = useNavigate()
@@ -485,6 +485,7 @@ export const useAddFollow = (followId) => {
                 navigate('/login')
             }
             if (data.response === "success") {
+                if (useContactCreated) useContactCreated()
                 setIsFollowing(true)
             }
         } catch (err) {
@@ -530,13 +531,14 @@ export const useRespondNotification = () => {
 
 }
 
-export const useGetNotifications = () => {
+export const useGetNotifications = (refreshTrigger) => {
     const [notificationData, setNotificationData] = useState(null)
     const [loading, setLoading] = useState(true)
     const navigate = useNavigate()
 
     useEffect(() => {
         const fetchNotifications = async () => {
+            setLoading(true)
             const requestOptions = {
                 method: "GET",
                 credentials: "include"
@@ -544,7 +546,7 @@ export const useGetNotifications = () => {
             try {
                 const response = await fetch('http://localhost:8080/api/getNotifications', requestOptions)
                 const data = await response.json()
-                console.log(data)
+                // console.log(data)
                 if (!data.loggedIn) {
                     navigate('/login')
                 }
@@ -560,7 +562,7 @@ export const useGetNotifications = () => {
             }
         }
         fetchNotifications()
-    }, [navigate])
+    }, [navigate, refreshTrigger])
 
     return {
         notificationData,
@@ -569,7 +571,7 @@ export const useGetNotifications = () => {
 
 }
 
-export const useCreateGroup = () => {
+export const useCreateGroup = (onGroupCreated) => {
 
     const [groupData, setGroupData] = useState({
         title: '',
@@ -603,6 +605,7 @@ export const useCreateGroup = () => {
                     navigate('/login')
                 }
                 if (data.response === "success") {
+                    if (onGroupCreated) onGroupCreated()
                     navigate(`/group/${data.groupId}`)
                 }
             } catch (err) {
@@ -694,13 +697,12 @@ export const useCreateEvent = (groupId) => {
     }
 }
 
-export const useGetContacts = () => {
+export const useGetContacts = (refreshTrigger) => {
     const [contacts, setContacts] = useState(null)
     const [loading, setLoading] = useState(true)
     const navigate = useNavigate()
 
     useEffect(() => {
-
         const getContacts = async () => {
             const requestOptions = {
                 method: "GET",
@@ -724,7 +726,7 @@ export const useGetContacts = () => {
 
         }
         getContacts()
-    }, [navigate])
+    }, [navigate, refreshTrigger])
     return {
         contacts,
         loading

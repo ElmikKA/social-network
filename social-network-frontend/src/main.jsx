@@ -21,24 +21,48 @@ import GroupsPage from './pages/groupsPage/GroupsPage'
 import GroupPage from './pages/GroupPage/GroupPage'
 import CreateGroupPage from './pages/CreateGroupPage/CreateGroupPage'
 import MessagePage from './pages/MessagePage/MessagePage'
-import { useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { InitSocket } from './WebSocket'
 import GroupMessagePage from './pages/GroupMessagePage/GroupMessagePage'
+import { useGetContacts } from './api'
 
 const Layout = () => {
+
+  const [refreshTrigger, setRefreshTrigger] = useState(false)
+  const { contacts: fetchedContacts, loading } = useGetContacts(refreshTrigger);
+  const [contacts, setContacts] = useState([]);
+
   useEffect(() => {
     InitSocket()
   }, [])
+
+  useEffect(() => {
+    if (!loading) {
+      setContacts(fetchedContacts);
+    }
+  }, [fetchedContacts, loading]);
+
+  // Callback function to refresh contacts or groups
+  const handleContactCreated = useCallback(() => {
+    console.log("group created, refreshing")
+    setRefreshTrigger(prev => !prev)
+  }, [])
+
+  if (loading) return <div>Loading...</div>
+
+
   return (
     <div className='page'>
       <Header />
       <div className='main' style={{ display: "flex" }}>
         <LeftSidebar />
         <div className='outletBody'>
-          <Outlet />
+          <Outlet context={{ onContactCreated: handleContactCreated }} />
         </div>
-        <Notifications />
-        <RightSidebar />
+        <div className='notifications'>
+          <Notifications />
+        </div>
+        <RightSidebar contacts={contacts} />
       </div>
       <Footer />
     </div>

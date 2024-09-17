@@ -1,12 +1,13 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useGetUser } from '../../api';
 import FollowButton from '../../components/ui/FollowButton';
-import { useParams } from 'react-router-dom';
+import { useOutletContext, useParams } from 'react-router-dom';
 
 const Profile = () => {
     const { id } = useParams()
-    const { userData, loading, error } = useGetUser(id);
+    const [refreshTrigger, setRefreshTrigger] = useState(false)
+    const { userData, loading, error } = useGetUser(id, refreshTrigger);
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error: {error}</p>;
@@ -33,7 +34,7 @@ const Profile = () => {
 
                 {
                     userData.following !== '' ? <p className='followButton'>{userData.following === "completed" ? 'following' : userData.following}</p> :
-                        <FollowButton userId={id} />
+                        <FollowButton userId={id} setRefreshTrigger={setRefreshTrigger} />
                 }
             </div>
             }

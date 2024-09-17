@@ -21,7 +21,6 @@ const MessageBox = () => {
     }, [initialMessages])
 
 
-    if (!messages || messages.length === 0) return <div>No messages</div>
 
     if (loading) {
         return <p>Loading messages...</p>;
@@ -40,6 +39,7 @@ const MessageBox = () => {
         }
     }
 
+    if (!messages || messages.length === 0) return <div>No messages</div>
     return (
         <div>
             {messages.map((message, index) => (

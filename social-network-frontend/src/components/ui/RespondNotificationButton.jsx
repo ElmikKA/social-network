@@ -1,12 +1,13 @@
 import React from 'react'
 import { useRespondNotification } from '../../api'
 
-const RespondNotificationButton = ({ idRef, type, response }) => {
+const RespondNotificationButton = ({ setRefreshTrigger, idRef, type, response }) => {
 
     const respondNotification = useRespondNotification()
 
     const handleClick = () => {
         respondNotification(idRef, type, response)
+        setRefreshTrigger(prev => !prev)
         return <div>response sent</div>
     }
 

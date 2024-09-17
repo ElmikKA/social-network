@@ -4,10 +4,8 @@ import { useParams } from 'react-router-dom';
 import { GetSocket } from '../WebSocket';
 
 const GroupMessageBox = () => {
-
     const { id } = useParams();
     const GroupId = Number(id);
-    console.log("groupId:", GroupId)
 
     const { messages: initialMessages, loading } = useGetGroupMessages(GroupId)
     const [messages, setMessages] = useState([])
@@ -20,9 +18,6 @@ const GroupMessageBox = () => {
         }
     }, [initialMessages])
 
-
-    if (!messages || messages.length === 0) return <div>No messages</div>
-
     if (loading) {
         return <p>Loading messages...</p>;
     }
@@ -31,7 +26,6 @@ const GroupMessageBox = () => {
 
     socket.onmessage = (data) => {
         const newMessage = JSON.parse(data.data)
-        console.log("in grouo bix", newMessage)
 
         if (newMessage.type === "groupMessage") {
             if (newMessage.groupId === GroupId) {
@@ -41,6 +35,7 @@ const GroupMessageBox = () => {
         }
     }
 
+    if (!messages || messages.length === 0) return <div>No messages</div>
     return (
         <div>
             {messages.map((message, index) => (

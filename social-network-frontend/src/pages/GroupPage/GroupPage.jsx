@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useGetGroupData, useSendGroupJoinRequest } from '../../api'
 import { useParams } from 'react-router-dom'
 import EventBox from '../../components/EventBox'
@@ -9,7 +9,8 @@ import GroupPostBox from '../../components/GroupPostBox'
 
 const GroupPage = () => {
     const { id } = useParams()
-    const { groupData, loading } = useGetGroupData(Number(id))
+    const [refreshTrigger, setRefreshTrigger] = useState(false)
+    const { groupData, loading } = useGetGroupData(Number(id), refreshTrigger)
 
     // Only call the hook when `groupData` is available and contains group ID
     const sendJoinRequest = useSendGroupJoinRequest()
@@ -22,6 +23,7 @@ const GroupPage = () => {
 
     const handleJoinGroup = () => {
         sendJoinRequest(groupData.groupData.id)
+        setRefreshTrigger(prev => !prev)
     }
 
     return (
