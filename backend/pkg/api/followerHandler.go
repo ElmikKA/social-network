@@ -134,6 +134,7 @@ func (h *Handler) GetContacts(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(responseData)
 		return
 	}
+	fmt.Println(contacts)
 	groupChats, err := h.store.GetGroupChats(user.Id)
 	if err != nil {
 		responseData["response"] = "failure"

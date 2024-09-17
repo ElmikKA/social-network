@@ -19,6 +19,9 @@ const Profile = () => {
             <h2>Profile Page</h2>
             <p>Name: {userData.getUser.name}</p>
             <p>Email: {userData.getUser.email}</p>
+
+
+
             <p>First Name: {userData.getUser.firstName}</p>
             <p>Last Name: {userData.getUser.lastName}</p>
 
@@ -39,7 +42,10 @@ const Profile = () => {
                 }
             </div>}
 
-            <PostBox allPosts={userData.posts} />
+            {userData.CanSee ?
+                <PostBox allPosts={userData.posts} />
+                : <p>private profile</p>
+            }
 
         </div>
     );

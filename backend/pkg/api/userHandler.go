@@ -298,6 +298,13 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 	responseData["message"] = "Getuser successful"
 	responseData["getUser"] = user
 	responseData["followers"] = contacts
+	responseData["status"] = user.Privacy
+
+	if status == "completed" || client.Id == userId || status == "" && user.Privacy == "public" {
+		responseData["CanSee"] = true
+	} else {
+		responseData["CanSee"] = false
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
