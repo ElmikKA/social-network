@@ -45,6 +45,7 @@ func (h *Handler) RespondNotification(w http.ResponseWriter, r *http.Request) {
 	data.UserId = user.Id
 
 	// add function to check if logged in user is the notification owner
+	fmt.Println("notification response")
 	fmt.Println(data)
 
 	err = h.store.RespondNotification(data)

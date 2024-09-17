@@ -13,8 +13,12 @@ const MessageBox = () => {
     const [messages, setMessages] = useState([])
 
     useEffect(() => {
-        if (initialMessages && initialMessages.messages)
+        if (initialMessages && initialMessages.messages) {
+
             setMessages(initialMessages.messages)
+        } else {
+            setMessages([])
+        }
     }, [initialMessages])
 
 

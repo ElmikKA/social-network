@@ -666,11 +666,12 @@ export const useCreateEvent = (groupId) => {
     }
 
     const handleSubmit = async (e) => {
+        console.log("time:", eventData.time)
         e.preventDefault()
         const requestOptions = {
             method: 'POST',
             credentials: 'include',
-            header: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(eventData),
         }
 

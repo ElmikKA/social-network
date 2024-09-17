@@ -16,7 +16,7 @@ export const InitSocket = () => {
         };
 
         globalSocket.onmessage = (event) => {
-            console.log("WebSocket message received:", event.data);
+            // console.log("WebSocket message received:", event.data);
         };
 
         globalSocket.onclose = () => {

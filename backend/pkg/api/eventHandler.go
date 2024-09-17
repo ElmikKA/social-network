@@ -55,6 +55,7 @@ func (h *Handler) CreateEvent(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) RespondEvent(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("responding event")
 
 	CorsEnabler(w, r)
 	if r.Method == http.MethodOptions {

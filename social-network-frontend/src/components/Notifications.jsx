@@ -1,6 +1,7 @@
 import React from 'react'
-import { useGetNotifications } from '../api'
+
 import RespondNotificationButton from './ui/RespondNotificationButton'
+import { useGetNotifications } from '../api'
 
 const Notifications = () => {
 
@@ -8,9 +9,6 @@ const Notifications = () => {
     if (loading) {
         return <div>Loading...</div>
     }
-
-
-
 
     return (
         <div className='notifications'>
