@@ -29,6 +29,7 @@ func (s *Store) RespondNotification(response models.NotificationResponse) error 
 	case "e_ref":
 		query = `UPDATE eventsStatus SET pending = ? WHERE id = ?`
 	}
+
 	_, err := s.Db.Exec(query, response.Response, response.IdRef)
 	if err != nil {
 		fmt.Println("err responding notification")

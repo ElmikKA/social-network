@@ -57,6 +57,12 @@
     background-color: gray;
 }
 
+.postBox {
+    border: 1px solid #ccc;
+    padding: 16px;
+    margin: 16px
+}
+
 .notifications {
     width: 25%;
     background-color: lightgray;

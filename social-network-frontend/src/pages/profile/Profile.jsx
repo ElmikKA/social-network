@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useGetUser } from '../../api';
 import FollowButton from '../../components/ui/FollowButton';
 import { useOutletContext, useParams } from 'react-router-dom';
+import PostBox from '../../components/PostBox';
 
 const Profile = () => {
     const { id } = useParams()
@@ -36,8 +37,10 @@ const Profile = () => {
                     userData.following !== '' ? <p className='followButton'>{userData.following === "completed" ? 'following' : userData.following}</p> :
                         <FollowButton userId={id} setRefreshTrigger={setRefreshTrigger} />
                 }
-            </div>
-            }
+            </div>}
+
+            <PostBox allPosts={userData.posts} />
+
         </div>
     );
 };

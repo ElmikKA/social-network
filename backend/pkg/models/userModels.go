@@ -36,4 +36,5 @@ type GroupEvents struct {
 	Time        string
 	Status      string
 	Role        string
+	IdRef int
 }

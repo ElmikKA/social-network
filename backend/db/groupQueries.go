@@ -125,6 +125,51 @@ AND
 	return members, nil
 }
 
+// func (s *Store) GetGroupEvents(groupId, userId int) ([]models.GroupEvents, error) {
+// 	query := `
+// 	SELECT
+// 	    e.id AS Id,
+// 	    e.userId AS OwnerId,
+// 	    e.groupId AS GroupId,
+// 	    e.title AS Title,
+// 	    e.description AS Description,
+// 	    e.time AS Time,
+// 	    es.pending AS Status,
+// 	    es.role AS Role
+// 	FROM
+// 	    events e
+// 	LEFT JOIN
+// 	    eventsStatus es
+// 	ON
+// 	    e.id = es.eventId
+// 	WHERE
+// 	    e.groupId = ?
+// 	AND
+// 	    es.userId = ?;
+// 	`
+
+// 	var events []models.GroupEvents
+
+// 	rows, err := s.Db.Query(query, groupId, userId)
+// 	if err != nil {
+// 		fmt.Println("error getting group event info", err)
+// 		return events, err
+// 	}
+
+// 	defer rows.Close()
+
+// 	for rows.Next() {
+// 		var event models.GroupEvents
+// 		err := rows.Scan(&event.Id, &event.OwnerId, &event.GroupId, &event.Title, &event.Description, &event.Time, &event.Status, &event.Role)
+// 		if err != nil {
+// 			fmt.Println("error scanning event info", err)
+// 			return events, err
+// 		}
+// 		events = append(events, event)
+// 	}
+// 	return events, nil
+// }
+
 func (s *Store) GetGroupEvents(groupId, userId int) ([]models.GroupEvents, error) {
 	query := `
 	SELECT 
@@ -135,22 +180,23 @@ func (s *Store) GetGroupEvents(groupId, userId int) ([]models.GroupEvents, error
 	    e.description AS Description,
 	    e.time AS Time,
 	    es.pending AS Status,
-	    es.role AS Role
+	    es.role AS Role,
+	    es.id AS IdRef
 	FROM 
 	    events e
 	LEFT JOIN 
 	    eventsStatus es 
 	ON 
 	    e.id = es.eventId
-	WHERE 
-	    e.groupId = ?
 	AND 
-	    es.userId = ?;
+	    es.userId = ?
+	WHERE 
+	    e.groupId = ?;
 	`
 
 	var events []models.GroupEvents
 
-	rows, err := s.Db.Query(query, groupId, userId)
+	rows, err := s.Db.Query(query, userId, groupId)
 	if err != nil {
 		fmt.Println("error getting group event info", err)
 		return events, err
@@ -160,7 +206,7 @@ func (s *Store) GetGroupEvents(groupId, userId int) ([]models.GroupEvents, error
 
 	for rows.Next() {
 		var event models.GroupEvents
-		err := rows.Scan(&event.Id, &event.OwnerId, &event.GroupId, &event.Title, &event.Description, &event.Time, &event.Status, &event.Role)
+		err := rows.Scan(&event.Id, &event.OwnerId, &event.GroupId, &event.Title, &event.Description, &event.Time, &event.Status, &event.Role, &event.IdRef)
 		if err != nil {
 			fmt.Println("error scanning event info", err)
 			return events, err

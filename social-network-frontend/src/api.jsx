@@ -304,7 +304,7 @@ export const useGetUser = (id, refreshTrigger) => {
 };
 
 
-export const useGetAllPosts = () => {
+export const useGetAllPosts = (refreshTrigger) => {
 
     const [allPosts, setAllposts] = useState([])
     const navigate = useNavigate()
@@ -322,7 +322,7 @@ export const useGetAllPosts = () => {
                     navigate('/login')
                 }
                 if (data) {
-                    setAllposts(data.getAllPosts)
+                    setAllposts(data.getAllPostsPrivate)
                 }
             } catch (err) {
                 console.log(err)
@@ -330,7 +330,7 @@ export const useGetAllPosts = () => {
             }
         }
         FetchAllPosts()
-    }, [])
+    }, [refreshTrigger])
 
     return { allPosts }
 

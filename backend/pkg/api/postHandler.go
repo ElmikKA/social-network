@@ -142,8 +142,35 @@ func (h *Handler) GetAllPosts(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(responseData)
 		return
 	}
+	user, err := h.store.GetUserFromCookie(r)
+	if err != nil {
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
 
 	posts, err := h.store.GetAllNormalPosts()
+	if err != nil {
+		if err == sql.ErrNoRows {
+			fmt.Println("no rows")
+			responseData["response"] = "success"
+			responseData["message"] = "GetAllPosts success"
+			responseData["getAllPosts"] = nil
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(responseData)
+			return
+		}
+		fmt.Println("error getallposts", err)
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		responseData["getAllPosts"] = nil
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+	privPosts, err := h.store.GetAllNormalPostsPrivacy(user.Id)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			fmt.Println("no rows")
@@ -165,6 +192,7 @@ func (h *Handler) GetAllPosts(w http.ResponseWriter, r *http.Request) {
 	responseData["response"] = "success"
 	responseData["message"] = "GetAllPosts success"
 	responseData["getAllPosts"] = posts
+	responseData["getAllPostsPrivate"] = privPosts
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(responseData)
 }

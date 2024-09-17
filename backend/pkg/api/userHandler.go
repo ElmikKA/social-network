@@ -219,6 +219,7 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userId, err := strconv.Atoi(r.PathValue("userId"))
+	fmt.Println("userId", userId)
 	if err != nil {
 		fmt.Println("err getuser url", err)
 		responseData["response"] = "failure"
@@ -229,6 +230,7 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user, err := h.store.GetUser(userId)
+	fmt.Println("user", user.Id)
 
 	if err != nil {
 		fmt.Println("getUser handler err", err)
@@ -249,8 +251,18 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	client, err := h.store.GetUserFromCookie(r)
+	if err != nil {
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+	fmt.Println("client", client.Id)
+
 	// posts
-	posts, err := h.store.GetAllUserPosts(user.Id)
+	posts, err := h.store.GetAllUserPosts(client.Id, user.Id)
 	if err != nil && err != sql.ErrNoRows {
 		responseData["response"] = "failure"
 		responseData["message"] = "Internal server error"
@@ -270,7 +282,8 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(responseData)
 		return
 	}
-	if h.id == userId {
+	fmt.Println(client.Id, userId)
+	if client.Id == userId {
 		responseData["following"] = "self"
 		responseData["ownPage"] = true
 	} else if err == sql.ErrNoRows {

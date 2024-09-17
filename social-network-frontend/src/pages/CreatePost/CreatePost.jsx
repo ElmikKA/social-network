@@ -2,13 +2,18 @@ import React, { useState } from 'react'
 
 import { useCreatePost } from '../../api'
 
-const CreatePost = ({ groupId }) => {
+const CreatePost = ({ setRefreshTrigger, groupId }) => {
 
     const { postData, handleChange, handleFileChange, handleSubmit } = useCreatePost(groupId)
 
+    const submit = (e) => {
+        setRefreshTrigger(prev => !prev)
+        handleSubmit(e)
+    }
+
 
     return (
-        <form onSubmit={handleSubmit} method='POST' style={{ display: 'flex', flexDirection: 'column', maxWidth: '400px', margin: '0 auto' }}>
+        <form onSubmit={submit} method='POST' style={{ display: 'flex', flexDirection: 'column', maxWidth: '400px', margin: '0 auto' }}>
 
             <label htmlFor="title">Title</label>
             <input type="text" id="title" placeholder='Title' required value={postData.title} onChange={handleChange} />

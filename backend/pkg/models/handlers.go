@@ -21,8 +21,9 @@ type UserStore interface {
 	GoOnline(id int) error
 	AddPost(post Post) error
 	GetPost(id int) (Post, error)
-	GetAllUserPosts(userId int) ([]Post, error)
+	GetAllUserPosts(userId, creator int) ([]Post, error)
 	GetAllNormalPosts() ([]Post, error)
+	GetAllNormalPostsPrivacy(userId int) ([]Post, error)
 	GetAllGroupPosts(groupId int) ([]Post, error)
 	GetGroupMembers(groupId int) ([]GroupMember, error)
 	GetIsPartOfGroup(groupId, userId int) (bool, error)

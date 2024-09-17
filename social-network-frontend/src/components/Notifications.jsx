@@ -8,6 +8,7 @@ const Notifications = () => {
     const [refreshTrigger, setRefreshTrigger] = useState(false)
 
     const { notificationData, loading } = useGetNotifications(refreshTrigger)
+    // console.log(notificationData)
 
     useEffect(() => {
         const intervalId = setInterval(() => {
@@ -28,7 +29,6 @@ const Notifications = () => {
                             {notification.content}
                             <RespondNotificationButton setRefreshTrigger={setRefreshTrigger} idRef={notification.idRef} type={notification.type} response="completed" ></RespondNotificationButton >
                             <RespondNotificationButton setRefreshTrigger={setRefreshTrigger} idRef={notification.idRef} type={notification.type} response="rejected" ></RespondNotificationButton >
-
                         </li>
                     ))}
                 </ul>

@@ -34,9 +34,9 @@ const GroupPage = () => {
 
             {groupData?.joinStatus === 'completed' ? (
                 <div>
-                    <EventBox events={groupData.groupEvents} />
-                    <CreateEvent groupId={groupData.groupData.id} />
-                    <CreateGroupPost groupId={groupData.groupData.id} />
+                    <EventBox setRefreshTrigger={setRefreshTrigger} events={groupData.groupEvents} />
+                    <CreateEvent setRefreshTrigger={setRefreshTrigger} groupId={groupData.groupData.id} />
+                    <CreateGroupPost setRefreshTrigger={setRefreshTrigger} groupId={groupData.groupData.id} />
                     <GroupPostBox posts={groupData.groupPosts} />
                 </div>
             ) : groupData?.joinStatus === 'pending' ? (
