@@ -8,7 +8,6 @@ import (
 )
 
 func (h *Handler) CreateEvent(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("creating event")
 	CorsEnabler(w, r)
 	if r.Method == http.MethodOptions {
 		return
@@ -56,8 +55,8 @@ func (h *Handler) CreateEvent(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) RespondEvent(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("responding event")
 
-	fmt.Println("responding to event")
 	CorsEnabler(w, r)
 	if r.Method == http.MethodOptions {
 		return
@@ -91,7 +90,6 @@ func (h *Handler) RespondEvent(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(responseData)
 		return
 	}
-	fmt.Println(data)
 
 	err = h.store.RespondEvent(users.Id, data.UserId, data.Pending)
 	if err != nil {

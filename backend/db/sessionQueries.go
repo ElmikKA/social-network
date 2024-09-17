@@ -38,7 +38,6 @@ func (s *Store) GetSessionByCookie(cookie string) (models.Session, error) {
 	err := s.Db.QueryRow(query, cookie).Scan(&session.Id, &session.Expires)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			fmt.Println("getsessionbycookie session not found", err)
 			return session, err
 		}
 		fmt.Println("getSessionByCookie error", err)

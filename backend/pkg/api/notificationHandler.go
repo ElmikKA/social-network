@@ -9,7 +9,6 @@ import (
 
 func (h *Handler) RespondNotification(w http.ResponseWriter, r *http.Request) {
 
-	fmt.Println("Responding to notifications")
 	CorsEnabler(w, r)
 	if r.Method == http.MethodOptions {
 		return
@@ -34,7 +33,6 @@ func (h *Handler) RespondNotification(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var data models.NotificationResponse
-	fmt.Println("data before", data)
 	err = json.NewDecoder(r.Body).Decode(&data)
 	if err != nil {
 		fmt.Println("err decoding json respondfollow", err)
@@ -44,13 +42,11 @@ func (h *Handler) RespondNotification(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(responseData)
 		return
 	}
-	fmt.Println("data after", data)
-	fmt.Println(data)
-	fmt.Println(user)
 	data.UserId = user.Id
-	fmt.Println(data)
 
 	// add function to check if logged in user is the notification owner
+	fmt.Println("notification response")
+	fmt.Println(data)
 
 	err = h.store.RespondNotification(data)
 	if err != nil {
@@ -70,7 +66,6 @@ func (h *Handler) RespondNotification(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) GetNotifications(w http.ResponseWriter, r *http.Request) {
 
-	fmt.Println("getting all notifications")
 	CorsEnabler(w, r)
 	if r.Method == http.MethodOptions {
 		return

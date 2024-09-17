@@ -1,5 +1,8 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, createContext, useContext, useRef } from "react"
 import { Navigate, useNavigate } from "react-router-dom"
+import { closeSocket, InitSocket } from "./WebSocket"
+
+
 
 export const useLogin = () => {
     const [loginData, setLoginData] = useState({
@@ -50,12 +53,13 @@ export const useLogin = () => {
     }
 }
 
-export const useLogout = () => {
+export const useLogOut = () => {
+    const [logOut, setLogOut] = useState(false)
     const navigate = useNavigate()
 
-    useEffect(() => {
 
-        const sendLogout = async () => {
+    useEffect(() => {
+        const sendLogOut = async () => {
             const requestOptions = {
                 method: "DELETE",
                 credentials: 'include'
@@ -66,13 +70,21 @@ export const useLogout = () => {
                 console.log(data)
                 if (data.response === "success") {
                     navigate('/login')
+                    closeSocket()
                 }
             } catch (err) {
                 console.log(err)
             }
         }
-        sendLogout()
-    }, [])
+        if (logOut) {
+            sendLogOut()
+            setLogOut(false)
+        }
+    }, [logOut, navigate])
+    const handleLogOut = () => {
+        setLogOut(true)
+    }
+    return handleLogOut
 
 }
 
@@ -218,6 +230,7 @@ export const useCreatePost = (groupId) => {
 export const useGetAllUsers = () => {
 
     const [allUsers, setAllUsers] = useState([])
+    const [loading, setLoading] = useState(true)
 
     const requestOptions = {
         method: "GET",
@@ -239,13 +252,16 @@ export const useGetAllUsers = () => {
             } catch (err) {
                 console.log(err)
                 return null
+            } finally {
+                setLoading(false)
             }
         }
         getAllUsers()
     }, [])
 
     return {
-        allUsers
+        allUsers,
+        loading
     }
 }
 
@@ -322,33 +338,37 @@ export const useGetAllPosts = () => {
 export const useGetGroupData = (groupId) => {
 
     const [groupData, setGroupData] = useState([])
+    const [loading, setLoading] = useState(true)
     const navigate = useNavigate()
 
     useEffect(() => {
         const fetchGroupData = async () => {
+
+            const requestOptions = {
+                method: 'POST',
+                credentials: 'include',
+                body: JSON.stringify({ "groupId": groupId })
+            }
             try {
-                const response = await fetch('http://localhost:8080/api/getGroupData', {
-                    method: 'GET',
-                    credentials: 'include',
-                    body: JSON.stringify({ "groupId": groupId })
-                })
+                const response = await fetch('http://localhost:8080/api/getGroupData', requestOptions)
                 const data = await response.json()
                 console.log(data)
                 if (!data.loggedIn) {
                     navigate('/login')
                 }
                 if (data) {
-                    setGroupData(data.getAllPosts)
+                    setGroupData(data)
                 }
             } catch (err) {
                 console.log(err)
-                return null
+            } finally {
+                setLoading(false)
             }
         }
         fetchGroupData()
-    }, [])
+    }, [groupId])
 
-    return { groupData }
+    return { groupData, loading }
 
 }
 
@@ -374,7 +394,7 @@ export const useGetOnePost = (id) => {
             }
         }
         fetchPost()
-    }, [])
+    }, [id])
 
 }
 
@@ -582,6 +602,9 @@ export const useCreateGroup = () => {
                 if (!data.loggedIn) {
                     navigate('/login')
                 }
+                if (data.response === "success") {
+                    navigate(`/group/${data.groupId}`)
+                }
             } catch (err) {
                 console.log(err)
             }
@@ -596,28 +619,30 @@ export const useCreateGroup = () => {
     }
 }
 
-export const useSendGroupJoinRequest = (groupId) => {
-    const navigate = useNavigate()
-    useEffect(() => {
-        const sendGroupJoinRequest = async () => {
-            const requestOptions = {
-                method: 'POST',
-                credentials: 'include',
-                body: JSON.stringify({ "id": groupId })
-            }
-            try {
-                const response = await fetch('http://localhost:8080/api/requestGroupJoin', requestOptions)
-                const data = await response.json()
-                console.log(data)
-                if (!data.loggedIn) {
-                    navigate('/login')
-                }
-            } catch (err) {
-                console.log(err)
-            }
+
+
+export const useSendGroupJoinRequest = () => {
+    const navigate = useNavigate();
+
+    const sendGroupJoinRequest = async (groupId) => {
+        const requestOptions = {
+            method: 'POST',
+            credentials: 'include',
+            body: JSON.stringify({ "id": groupId })
         }
-        sendGroupJoinRequest()
-    }, [])
+        try {
+            const response = await fetch('http://localhost:8080/api/requestGroupJoin', requestOptions)
+            const data = await response.json()
+            console.log(data)
+            if (!data.loggedIn) {
+                navigate('/login')
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    return sendGroupJoinRequest;
 }
 
 
@@ -641,11 +666,12 @@ export const useCreateEvent = (groupId) => {
     }
 
     const handleSubmit = async (e) => {
+        console.log("time:", eventData.time)
         e.preventDefault()
         const requestOptions = {
             method: 'POST',
             credentials: 'include',
-            header: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(eventData),
         }
 
@@ -727,16 +753,18 @@ export const useGetComments = (postId) => {
             }
         }
         getComments()
-    }, [])
+    }, [postId])
 }
 
-export const useGetMessages = (userId = 0, groupId = 0) => {
+export const useGetMessages = (userId) => {
+    const groupId = 0
     const navigate = useNavigate()
+    const [messages, setMessages] = useState([])
+    const [loading, setLoading] = useState(true)
     useEffect(() => {
-
         const getMessages = async () => {
             const requestOptions = {
-                method: "GET",
+                method: "POST",
                 credentials: 'include',
                 body: JSON.stringify({ "userId": userId, "groupId": groupId })
             }
@@ -747,12 +775,57 @@ export const useGetMessages = (userId = 0, groupId = 0) => {
                 if (!data.loggedIn) {
                     navigate('/login')
                 }
+                if (data.response === "success") {
+                    setMessages(data)
+                }
+
             } catch (err) {
                 console.log(err)
+            } finally {
+                setLoading(false)
             }
         }
         getMessages()
-    }, [])
+    }, [userId])
+    return {
+        messages,
+        loading
+    }
+}
+export const useGetGroupMessages = (groupId) => {
+    const userId = 0
+    const navigate = useNavigate()
+    const [messages, setMessages] = useState([])
+    const [loading, setLoading] = useState(true)
+    useEffect(() => {
+        const getMessages = async () => {
+            const requestOptions = {
+                method: "POST",
+                credentials: 'include',
+                body: JSON.stringify({ "userId": userId, "groupId": groupId })
+            }
+            try {
+                const response = await fetch('http://localhost:8080/api/getMessages', requestOptions)
+                const data = await response.json()
+                console.log(data)
+                if (!data.loggedIn) {
+                    navigate('/login')
+                }
+                if (data.response === "success") {
+                    setMessages(data)
+                }
+            } catch (err) {
+                console.log(err)
+            } finally {
+                setLoading(false)
+            }
+        }
+        getMessages()
+    }, [groupId])
+    return {
+        messages,
+        loading
+    }
 }
 
 export const useCheckLoggedIn = () => {
@@ -788,6 +861,41 @@ export const useCheckLoggedIn = () => {
 
     return {
         userData,
+        loading
+    }
+}
+
+export const useGetAllGroups = () => {
+    const [groupData, setGroupData] = useState([])
+    const [loading, setLoading] = useState(true)
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        const fetchGroupData = async () => {
+            const requestOptions = {
+                method: 'GET',
+                credentials: 'include'
+            }
+            try {
+                const response = await fetch('http://localhost:8080/api/getAllGroups', requestOptions)
+                const data = await response.json()
+                console.log(data)
+                if (!data.loggedIn) {
+                    navigate('/login')
+                }
+                if (data.response === "success") {
+                    setGroupData(data)
+                }
+            } catch (err) {
+                console.log(err)
+            } finally {
+                setLoading(false)
+            }
+        }
+        fetchGroupData()
+    }, [])
+    return {
+        groupData,
         loading
     }
 }

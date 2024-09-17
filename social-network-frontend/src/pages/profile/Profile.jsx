@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useGetUser } from '../../services/api';
+import { useGetUser } from '../../api';
 import FollowButton from '../../components/ui/FollowButton';
 import { useParams } from 'react-router-dom';
 
@@ -32,7 +32,7 @@ const Profile = () => {
             {!userData.ownPage && <div>
 
                 {
-                    userData.following !== 'not following' ? <p className='followButton'>following</p> :
+                    userData.following !== '' ? <p className='followButton'>{userData.following === "completed" ? 'following' : userData.following}</p> :
                         <FollowButton userId={id} />
                 }
             </div>

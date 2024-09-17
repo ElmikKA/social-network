@@ -54,17 +54,19 @@ func (s *Store) AddGroupMember(group models.Group) (int, error) {
 	return int(newId), nil
 }
 
-func (s *Store) GetOnlineGroupMembers(userId int) ([]int, error) {
-	query := `SELECT u.id 
+func (s *Store) GetOnlineGroupMembers(groupId int) ([]int, error) {
+
+	fmt.Println(groupId)
+	query := `
+	SELECT u.id 
 FROM groupMembers gm
 JOIN users u ON gm.userId = u.id
-WHERE gm.groupId = (SELECT groupId FROM groupMembers WHERE userId = ?)
-AND u.id != ? 
+WHERE gm.groupId = ?
 AND u.online = 1;
 `
 	var response []int
 
-	rows, err := s.Db.Query(query, userId, userId)
+	rows, err := s.Db.Query(query, groupId)
 	if err != nil {
 		fmt.Println("error getting online group members", err)
 		return response, err
@@ -177,4 +179,51 @@ func (s *Store) GetIsPartOfGroup(groupId, userId int) (bool, error) {
 		return false, err
 	}
 	return count > 0, nil
+}
+
+func (s *Store) GetAllGroups() ([]models.Group, error) {
+	query := `SELECT * FROM groups`
+	rows, err := s.Db.Query(query)
+	var groups []models.Group
+	if err != nil {
+		fmt.Println("err getting all groups", err)
+		return groups, err
+	}
+	defer rows.Close()
+	var group models.Group
+	for rows.Next() {
+		err := rows.Scan(&group.Id, &group.UserId, &group.Title, &group.Description)
+		if err != nil {
+			fmt.Println("err scanning all groups", err)
+			return groups, err
+		}
+		groups = append(groups, group)
+	}
+	return groups, nil
+}
+
+func (s *Store) GetGroup(groupId int) (models.Group, error) {
+	query := `SELECT * FROM groups WHERE id = ?`
+	var group models.Group
+	err := s.Db.QueryRow(query, groupId).Scan(&group.Id, &group.UserId, &group.Title, &group.Description)
+	if err != nil {
+		fmt.Println("err getting group", err)
+		return group, err
+	}
+	return group, nil
+}
+
+func (s *Store) GetGroupJoinStatus(groupId, userId int) (string, error) {
+	query := `SELECT pending FROM groupMembers WHERE groupId = ? AND userId = ?`
+	var status string
+	err := s.Db.QueryRow(query, groupId, userId).Scan(&status)
+	if err == sql.ErrNoRows {
+		return "", nil
+	}
+	if err != nil {
+		fmt.Println("err getting group join status", err)
+		return status, err
+	}
+	return status, nil
+
 }

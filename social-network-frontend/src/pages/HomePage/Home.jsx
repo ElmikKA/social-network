@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from 'react'
-import { useGetAllPosts } from '../../services/api'
-import Notifications from '../../components/Notifications'
+import React from 'react'
+import { useGetAllPosts } from '../../api'
+import CreatePost from '../CreatePost/CreatePost'
 
 const Home = () => {
-
     const { allPosts } = useGetAllPosts()
+
     return (
-        <div className='homePage' style={{ display: "flex" }}>
+        <div className='homePage'>
+            <div className='createPost'>
+                <CreatePost groupId={0} />
+            </div>
             <div className='homePosts'>
                 <h1>All Posts</h1>
                 {allPosts && allPosts.length > 0 ? (
@@ -31,7 +34,6 @@ const Home = () => {
                     <p>no posts</p>
                 )}
             </div>
-            <div className='homeNotifications' ><Notifications /></div>
         </div>
     )
 }

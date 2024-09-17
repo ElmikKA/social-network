@@ -72,8 +72,6 @@ func (h *Handler) AddComment(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		comment.Avatar = filepath
-	} else {
-		fmt.Println("no avatar")
 	}
 
 	err = h.store.AddComment(comment)

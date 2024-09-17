@@ -1,5 +1,5 @@
 import React from 'react'
-import { useRegister } from '../../services/api'
+import { useRegister } from '../../api'
 import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/vibley-logo.png';
 import './Register.css';

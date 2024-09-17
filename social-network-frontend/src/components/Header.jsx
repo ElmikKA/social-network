@@ -1,9 +1,16 @@
+import { useNavigate } from "react-router-dom";
+import LogoutButton from "./ui/LogoutButton";
+
 function Header() {
+    const navigate = useNavigate()
 
     return (
         <header className="navbar">
             <nav>
-                home logo, search,notifications, logout
+                <button className='leftSidebarButton' onClick={() => navigate('/home')} >Home Page</button>
+                search?
+                notifications?
+                <LogoutButton />
             </nav>
             <hr />
         </header>

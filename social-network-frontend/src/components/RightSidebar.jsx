@@ -1,5 +1,5 @@
 import React from 'react'
-import { useGetContacts } from '../services/api'
+import { useGetContacts } from '../api'
 import ContactElement from './ContactElement'
 import GroupElement from './GroupElement'
 

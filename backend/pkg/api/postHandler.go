@@ -11,7 +11,6 @@ import (
 )
 
 func (h *Handler) AddPost(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("adding post")
 	CorsEnabler(w, r)
 	if r.Method == http.MethodOptions {
 		return
@@ -55,7 +54,6 @@ func (h *Handler) AddPost(w http.ResponseWriter, r *http.Request) {
 		UserId:  user.Id,
 		GroupId: GroupId,
 	}
-	fmt.Println(post)
 
 	_, _, err = r.FormFile("avatar")
 	if err == nil {
@@ -69,8 +67,6 @@ func (h *Handler) AddPost(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		post.Avatar = filepath
-	} else {
-		fmt.Println("no avatar")
 	}
 
 	err = h.store.AddPost(post)
@@ -133,7 +129,6 @@ func (h *Handler) GetPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetAllPosts(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("getallpost")
 	CorsEnabler(w, r)
 	if r.Method == http.MethodOptions {
 		return
@@ -174,15 +169,11 @@ func (h *Handler) GetAllPosts(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(responseData)
 }
 
-func (h *Handler) GetGroupData(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("getallpost")
+func (h *Handler) GetAllGroups(w http.ResponseWriter, r *http.Request) {
 	CorsEnabler(w, r)
-	if r.Method == http.MethodOptions {
-		return
-	}
+
 	responseData := make(map[string]interface{})
 	responseData["loggedIn"] = true
-
 	if r.Method != http.MethodGet {
 		responseData["response"] = "failure"
 		responseData["message"] = "Method not allowed"
@@ -191,70 +182,8 @@ func (h *Handler) GetGroupData(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var response struct {
-		GroupId int `json:"groupId"`
-	}
-	err := json.NewDecoder(r.Body).Decode(&response)
+	groupData, err := h.store.GetAllGroups()
 	if err != nil {
-		fmt.Println("error decoding group post", err)
-		responseData["response"] = "failure"
-		responseData["message"] = "Invalid payload"
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(responseData)
-		return
-	}
-
-	// check if part of group
-
-	partOfGroup, err := h.store.GetIsPartOfGroup(response.GroupId, h.id)
-
-	if err != nil {
-		fmt.Println("err getting ispartofgroup", err)
-		responseData["response"] = "failure"
-		responseData["message"] = "Internal server error"
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(responseData)
-		return
-	}
-	if !partOfGroup {
-		fmt.Println("User isn't part of the group", err)
-		responseData["response"] = "failure"
-		responseData["message"] = "User isn't part of the group"
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(responseData)
-		return
-	}
-
-	posts, err := h.store.GetAllGroupPosts(response.GroupId)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			responseData["groupPosts"] = nil
-		} else {
-
-			fmt.Println("error getallposts", err)
-			responseData["response"] = "failure"
-			responseData["message"] = "Internal server error"
-			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(responseData)
-			return
-		}
-	}
-
-	// owner, all member, all events
-
-	groupMembers, err := h.store.GetGroupMembers(response.GroupId)
-	if err != nil {
-		fmt.Println("error getting groupmembers", err)
-		responseData["response"] = "failure"
-		responseData["message"] = "Internal server error"
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(responseData)
-		return
-	}
-
-	events, err := h.store.GetGroupEvents(response.GroupId, h.id)
-	if err != nil {
-		fmt.Println("error getting group events", err)
 		responseData["response"] = "failure"
 		responseData["message"] = "Internal server error"
 		w.Header().Set("Content-Type", "application/json")
@@ -263,10 +192,8 @@ func (h *Handler) GetGroupData(w http.ResponseWriter, r *http.Request) {
 	}
 
 	responseData["response"] = "success"
-	responseData["message"] = "GetAllPosts success"
-	responseData["groupPosts"] = posts
-	responseData["groupMembers"] = groupMembers
-	responseData["groupEvents"] = events
+	responseData["message"] = "GetAllGroups success"
+	responseData["groupData"] = groupData
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(responseData)

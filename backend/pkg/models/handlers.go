@@ -38,10 +38,13 @@ type UserStore interface {
 	AddEvent(event Event) error
 	RespondEvent(userId, eventId int, answer string) error
 	AddMessage(msg Message) error
-	GetOnlineGroupMembers(userId int) ([]int, error)
+	GetOnlineGroupMembers(groupId int) ([]int, error)
 	GetNotifications(userId int) ([]Notification, error)
 	GetContacts(userId int) ([]Contacts, error)
 	GetGroupChats(userId int) ([]GroupChats, error)
-	GetMessages(userId, groupId int) ([]Message, error)
+	GetMessages(partner, groupId, userId int) ([]Message, error)
 	IsFollowing(userId, followee int) (string, error)
+	GetAllGroups() ([]Group, error)
+	GetGroup(groupId int) (Group, error)
+	GetGroupJoinStatus(groupId, userId int) (string, error)
 }

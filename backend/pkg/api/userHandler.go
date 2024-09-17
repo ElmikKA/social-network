@@ -100,10 +100,7 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("login")
 	CorsEnabler(w, r)
-	fmt.Println("after cors")
-	fmt.Println("after options")
 	responseData := make(map[string]interface{})
 	responseData["loggedIn"] = true
 	if r.Method != "POST" {
@@ -115,7 +112,6 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("2")
 	credentials := models.LoginCredentials{}
 
 	err := json.NewDecoder(r.Body).Decode(&credentials)
@@ -128,7 +124,6 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("3")
 	// check if credentials match
 	loggedIn, id, err := h.store.CheckLogin(credentials)
 	if err != nil {
@@ -149,7 +144,6 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("4")
 	// sessions
 	err = h.AddSession(w, r, id)
 	if err != nil {
@@ -299,8 +293,6 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetAllUsers(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("getAllUsers")
-
 	CorsEnabler(w, r)
 	responseData := make(map[string]interface{})
 	responseData["loggedIn"] = true

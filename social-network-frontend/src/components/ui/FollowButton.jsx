@@ -1,5 +1,5 @@
 import React from 'react'
-import { useAddFollow } from '../../services/api'
+import { useAddFollow } from '../../api'
 
 const FollowButton = ({ userId }) => {
     console.log(userId)

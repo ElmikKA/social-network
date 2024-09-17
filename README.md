@@ -64,6 +64,8 @@ send private and group messages:
 
         button to all groups /groups
 
+        button to create a group (todo)
+
     main body:
         create post: 
             const { postData, handleChange, handleFileChange, handleSubmit } = useCreatePost()

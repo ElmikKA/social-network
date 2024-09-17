@@ -28,6 +28,10 @@ func CorsEnabler(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusNoContent)
 			return
 		}
+		if r.Header.Get("Upgrade") == "websocket" {
+			w.Header().Set("Connection", "Upgrade")
+			w.Header().Set("Upgrade", "websocket")
+		}
 	} else {
 		// Optionally handle disallowed origins (e.g., returning an error)
 		http.Error(w, "CORS not allowed", http.StatusForbidden)

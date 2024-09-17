@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLogin } from '../../services/api';
+import { useLogin } from '../../api';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/vibley-logo.png';
 import './Login.css';
