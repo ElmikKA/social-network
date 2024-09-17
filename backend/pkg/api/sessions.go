@@ -21,7 +21,7 @@ func (h *Handler) AddSession(w http.ResponseWriter, r *http.Request, id int) err
 			Path:     "/",
 			Expires:  time.Now().Add(30 * time.Minute),
 			SameSite: http.SameSiteNoneMode,
-			// Secure:   true,
+			Secure:   true,
 		}
 		http.SetCookie(w, cookie)
 
@@ -45,7 +45,7 @@ func (h *Handler) AddSession(w http.ResponseWriter, r *http.Request, id int) err
 				Path:     "/",
 				Expires:  time.Now().Add(30 * time.Minute),
 				SameSite: http.SameSiteNoneMode,
-				// Secure:   true,
+				Secure:   true,
 			}
 			http.SetCookie(w, cookie)
 			session = models.Session{
@@ -71,7 +71,7 @@ func (h *Handler) AddSession(w http.ResponseWriter, r *http.Request, id int) err
 				Path:     "/",
 				Expires:  time.Now().Add(30 * time.Minute),
 				SameSite: http.SameSiteNoneMode,
-				// Secure:   true,
+				Secure:   true,
 			}
 			http.SetCookie(w, cookie)
 
