@@ -40,6 +40,7 @@ func (h *Handler) Websocket(w http.ResponseWriter, r *http.Request) {
 	defer func() {
 		fmt.Println("closing websocket")
 		h.CloseSocket(conn)
+		// remove online status (TODO)
 	}()
 
 	// change status to online
@@ -116,11 +117,15 @@ func (h *Handler) sendGroupMessage(msg models.Message) {
 		fmt.Println("err addin group message", err)
 		return
 	}
+	user, err := h.store.GetUser(msg.UserId)
+	if err != nil {
+		fmt.Println("err gettin user for pm", err)
+	}
 
 	// send message to all group members
 	responseData := make(map[string]interface{})
-	onlineMembers, err := h.store.GetOnlineGroupMembers(msg.UserId)
-	fmt.Println(onlineMembers)
+	onlineMembers, err := h.store.GetOnlineGroupMembers(msg.GroupId)
+	fmt.Println("online:", onlineMembers)
 	if err != nil {
 		fmt.Println("err getting online group members", err)
 		return
@@ -128,8 +133,11 @@ func (h *Handler) sendGroupMessage(msg models.Message) {
 	for msgConn, value := range connections {
 		if utils.ContainsInt(onlineMembers, value.Id) {
 			// send message
-			responseData["response"] = msg.Message
-			responseData["username"] = value.Username
+			responseData["message"] = msg.Message
+			responseData["response"] = "success"
+			responseData["name"] = user.Name
+			responseData["type"] = "groupMessage"
+			responseData["groupId"] = msg.GroupId
 			if err := msgConn.WriteJSON(responseData); err != nil {
 				fmt.Println("error writing onlineresponse message", err)
 			}

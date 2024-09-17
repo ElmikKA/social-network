@@ -23,6 +23,7 @@ import CreateGroupPage from './pages/CreateGroupPage/CreateGroupPage'
 import MessagePage from './pages/MessagePage/MessagePage'
 import { useEffect } from 'react'
 import { InitSocket } from './WebSocket'
+import GroupMessagePage from './pages/GroupMessagePage/GroupMessagePage'
 
 const Layout = () => {
   useEffect(() => {
@@ -93,7 +94,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/groupMessage/:id',
-        element: <p>group message</p>
+        element: <GroupMessagePage />
       }
     ]
   },

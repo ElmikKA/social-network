@@ -34,6 +34,7 @@ func (h *Handler) GetMessages(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = json.NewDecoder(r.Body).Decode(&data)
+	fmt.Println(data.UserId, data.GroupId)
 	if err != nil {
 		fmt.Println("error decoding getMessage")
 		responseData["response"] = "failure"

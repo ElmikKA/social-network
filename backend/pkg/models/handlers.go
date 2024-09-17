@@ -38,7 +38,7 @@ type UserStore interface {
 	AddEvent(event Event) error
 	RespondEvent(userId, eventId int, answer string) error
 	AddMessage(msg Message) error
-	GetOnlineGroupMembers(userId int) ([]int, error)
+	GetOnlineGroupMembers(groupId int) ([]int, error)
 	GetNotifications(userId int) ([]Notification, error)
 	GetContacts(userId int) ([]Contacts, error)
 	GetGroupChats(userId int) ([]GroupChats, error)

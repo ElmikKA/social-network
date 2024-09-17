@@ -54,17 +54,19 @@ func (s *Store) AddGroupMember(group models.Group) (int, error) {
 	return int(newId), nil
 }
 
-func (s *Store) GetOnlineGroupMembers(userId int) ([]int, error) {
-	query := `SELECT u.id 
+func (s *Store) GetOnlineGroupMembers(groupId int) ([]int, error) {
+
+	fmt.Println(groupId)
+	query := `
+	SELECT u.id 
 FROM groupMembers gm
 JOIN users u ON gm.userId = u.id
-WHERE gm.groupId = (SELECT groupId FROM groupMembers WHERE userId = ?)
-AND u.id != ? 
+WHERE gm.groupId = ?
 AND u.online = 1;
 `
 	var response []int
 
-	rows, err := s.Db.Query(query, userId, userId)
+	rows, err := s.Db.Query(query, groupId)
 	if err != nil {
 		fmt.Println("error getting online group members", err)
 		return response, err
