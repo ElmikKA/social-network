@@ -7,18 +7,6 @@ import './Register.css';
 const Register = () => {
     const { registerData, handleChange, handleFileChange, handleSubmit } = useRegister()
 
-    const navigate = useNavigate();
-
-    const handleFormSubmit = (event) => {
-        event.preventDefault();
-        const sucess = handleSubmit(event);
-
-        console.log(sucess)
-
-        if(sucess.response === 'success') {
-            navigate('/')
-        }
-    }
     return (
         <div className='register-section'>
             <div className='register-container'>
@@ -33,7 +21,7 @@ const Register = () => {
                     <div className='registration-header'>
                         <h2>Registration</h2>
                     </div>
-                    <form onSubmit={handleFormSubmit} method='POST' className='registration-form'>
+                    <form onSubmit={handleSubmit} method='POST' className='registration-form'>
                         <div className='register-form-group'>
                             <div className='register-form-field'>
                                 <label htmlFor="email">Email</label>
