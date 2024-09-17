@@ -31,6 +31,7 @@ const GroupMessageBox = () => {
 
     socket.onmessage = (data) => {
         const newMessage = JSON.parse(data.data)
+        console.log("in grouo bix", newMessage)
 
         if (newMessage.type === "groupMessage") {
             if (newMessage.groupId === GroupId) {

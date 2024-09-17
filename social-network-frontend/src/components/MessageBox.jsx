@@ -7,7 +7,6 @@ const MessageBox = () => {
 
     const { id } = useParams();
     const receiverId = Number(id);
-    console.log("receiver:", receiverId)
 
     const { messages: initialMessages, loading } = useGetMessages(receiverId);
     const [messages, setMessages] = useState([])
@@ -35,7 +34,6 @@ const MessageBox = () => {
         console.log("socket message", newMessage)
 
         if (newMessage.type === "message") {
-            console.log(receiverId, newMessage.partnerId)
             if (newMessage.partnerId === receiverId) {
                 setMessages(prevMessages => prevMessages ? [...prevMessages, newMessage] : [newMessage]); // Append new message
             }

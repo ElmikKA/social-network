@@ -761,7 +761,6 @@ export const useGetMessages = (userId) => {
     const navigate = useNavigate()
     const [messages, setMessages] = useState([])
     const [loading, setLoading] = useState(true)
-    console.log(userId)
     useEffect(() => {
         const getMessages = async () => {
             const requestOptions = {

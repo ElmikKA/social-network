@@ -7,7 +7,8 @@ import (
 )
 
 func main() {
-	Db, err := db.InitDb()
+	trigger := false //if you drop database set it to true and run code once. turn if off after
+	Db, err := db.InitDb(trigger)
 	if err != nil {
 		fmt.Println("database init error", err)
 	}

@@ -2,6 +2,7 @@ import React from 'react'
 
 import RespondNotificationButton from './ui/RespondNotificationButton'
 import { useGetNotifications } from '../api'
+import { GetSocket } from '../WebSocket'
 
 const Notifications = () => {
 
@@ -9,6 +10,12 @@ const Notifications = () => {
     if (loading) {
         return <div>Loading...</div>
     }
+
+
+    const socket = GetSocket()
+
+
+
 
     return (
         <div className='notifications'>
