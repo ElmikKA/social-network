@@ -88,9 +88,7 @@ func (h *Handler) AddComment(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) GetComments(w http.ResponseWriter, r *http.Request) {
 	CorsEnabler(w, r)
-	if r.Method == http.MethodOptions {
-		return
-	}
+
 	responseData := make(map[string]interface{})
 	responseData["loggedIn"] = true
 	if r.Method != http.MethodPost {
@@ -107,7 +105,7 @@ func (h *Handler) GetComments(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&data)
 	if err != nil {
-		fmt.Println("error decoding getpost")
+		fmt.Println("error decoding getComment")
 		responseData["response"] = "failure"
 		responseData["message"] = "Invalid payload"
 		w.Header().Set("Content-Type", "application/json")

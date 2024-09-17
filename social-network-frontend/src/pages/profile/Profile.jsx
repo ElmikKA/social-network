@@ -1,9 +1,10 @@
 
 import React, { useState } from 'react';
-import { useGetUser } from '../../api';
+import { UnFollow, useGetUser } from '../../api';
 import FollowButton from '../../components/ui/FollowButton';
 import { useOutletContext, useParams } from 'react-router-dom';
 import PostBox from '../../components/PostBox';
+import UnFollowButton from '../../components/ui/UnFollowButton';
 
 const Profile = () => {
     const { id } = useParams()
@@ -37,13 +38,15 @@ const Profile = () => {
             {!userData.ownPage && <div>
 
                 {
-                    userData.following !== '' ? <p className='followButton'>{userData.following === "completed" ? 'following' : userData.following}</p> :
+                    userData.following !== '' ? <p className='followButton'>{userData.following === "completed" ? <UnFollowButton userId={userData.getUser.id} setRefreshTrigger={setRefreshTrigger} /> : userData.following}</p> :
                         <FollowButton userId={id} setRefreshTrigger={setRefreshTrigger} />
                 }
             </div>}
 
             {userData.CanSee ?
-                <PostBox allPosts={userData.posts} />
+                <>
+                    <PostBox allPosts={userData.posts} />
+                </>
                 : <p>private profile</p>
             }
 

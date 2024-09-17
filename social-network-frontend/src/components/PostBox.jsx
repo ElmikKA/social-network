@@ -1,4 +1,5 @@
 import React from 'react'
+import CommentToggle from './ui/CommentToggle'
 
 const PostBox = ({ allPosts }) => {
     return (
@@ -21,6 +22,7 @@ const PostBox = ({ allPosts }) => {
                             ) : (
                                 <p>No avatar available</p>
                             )}
+                            <CommentToggle postId={post.id} />
                         </div>
                     ))
                 )

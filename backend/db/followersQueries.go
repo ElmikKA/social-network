@@ -242,3 +242,13 @@ func (s *Store) IsFollowing(userId, followee int) (string, error) {
 	}
 	return pending, nil
 }
+
+func (s *Store) RemoveFollow(userId, followeeId int) error {
+	query := `DELETE FROM followers WHERE userId = ? AND following =?`
+	_, err := s.Db.Exec(query, userId, followeeId)
+	if err != nil {
+		fmt.Println("error removing follow", err)
+		return err
+	}
+	return nil
+}

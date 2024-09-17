@@ -138,3 +138,23 @@
 .createPost {
     border: solid black 1px;
 }
+
+.commentToggle {
+    background-color: white;
+    border: solid white 1px;
+}
+
+.commentInput {
+    display: flex;
+    flex-direction: column;
+    max-width: 400px;
+    margin: 0 auto
+}
+
+.commentMain {
+    border: solid black 1px;
+}
+
+.commentBox {
+    border: solid red 1px;
+}

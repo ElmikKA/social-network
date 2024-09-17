@@ -31,7 +31,7 @@ func (s *Store) GetComments(postId int) ([]models.Comment, error) {
 	var comments []models.Comment
 	for rows.Next() {
 		var comment models.Comment
-		err := rows.Scan(&comment.Id, &comment.UserId, &comment.PostId, &comment.Creator, &comment.Content, &comment.CreatedAt, &comment.Avatar)
+		err := rows.Scan(&comment.Id, &comment.UserId, &comment.PostId, &comment.Creator, &comment.Content, &comment.Avatar, &comment.CreatedAt)
 		if err != nil {
 			fmt.Println("err scanning comments rows", err)
 			return []models.Comment{}, err

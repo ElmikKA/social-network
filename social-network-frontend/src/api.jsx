@@ -413,7 +413,6 @@ export const useSetComment = (postId) => {
         const formData = new FormData()
 
         formData.append('content', commentData.content)
-        formData.append('groupId', commentData.groupId)
         formData.append('postId', postId)
 
         if (commentData.avatar) {
@@ -735,27 +734,32 @@ export const useGetContacts = (refreshTrigger) => {
 
 
 export const useGetComments = (postId) => {
+    const [comments, setComments] = useState([])
     const navigate = useNavigate()
     useEffect(() => {
         const getComments = async () => {
             const requestOptions = {
-                method: "GET",
+                method: "POST",
                 credentials: "include",
-                body: JSON.stringify({ "id": postId })
+                body: JSON.stringify({ "id": Number(postId) })
             }
             try {
                 const response = await fetch("http://localhost:8080/api/getComments", requestOptions)
                 const data = await response.json()
-                console.log(data)
+                console.log("getcomment:", data)
                 if (!data.loggedIn) {
                     navigate('/login')
+                }
+                if (data.response === "success") {
+                    setComments(data.comments || [])
                 }
             } catch (err) {
                 console.log(err)
             }
         }
         getComments()
-    }, [postId])
+    }, [postId, navigate])
+    return { comments }
 }
 
 export const useGetMessages = (userId) => {
@@ -900,4 +904,24 @@ export const useGetAllGroups = () => {
         groupData,
         loading
     }
+}
+
+export const UnFollow = (userId, onContactCreated) => {
+    const unFollow = async () => {
+        const requestOptions = {
+            method: 'DELETE',
+            credentials: 'include',
+            body: JSON.stringify({ "id": userId }),
+        }
+        try {
+            const response = await fetch('http://localhost:8080/api/unFollow', requestOptions)
+            const data = await response.json()
+            console.log(data)
+            if (data.response === "success") onContactCreated()
+        } catch (err) {
+            console.log(err)
+        }
+    }
+    console.log("calling unfollow")
+    unFollow()
 }

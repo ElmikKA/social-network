@@ -48,4 +48,5 @@ type UserStore interface {
 	GetAllGroups() ([]Group, error)
 	GetGroup(groupId int) (Group, error)
 	GetGroupJoinStatus(groupId, userId int) (string, error)
+	RemoveFollow(userId, followeeId int) error
 }
