@@ -1,22 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { useWebSocketForMessagePage } from '../WebSocket';
+import { GetSocket } from '../WebSocket';
+import { useParams } from 'react-router-dom';
 
-const MessageInput = ({ receiverId, myId }) => {
+const MessageInput = () => {
     const [message, setMessage] = useState('');
-    const { socket } = useWebSocketForMessagePage();
+    const { id } = useParams();
+    const receiverId = Number(id);
 
-    useEffect(() => {
-        if (socket && socket.readyState !== WebSocket.OPEN) {
-            console.error('WebSocket is not open. Current state:', socket.readyState);
-        }
-    }, [socket]);
+    const socket = GetSocket()
 
     const handleSendMessage = () => {
         if (socket && socket.readyState === WebSocket.OPEN && message.trim()) {
             const messageObj = {
                 message: message.trim(),
                 receiverId: receiverId,
-                senderId: myId,
+                type: 'message',
             };
             socket.send(JSON.stringify(messageObj));
             setMessage('');

@@ -1,64 +1,42 @@
-// import React, { createContext, useContext, useRef, useState, useEffect } from 'react';
 
-// const WebSocketContext = createContext(null);
+import { w3cwebsocket as Socket } from "websocket";
 
-// export const WebSocketProviderForMessagePage = ({ initialMessages = [], partnerId, children }) => {
-//     const socket = useRef(null);
-//     const [isConnected, setIsConnected] = useState(false);
-//     const [messages, setMessages] = useState(initialMessages)
-//     const [currentPartnerId, setCurrentPartnerId] = useState(partnerId)
+let globalSocket = null;
 
-//     useEffect(() => {
-//         if (!socket.current) {
-//             socket.current = new WebSocket('ws://localhost:8080/api/websocket');
-//             socket.current.onopen = () => {
-//                 console.log('WebSocket connection established');
-//                 setIsConnected(true);
-//             };
-//             socket.current.onclose = () => {
-//                 console.log('WebSocket connection closed');
-//                 setIsConnected(false);
-//             };
-//             socket.current.onerror = (error) => {
-//                 console.error('WebSocket error', error);
-//             };
+export const GetSocket = () => {
+    return globalSocket;
+};
 
-//             socket.current.onmessage = (event) => {
-//                 const message = JSON.parse(event.data);
-//                 console.log(message)
-//                 if (message.type === "message") {
-//                     console.log(currentPartnerId, message.partnerId)
-//                     if (message.partnerId === currentPartnerId) {
-//                         setMessages(prevMessages => prevMessages ? [...prevMessages, message] : [message]); // Append new message
-//                     }
-//                 } else {
-//                     console.log("not current speaker")
-//                 }
-//             };
-//         }
+export const InitSocket = () => {
+    if (!globalSocket) {
+        globalSocket = new Socket("ws://localhost:8080/api/websocket");
 
+        globalSocket.onopen = () => {
+            console.log("WebSocket connection established.");
+        };
 
-//         return () => {
-//             if (socket.current) {
-//                 socket.current.close();
-//                 socket.current = null
-//             }
-//         };
-//     }, []);
+        globalSocket.onmessage = (event) => {
+            console.log("WebSocket message received:", event.data);
+        };
 
-//     useEffect(() => {
-//         setMessages(initialMessages);
-//     }, [initialMessages]);
-//     return (
-//         <WebSocketContext.Provider value={{ socket: socket.current, messages, currentPartnerId }}>
-//             {children}
-//         </WebSocketContext.Provider>
-//     );
-// };
+        globalSocket.onclose = () => {
+            console.log("WebSocket connection closed.");
+            globalSocket = null;
+        };
 
-// export const useWebSocketForMessagePage = () => {
-//     return useContext(WebSocketContext);
-// };
+        globalSocket.onerror = (error) => {
+            console.error("WebSocket error", error);
+        };
+    }
 
+    return globalSocket;
+};
 
-const { WebSocketServer } = require("ws")
+export const closeSocket = () => {
+    if (globalSocket) {
+        globalSocket.close()
+        console.log("closed socket")
+    } else {
+        console.log("no active websockets")
+    }
+}

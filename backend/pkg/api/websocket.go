@@ -85,6 +85,7 @@ func (h *Handler) Websocket(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("got a readJSON")
 			fmt.Println("message:", msg.Message)
 			fmt.Println("receiverId:", msg.ReceiverId)
+			fmt.Println("sender:", msg.UserId)
 			fmt.Println(msg)
 			broadcast <- msg
 		}

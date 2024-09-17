@@ -13,6 +13,7 @@
 
 }
 
+/* 
 .footer {
     position: fixed;
     bottom: 0;
@@ -20,7 +21,7 @@
     background-color: lavender;
     text-align: center;
     padding: 5px 0px;
-}
+} */
 
 .page {
     min-height: 100vh;

@@ -20,9 +20,14 @@ import Users from './pages/usersPage/Users'
 import GroupsPage from './pages/groupsPage/GroupsPage'
 import GroupPage from './pages/GroupPage/GroupPage'
 import CreateGroupPage from './pages/CreateGroupPage/CreateGroupPage'
-// import MessagePage from './pages/MessagePage/MessagePage'
+import MessagePage from './pages/MessagePage/MessagePage'
+import { useEffect } from 'react'
+import { InitSocket } from './WebSocket'
 
 const Layout = () => {
+  useEffect(() => {
+    InitSocket()
+  }, [])
   return (
     <div className='page'>
       <Header />
@@ -38,6 +43,8 @@ const Layout = () => {
     </div>
   )
 }
+
+
 
 const router = createBrowserRouter([
   {
@@ -80,10 +87,14 @@ const router = createBrowserRouter([
         path: '/createGroup',
         element: <CreateGroupPage />
       },
-      // {
-      //   path: '/message/:id',
-      //   element: <MessagePage />
-      // }
+      {
+        path: '/message/:id',
+        element: <MessagePage />
+      },
+      {
+        path: '/groupMessage/:id',
+        element: <p>group message</p>
+      }
     ]
   },
 ]);

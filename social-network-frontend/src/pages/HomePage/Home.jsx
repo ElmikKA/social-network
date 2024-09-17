@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useGetAllPosts } from '../../api'
-import Notifications from '../../components/Notifications'
 import CreatePost from '../CreatePost/CreatePost'
 
 const Home = () => {
-
     const { allPosts } = useGetAllPosts()
+
     return (
         <div className='homePage'>
             <div className='createPost'>

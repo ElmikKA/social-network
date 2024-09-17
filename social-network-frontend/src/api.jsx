@@ -1,5 +1,6 @@
 import { useState, useEffect, createContext, useContext, useRef } from "react"
 import { Navigate, useNavigate } from "react-router-dom"
+import { closeSocket, InitSocket } from "./WebSocket"
 
 
 
@@ -69,6 +70,7 @@ export const useLogOut = () => {
                 console.log(data)
                 if (data.response === "success") {
                     navigate('/login')
+                    closeSocket()
                 }
             } catch (err) {
                 console.log(err)
