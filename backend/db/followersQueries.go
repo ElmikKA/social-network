@@ -58,7 +58,6 @@ func (s *Store) GetContacts(userId int) ([]models.Contacts, error) {
 	}
 	defer rows.Close()
 
-	// Map to track seen contacts and avoid duplicates
 	seenContacts := make(map[int]models.Contacts)
 
 	for rows.Next() {
@@ -69,23 +68,17 @@ func (s *Store) GetContacts(userId int) ([]models.Contacts, error) {
 			return nil, err
 		}
 
-		// Check if the contact has been seen before
 		if existingContact, found := seenContacts[contact.Id]; found {
-			// If the contact is already present, we need to decide which type to keep
-			// Here, we prefer 'following' over 'followee' to keep one entry per mutual follow
 			if contact.Type == "following" {
-				// Replace the existing contact if it's a 'followee'
 				if existingContact.Type == "followee" {
 					seenContacts[contact.Id] = contact
 				}
 			}
 		} else {
-			// Add new contact to the map
 			seenContacts[contact.Id] = contact
 		}
 	}
 
-	// Convert the map values to a slice
 	contacts := make([]models.Contacts, 0, len(seenContacts))
 	for _, contact := range seenContacts {
 		contacts = append(contacts, contact)

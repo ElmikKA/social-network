@@ -5,18 +5,7 @@ import (
 )
 
 func CorsEnabler(w http.ResponseWriter, r *http.Request) {
-	// allowedOrigins := []string{
-	// 	"http://localhost:8080",
-	// 	"http://localhost:5173",
-	// }
 	origin := r.Header.Get("Origin")
-	// isAllowed := false
-	// for _, o := range allowedOrigins {
-	// 	if origin == o {
-	// 		isAllowed = true
-	// 		break
-	// 	}
-	// }
 
 	isAllowed := true
 	if isAllowed {
@@ -33,7 +22,6 @@ func CorsEnabler(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Upgrade", "websocket")
 		}
 	} else {
-		// Optionally handle disallowed origins (e.g., returning an error)
 		http.Error(w, "CORS not allowed", http.StatusForbidden)
 	}
 }

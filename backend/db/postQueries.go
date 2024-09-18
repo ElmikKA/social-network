@@ -30,35 +30,13 @@ func (s *Store) GetPost(id int) (models.Post, error) {
 	return post, nil
 }
 
-// func (s *Store) GetAllUserPosts(userId int) ([]models.Post, error) {
-
-// 	query := `
-// 		SELECT * FROM posts WHERE userId =?
-// 	`
-// 	rows, err := s.Db.Query(query, userId)
-// 	if err != nil {
-// 		fmt.Println("error getting all posts", err)
-// 		return []models.Post{}, err
-// 	}
-// 	defer rows.Close()
-
-// 	var posts []models.Post
-// 	for rows.Next() {
-// 		var post models.Post
-// 		rows.Scan(&post.Id, &post.UserId, &post.GroupId, &post.Creator, &post.Title, &post.Content, &post.Avatar, &post.CreatedAt, &post.Privacy)
-// 		posts = append(posts, post)
-// 	}
-// 	return posts, nil
-// }
-
 func (s *Store) GetAllUserPosts(userId, creator int) ([]models.Post, error) {
-	// Define the query to get posts along with their privacy and creator info
 	query := `
 		SELECT p.id, p.userId, p.groupId, p.creator, p.title, p.content, p.avatar, p.createdAt, p.privacy
 		FROM posts p
 		WHERE p.userId = ?
 	`
-	rows, err := s.Db.Query(query, creator) // Query posts of a specific user
+	rows, err := s.Db.Query(query, creator)
 	if err != nil {
 		fmt.Println("error getting all posts", err)
 		return nil, err
@@ -74,11 +52,9 @@ func (s *Store) GetAllUserPosts(userId, creator int) ([]models.Post, error) {
 			return nil, err
 		}
 
-		// Set CanSee based on the post's privacy and following status
-		if userId == creator { // If the user is the creator, they can always see their posts
+		if userId == creator {
 			post.CanSee = true
 		} else if post.Privacy == "private" {
-			// Check if the user is following the creator
 			followingQuery := `
 				SELECT COUNT(1)
 				FROM followers
@@ -92,7 +68,6 @@ func (s *Store) GetAllUserPosts(userId, creator int) ([]models.Post, error) {
 			}
 			post.CanSee = count > 0
 		} else {
-			// For non-private posts, CanSee is always true
 			post.CanSee = true
 		}
 
