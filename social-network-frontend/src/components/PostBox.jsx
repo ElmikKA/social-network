@@ -13,15 +13,13 @@ const PostBox = ({ allPosts }) => {
                             <p>{post.content}</p>
                             <p><strong>Created by:</strong> {post.creator}</p>
                             <p><strong>Created at:</strong> {new Date(post.createdAt).toLocaleString()}</p>
-                            {post.avatar ? (
+                            {post.avatar &&
                                 <img
                                     src={`http://localhost:8080/api/avatars/${post.avatar}`}
                                     alt="Post Avatar"
                                     style={{ width: '150px', height: '150px', borderRadius: '50%' }}
                                 />
-                            ) : (
-                                <p>No avatar available</p>
-                            )}
+                            }
                             <CommentToggle postId={post.id} />
                         </div>
                     ))

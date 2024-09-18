@@ -2,8 +2,6 @@
 import React from 'react'
 
 const CommentBox = ({ comments = [] }) => { // Default to empty array
-    console.log("in box", comments)
-    console.log(comments)
 
     return (
         <div className='commentMain'>

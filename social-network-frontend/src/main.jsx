@@ -60,7 +60,7 @@ const Layout = () => {
           <Outlet context={{ onContactCreated: handleContactCreated }} />
         </div>
         <div className='notifications'>
-          <Notifications />
+          <Notifications refreshSidebar={handleContactCreated} />
         </div>
         <RightSidebar contacts={contacts} />
       </div>

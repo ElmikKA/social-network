@@ -1,20 +1,29 @@
 
-import React, { useState } from 'react';
-import { UnFollow, useGetUser } from '../../api';
+import React, { useEffect, useState } from 'react';
+import { useGetUser } from '../../api';
 import FollowButton from '../../components/ui/FollowButton';
-import { useOutletContext, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import PostBox from '../../components/PostBox';
 import UnFollowButton from '../../components/ui/UnFollowButton';
+import ChangePrivacy from '../../components/ChangePrivacy';
 
 const Profile = () => {
     const { id } = useParams()
     const [refreshTrigger, setRefreshTrigger] = useState(false)
     const { userData, loading, error } = useGetUser(id, refreshTrigger);
+    const [privacy, setPrivacy] = useState("")
+
+
+    console.log(userData)
+    useEffect(() => {
+        if (userData) {
+            setPrivacy(userData.status)
+        }
+    }, [userData])
+    console.log(privacy)
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error: {error}</p>;
-    console.log(userData)
-
     return (
         <div className='profile'>
             <h2>Profile Page</h2>
@@ -34,6 +43,7 @@ const Profile = () => {
                     style={{ width: '100px', height: '100px', borderRadius: '50%' }}
                 />
             </div>
+            {userData.ownPage && privacy && <ChangePrivacy status={privacy} />}
 
             {!userData.ownPage && <div>
 

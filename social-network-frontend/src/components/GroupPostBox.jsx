@@ -1,7 +1,8 @@
+import CommentToggle from "./ui/CommentToggle"
 
 const GroupPostBox = ({ posts }) => {
     return (
-        <div className='groupEventDiv'>
+        <div className='groupPostMain'>
             {posts && posts.length > 0 ? (
                 posts.map((post) => (
                     <div className='postBox' key={post.id}>
@@ -14,6 +15,7 @@ const GroupPostBox = ({ posts }) => {
                                 style={{ width: '150px', height: '150px', borderRadius: '50%' }}
                             />
                         }
+                        <CommentToggle postId={post.id} />
                     </div>
                 ))
             ) : (<p>No posts</p>)}

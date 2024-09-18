@@ -1,17 +1,21 @@
-import React from 'react'
+import React, { useState } from 'react'
 import CommentInput from '../CommentInput'
-import { useGetComments } from '../../api'
 import CommentBox from '../CommentBox'
+import { useGetComments } from '../../api'
 
 const CommentElement = ({ postId }) => {
-    console.log("fetch comments", postId)
+    const [refreshCommentTrigger, setRefreshCommentTrigger] = useState(false)
+    const { comments, loading } = useGetComments(postId, refreshCommentTrigger)
 
-    const { comments } = useGetComments(postId)
-    if (comments) console.log(comments)
+    const refreshComments = () => {
+        console.log("refreshing comments")
+        setRefreshCommentTrigger(prev => !prev)
+    }
+    if (loading) return <p>Loading comments...</p>
 
     return (
         <div>
-            <CommentInput postId={postId} />
+            <CommentInput refreshComments={refreshComments} postId={postId} />
             <CommentBox comments={comments} />
         </div>
     )

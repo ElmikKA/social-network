@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 
 import RespondNotificationButton from './ui/RespondNotificationButton'
 import { useGetNotifications } from '../api'
-import { GetSocket } from '../WebSocket'
+import { useOutletContext } from 'react-router-dom'
 
-const Notifications = () => {
+const Notifications = ({ refreshSidebar }) => {
     const [refreshTrigger, setRefreshTrigger] = useState(false)
 
     const { notificationData, loading } = useGetNotifications(refreshTrigger)
-    // console.log(notificationData)
 
     useEffect(() => {
         const intervalId = setInterval(() => {
@@ -27,8 +26,8 @@ const Notifications = () => {
                     {notificationData.notifications.map((notification) => (
                         <li key={notification.id}>
                             {notification.content}
-                            <RespondNotificationButton setRefreshTrigger={setRefreshTrigger} idRef={notification.idRef} type={notification.type} response="completed" ></RespondNotificationButton >
-                            <RespondNotificationButton setRefreshTrigger={setRefreshTrigger} idRef={notification.idRef} type={notification.type} response="rejected" ></RespondNotificationButton >
+                            <RespondNotificationButton refreshSidebar={refreshSidebar} setRefreshTrigger={setRefreshTrigger} idRef={notification.idRef} type={notification.type} response="completed" ></RespondNotificationButton >
+                            <RespondNotificationButton refreshSidebar={refreshSidebar} setRefreshTrigger={setRefreshTrigger} idRef={notification.idRef} type={notification.type} response="rejected" ></RespondNotificationButton >
                         </li>
                     ))}
                 </ul>

@@ -49,4 +49,8 @@ type UserStore interface {
 	GetGroup(groupId int) (Group, error)
 	GetGroupJoinStatus(groupId, userId int) (string, error)
 	RemoveFollow(userId, followeeId int) error
+	ChangePrivacy(userId int, Privacy string) error
+	IsGroupOwner(userId, groupId int) (bool, error)
+	GetInvite(groupId int) ([]Users, error)
+	SendGroupInvite(GroupId, UserId int) error
 }

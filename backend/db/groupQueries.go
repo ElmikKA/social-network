@@ -231,3 +231,57 @@ func (s *Store) GetGroupJoinStatus(groupId, userId int) (string, error) {
 	return status, nil
 
 }
+
+func (s *Store) IsGroupOwner(userId, groupId int) (bool, error) {
+	query := `SELECT COUNT(*) FROM groups WHERE id = ? AND userId = ?`
+	var count int
+	err := s.Db.QueryRow(query, groupId, userId).Scan(&count)
+	if err != nil {
+		fmt.Println("err getting group owner")
+		return false, err
+	}
+	return count > 0, nil
+}
+
+func (s *Store) GetInvite(groupId int) ([]models.Users, error) {
+	query := `
+    SELECT u.id, u.name, u.email, u.firstName, u.lastName, u.dateOfBirth, u.avatar, u.nickname, u.aboutMe, u.online, u.privacy
+    FROM users u
+    WHERE NOT EXISTS (
+        SELECT 1
+        FROM groupMembers gm
+        WHERE gm.userId = u.id
+        AND gm.groupId = ?
+    )`
+	rows, err := s.Db.Query(query, groupId)
+	if err != nil {
+		fmt.Println("err getting invite", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []models.Users
+	for rows.Next() {
+		var user models.Users
+		err := rows.Scan(&user.Id, &user.Name, &user.Email, &user.FirstName, &user.LastName, &user.DateOfBirth, &user.Avatar, &user.Nickname, &user.AboutMe, &user.Online, &user.Privacy)
+		if err != nil {
+			fmt.Println("invite rows", err)
+			return nil, err
+		}
+		users = append(users, user)
+	}
+
+	return users, nil
+}
+
+func (s *Store) SendGroupInvite(GroupId, UserId int) error {
+	query := `
+	INSERT INTO groupMembers (userId, groupId, pending) VALUES (?,?,?)
+	`
+	_, err := s.Db.Exec(query, UserId, GroupId, "pending")
+	if err != nil {
+		fmt.Println("error sending group invite", err)
+		return err
+	}
+	return nil
+}

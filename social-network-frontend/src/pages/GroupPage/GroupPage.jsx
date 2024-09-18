@@ -6,6 +6,8 @@ import CreateEvent from '../../addingStuff/CreateEvent'
 import CreateGroupPost from '../CreatePost/CreateGroupPost'
 import GroupsBox from '../../components/GroupsBox'
 import GroupPostBox from '../../components/GroupPostBox'
+import InviteGroup from '../../components/InviteGroup'
+import ToggleInviteGroup from '../../components/ui/ToggleInviteGroup'
 
 const GroupPage = () => {
     const { id } = useParams()
@@ -31,9 +33,12 @@ const GroupPage = () => {
             <h2>Group page</h2>
             <p>{groupData.groupData.title}</p>
             <p>Description: {groupData.groupData.description}</p>
+            {groupData.owner && <p>owner of group</p>}
+
 
             {groupData?.joinStatus === 'completed' ? (
                 <div>
+                    <ToggleInviteGroup groupId={groupData.groupData.id} />
                     <EventBox setRefreshTrigger={setRefreshTrigger} events={groupData.groupEvents} />
                     <CreateEvent setRefreshTrigger={setRefreshTrigger} groupId={groupData.groupData.id} />
                     <CreateGroupPost setRefreshTrigger={setRefreshTrigger} groupId={groupData.groupData.id} />

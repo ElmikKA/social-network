@@ -1,12 +1,13 @@
 import React from 'react'
 import { useSetComment } from '../api'
 
-const CommentInput = ({ postId }) => {
+const CommentInput = ({ refreshComments, postId }) => {
 
-    const { commentData, handleFileChange, handleChange, handleSubmit } = useSetComment(postId)
+    const { commentData, handleFileChange, handleChange, handleSubmit } = useSetComment(postId, refreshComments)
 
     const submit = (e) => {
         handleSubmit(e)
+
     }
 
     return (

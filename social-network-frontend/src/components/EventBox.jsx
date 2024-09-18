@@ -17,7 +17,6 @@ const EventBox = ({ setRefreshTrigger, events }) => {
                     <div className='groupEventBox' key={event.Id}>
                         <p>title:{event.Title}</p>
                         <p>when:{formatDate(event.Time)}</p>
-                        {console.log(event.Status)}
                         {event.Status === 'pending' ?
                             <>
                                 <RespondNotificationButton setRefreshTrigger={setRefreshTrigger} idRef={event.IdRef} type={"e_ref"} response="completed" ></RespondNotificationButton >

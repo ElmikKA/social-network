@@ -1,9 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import CommentElement from './CommentElement'
 
 const CommentToggle = ({ postId }) => {
     const [opened, setOpened] = useState(false)
-
     const handleClick = () => {
         setOpened(prev => !prev)
     }
