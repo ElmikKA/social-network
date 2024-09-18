@@ -28,7 +28,7 @@ const CreatePost = ({ setRefreshTrigger, groupId }) => {
             <select id="privacy" value={postData.privacy} onChange={handleChange}>
                 <option value="public">public</option>
                 <option value="private">priate</option>
-                <option value="almostPrivate">almost private</option>
+                {/* <option value="almostPrivate">almost private</option> */}
             </select>
 
             <button type='submit'>Create post</button>
