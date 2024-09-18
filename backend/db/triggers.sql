@@ -66,10 +66,41 @@ END;
 
 
 
+-- CREATE TRIGGER set_groupMembers_role_and_pending_and_create_notification
+-- AFTER INSERT ON groupMembers
+-- FOR EACH ROW
+-- BEGIN
+--     UPDATE groupMembers
+--     SET role = CASE
+--         WHEN (SELECT userId FROM groups WHERE id = NEW.groupId) = NEW.userId
+--         THEN 'owner'
+--         ELSE 'member'
+--     END,
+--     pending = CASE
+--         WHEN (SELECT userId FROM groups WHERE id = NEW.groupId) = NEW.userId
+--         THEN 'completed'
+--         ELSE 'pending'
+--     END
+--     WHERE id = NEW.id;
+
+--     INSERT INTO notifications (userId, content, type, idRef)
+--     SELECT 
+--         (SELECT userId FROM groups WHERE id = NEW.groupId), 
+--         (SELECT name FROM users WHERE id = NEW.userId) || ' has sent a request to join your group ' || 
+--         (SELECT title FROM groups WHERE id = NEW.groupId),  
+--         'g_ref', 
+--         NEW.id  
+--     FROM groupMembers
+--     WHERE id = NEW.id AND pending = 'pending';  
+-- END;
+
+
+
 CREATE TRIGGER set_groupMembers_role_and_pending_and_create_notification
 AFTER INSERT ON groupMembers
 FOR EACH ROW
 BEGIN
+    -- Update the role and pending status based on whether the user is the owner
     UPDATE groupMembers
     SET role = CASE
         WHEN (SELECT userId FROM groups WHERE id = NEW.groupId) = NEW.userId
@@ -83,16 +114,33 @@ BEGIN
     END
     WHERE id = NEW.id;
 
+    -- Send a notification based on the value of 'pending' and 'invitee'
     INSERT INTO notifications (userId, content, type, idRef)
-    SELECT 
-        (SELECT userId FROM groups WHERE id = NEW.groupId), 
-        (SELECT name FROM users WHERE id = NEW.userId) || ' has sent a request to join your group ' || 
-        (SELECT title FROM groups WHERE id = NEW.groupId),  
-        'g_ref', 
-        NEW.id  
-    FROM groupMembers
-    WHERE id = NEW.id AND pending = 'pending';  
+    SELECT
+        CASE
+            WHEN NEW.invitee = 0 AND NEW.pending = 'pending' THEN (SELECT userId FROM groups WHERE id = NEW.groupId)
+            WHEN NEW.invitee = 1 THEN NEW.userId
+            ELSE NULL
+        END AS userId,
+        CASE
+            WHEN NEW.invitee = 0 AND NEW.pending = 'pending' THEN (SELECT name FROM users WHERE id = NEW.userId) || ' has sent a request to join your group ' || (SELECT title FROM groups WHERE id = NEW.groupId)
+            WHEN NEW.invitee = 1 THEN 'You have been added to group ' || (SELECT title FROM groups WHERE id = NEW.groupId)
+            ELSE NULL
+        END AS content,
+        CASE
+            WHEN NEW.invitee = 0 AND NEW.pending = 'pending' THEN 'g_ref'
+            WHEN NEW.invitee = 1 THEN 'gi_ref'
+            ELSE NULL
+        END AS type,
+        NEW.id AS idRef
+    WHERE
+        (NEW.invitee = 0 AND NEW.pending = 'pending')
+        OR
+        NEW.invitee = 1;
 END;
+
+
+
 
 CREATE TRIGGER delete_notification_on_groupMemberUpdate
 AFTER UPDATE OF pending ON groupMembers

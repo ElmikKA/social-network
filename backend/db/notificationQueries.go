@@ -28,6 +28,8 @@ func (s *Store) RespondNotification(response models.NotificationResponse) error 
 		query = `UPDATE followers SET pending = ? WHERE id = ?`
 	case "e_ref":
 		query = `UPDATE eventsStatus SET pending = ? WHERE id = ?`
+	case "gi_ref":
+		query = `UPDATE groupMembers SET pending = ? WHERE id = ?`
 	}
 
 	_, err := s.Db.Exec(query, response.Response, response.IdRef)

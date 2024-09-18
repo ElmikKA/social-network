@@ -38,9 +38,9 @@ func (s *Store) AddGroupMember(group models.Group) (int, error) {
 		return 0, nil
 	}
 	query := `
-	INSERT INTO groupMembers (userId, groupId) VALUES (?,?)
+	INSERT INTO groupMembers (userId, groupId, invitee) VALUES (?,?,?)
 	`
-	result, err := s.Db.Exec(query, group.UserId, group.Id)
+	result, err := s.Db.Exec(query, group.UserId, group.Id, 0)
 	if err != nil {
 		fmt.Println("err adding group member", err)
 		return 0, err
@@ -276,9 +276,9 @@ func (s *Store) GetInvite(groupId int) ([]models.Users, error) {
 
 func (s *Store) SendGroupInvite(GroupId, UserId int) error {
 	query := `
-	INSERT INTO groupMembers (userId, groupId, pending) VALUES (?,?,?)
+	INSERT INTO groupMembers (userId, groupId, pending, invitee) VALUES (?,?,?,?)
 	`
-	_, err := s.Db.Exec(query, UserId, GroupId, "pending")
+	_, err := s.Db.Exec(query, UserId, GroupId, "pending", 1)
 	if err != nil {
 		fmt.Println("error sending group invite", err)
 		return err
