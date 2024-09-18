@@ -122,11 +122,21 @@
     background-color: #FE9B33;
     color: white;
     margin-bottom: 10px;
+    transition: background-color ease-out 0.3s;
+}
+
+.continue-btn:hover {
+    background-color: #B14B34;
 }
 
 .register-btn {
     background-color: #E86726;
     color: white;
+    transition: background-color ease-out 0.3s;
+}
+
+.register-btn:hover {
+    background-color: #B14B34;
 }
 
 .or-separator {

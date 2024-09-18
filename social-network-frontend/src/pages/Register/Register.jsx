@@ -7,6 +7,12 @@ import './Register.css';
 const Register = () => {
     const { registerData, handleChange, handleFileChange, handleSubmit } = useRegister()
 
+    const navigate = useNavigate();
+
+    const handleBackButtonClick = () => {
+        navigate('/login');
+    };
+
     return (
         <div className='register-section'>
             <div className='register-container'>
@@ -20,6 +26,7 @@ const Register = () => {
                 <div className='register-right-panel'>
                     <div className='registration-header'>
                         <h2>Registration</h2>
+                        <button className='back-button-to-login-section' onClick={handleBackButtonClick}>BACK</button>
                     </div>
                     <form onSubmit={handleSubmit} method='POST' className='registration-form'>
                         <div className='register-form-group'>
@@ -73,7 +80,7 @@ const Register = () => {
                             </div>
                         </div>
 
-                        <button type="submit" className="btn register-btn">
+                        <button type="submit" className="register-section-button">
                             Register
                         </button>
                     </form>

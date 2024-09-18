@@ -85,12 +85,25 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 30px;
     width: 100%;
+}
+
+.back-button-to-login-section {
+    background: none;
+    font-size: 15px;
+    color: white;
+    cursor: pointer;
+    transition: color 0.5s;
+    font-weight: 600;
+}
+
+.back-button-to-login-section:hover {
+    color: #FE9B33;
 }
 
 .register-right-panel h2 {
     font-size: 30px;
-    margin-bottom: 20px;
 }
 
 .register-form-group {
@@ -103,7 +116,7 @@
 .register-form-field {
     display: flex;
     flex-direction: column;
-    width: 48%;
+    width: 47%;
 }
 
 .register-form-group .register-form-field label {
@@ -124,8 +137,8 @@
     outline: none;
 }
 
-.register-btn {
-    width: 150px;
+.register-section-button {
+    width: 103%;
     height: 50px;
     min-width: 100px;
     padding: 12px;
@@ -134,16 +147,13 @@
     border-radius: 5px;
     cursor: pointer;
     font-weight: 600;
-}
-
-.continue-btn {
     background-color: #E86726;
-    color: white;
     margin-bottom: 10px;
     transition: background-color 0.5s;
+    color: white;
 }
 
-.continue-btn:hover {
+.register-section-button:hover {
     background-color: #FE9B33;
     color: white;
     margin-bottom: 10px;

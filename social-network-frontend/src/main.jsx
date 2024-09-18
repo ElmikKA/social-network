@@ -1,8 +1,5 @@
 import { createRoot } from 'react-dom/client'
-import Root from './Root'
 import './index.css'
-
-
 import Register from './pages/Register/Register'
 import Login from './pages/Login/Login'
 import Profile from './pages/profile/Profile'
@@ -25,7 +22,6 @@ import MessagePage from './pages/MessagePage/MessagePage'
 import { useEffect } from 'react'
 import { InitSocket } from './WebSocket'
 import GroupMessagePage from './pages/GroupMessagePage/GroupMessagePage'
-
 const Layout = () => {
   useEffect(() => {
     InitSocket()
@@ -45,9 +41,6 @@ const Layout = () => {
     </div>
   )
 }
-
-
-
 const router = createBrowserRouter([
   {
     path: '/',
@@ -100,7 +93,6 @@ const router = createBrowserRouter([
     ]
   },
 ]);
-
 createRoot(document.getElementById('root')).render(
   <RouterProvider router={router} />
 )
