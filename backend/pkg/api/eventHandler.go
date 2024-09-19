@@ -43,10 +43,6 @@ func (h *Handler) CreateEvent(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(responseData)
 		return
 	}
-	// add trigger to set all group members to pending
-	// add trigger to add any new members who join to pending
-	// add notification to every member
-	// remove notification when it's completed/rejected
 
 	responseData["response"] = "success"
 	responseData["message"] = "successfully created event"

@@ -38,9 +38,9 @@ func (s *Store) AddGroupMember(group models.Group) (int, error) {
 		return 0, nil
 	}
 	query := `
-	INSERT INTO groupMembers (userId, groupId) VALUES (?,?)
+	INSERT INTO groupMembers (userId, groupId, invitee) VALUES (?,?,?)
 	`
-	result, err := s.Db.Exec(query, group.UserId, group.Id)
+	result, err := s.Db.Exec(query, group.UserId, group.Id, 0)
 	if err != nil {
 		fmt.Println("err adding group member", err)
 		return 0, err
@@ -135,23 +135,27 @@ func (s *Store) GetGroupEvents(groupId, userId int) ([]models.GroupEvents, error
 	    e.description AS Description,
 	    e.time AS Time,
 	    es.pending AS Status,
-	    es.role AS Role
+	    es.role AS Role,
+	    es.id AS IdRef
 	FROM 
 	    events e
 	LEFT JOIN 
 	    eventsStatus es 
 	ON 
 	    e.id = es.eventId
-	WHERE 
-	    e.groupId = ?
 	AND 
-	    es.userId = ?;
+	    es.userId = ?
+	WHERE 
+	    e.groupId = ?;
 	`
 
 	var events []models.GroupEvents
 
-	rows, err := s.Db.Query(query, groupId, userId)
+	rows, err := s.Db.Query(query, userId, groupId)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return events, nil
+		}
 		fmt.Println("error getting group event info", err)
 		return events, err
 	}
@@ -160,7 +164,7 @@ func (s *Store) GetGroupEvents(groupId, userId int) ([]models.GroupEvents, error
 
 	for rows.Next() {
 		var event models.GroupEvents
-		err := rows.Scan(&event.Id, &event.OwnerId, &event.GroupId, &event.Title, &event.Description, &event.Time, &event.Status, &event.Role)
+		err := rows.Scan(&event.Id, &event.OwnerId, &event.GroupId, &event.Title, &event.Description, &event.Time, &event.Status, &event.Role, &event.IdRef)
 		if err != nil {
 			fmt.Println("error scanning event info", err)
 			return events, err
@@ -226,4 +230,58 @@ func (s *Store) GetGroupJoinStatus(groupId, userId int) (string, error) {
 	}
 	return status, nil
 
+}
+
+func (s *Store) IsGroupOwner(userId, groupId int) (bool, error) {
+	query := `SELECT COUNT(*) FROM groups WHERE id = ? AND userId = ?`
+	var count int
+	err := s.Db.QueryRow(query, groupId, userId).Scan(&count)
+	if err != nil {
+		fmt.Println("err getting group owner")
+		return false, err
+	}
+	return count > 0, nil
+}
+
+func (s *Store) GetInvite(groupId int) ([]models.Users, error) {
+	query := `
+    SELECT u.id, u.name, u.email, u.firstName, u.lastName, u.dateOfBirth, u.avatar, u.nickname, u.aboutMe, u.online, u.privacy
+    FROM users u
+    WHERE NOT EXISTS (
+        SELECT 1
+        FROM groupMembers gm
+        WHERE gm.userId = u.id
+        AND gm.groupId = ?
+    )`
+	rows, err := s.Db.Query(query, groupId)
+	if err != nil {
+		fmt.Println("err getting invite", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []models.Users
+	for rows.Next() {
+		var user models.Users
+		err := rows.Scan(&user.Id, &user.Name, &user.Email, &user.FirstName, &user.LastName, &user.DateOfBirth, &user.Avatar, &user.Nickname, &user.AboutMe, &user.Online, &user.Privacy)
+		if err != nil {
+			fmt.Println("invite rows", err)
+			return nil, err
+		}
+		users = append(users, user)
+	}
+
+	return users, nil
+}
+
+func (s *Store) SendGroupInvite(GroupId, UserId int) error {
+	query := `
+	INSERT INTO groupMembers (userId, groupId, pending, invitee) VALUES (?,?,?,?)
+	`
+	_, err := s.Db.Exec(query, UserId, GroupId, "pending", 1)
+	if err != nil {
+		fmt.Println("error sending group invite", err)
+		return err
+	}
+	return nil
 }

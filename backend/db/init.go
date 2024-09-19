@@ -14,7 +14,6 @@ func InitDb(trigger bool) (*sql.DB, error) {
 		return nil, err
 	}
 	if trigger {
-
 		triggers, err := os.ReadFile("./db/triggers.sql")
 		if err != nil {
 			fmt.Println("error adding triggers")

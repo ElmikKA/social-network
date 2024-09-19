@@ -267,7 +267,7 @@ export const useGetAllUsers = () => {
 
 
 
-export const useGetUser = (id) => {
+export const useGetUser = (id, refreshTrigger) => {
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -275,6 +275,7 @@ export const useGetUser = (id) => {
 
     useEffect(() => {
         const getProfile = async () => {
+            setLoading(true)
             const requestOptions = {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' },
@@ -289,6 +290,7 @@ export const useGetUser = (id) => {
                 let data = await response.json();
                 if (!data.loggedIn) {
                     navigate('/login')
+                    return
                 }
                 setUserData(data);
             } catch (err) {
@@ -298,13 +300,13 @@ export const useGetUser = (id) => {
             }
         };
         getProfile();
-    }, [id]);
+    }, [id, refreshTrigger, navigate]);
 
     return { userData, loading, error };
 };
 
 
-export const useGetAllPosts = () => {
+export const useGetAllPosts = (refreshTrigger) => {
 
     const [allPosts, setAllposts] = useState([])
     const navigate = useNavigate()
@@ -322,7 +324,7 @@ export const useGetAllPosts = () => {
                     navigate('/login')
                 }
                 if (data) {
-                    setAllposts(data.getAllPosts)
+                    setAllposts(data.getAllPostsPrivate)
                 }
             } catch (err) {
                 console.log(err)
@@ -330,12 +332,12 @@ export const useGetAllPosts = () => {
             }
         }
         FetchAllPosts()
-    }, [])
+    }, [refreshTrigger])
 
     return { allPosts }
 
 }
-export const useGetGroupData = (groupId) => {
+export const useGetGroupData = (groupId, refreshTrigger) => {
 
     const [groupData, setGroupData] = useState([])
     const [loading, setLoading] = useState(true)
@@ -366,7 +368,7 @@ export const useGetGroupData = (groupId) => {
             }
         }
         fetchGroupData()
-    }, [groupId])
+    }, [groupId, refreshTrigger])
 
     return { groupData, loading }
 
@@ -399,7 +401,7 @@ export const useGetOnePost = (id) => {
 }
 
 
-export const useSetComment = (postId) => {
+export const useSetComment = (postId, refreshComments) => {
 
     const [commentData, setCommentData] = useState({
         content: '',
@@ -413,7 +415,6 @@ export const useSetComment = (postId) => {
         const formData = new FormData()
 
         formData.append('content', commentData.content)
-        formData.append('groupId', commentData.groupId)
         formData.append('postId', postId)
 
         if (commentData.avatar) {
@@ -433,6 +434,7 @@ export const useSetComment = (postId) => {
             if (!data.loggedIn) {
                 navigate('/login')
             }
+            if (data.response === "success") refreshComments()
         } catch (err) {
             console.log(err)
         }
@@ -463,7 +465,7 @@ export const useSetComment = (postId) => {
     }
 }
 
-export const useAddFollow = (followId) => {
+export const useAddFollow = (followId, useContactCreated) => {
 
     const [isFollowing, setIsFollowing] = useState(false)
     const navigate = useNavigate()
@@ -485,6 +487,7 @@ export const useAddFollow = (followId) => {
                 navigate('/login')
             }
             if (data.response === "success") {
+                if (useContactCreated) useContactCreated()
                 setIsFollowing(true)
             }
         } catch (err) {
@@ -498,7 +501,7 @@ export const useAddFollow = (followId) => {
     }
 }
 
-export const useRespondNotification = () => {
+export const useRespondNotification = (refreshSidebar) => {
 
     const navigate = useNavigate()
 
@@ -522,6 +525,7 @@ export const useRespondNotification = () => {
             if (!data.loggedIn) {
                 navigate('/login')
             }
+            if (refreshSidebar) refreshSidebar()
         } catch (err) {
             console.log(err)
         }
@@ -530,13 +534,14 @@ export const useRespondNotification = () => {
 
 }
 
-export const useGetNotifications = () => {
+export const useGetNotifications = (refreshTrigger) => {
     const [notificationData, setNotificationData] = useState(null)
     const [loading, setLoading] = useState(true)
     const navigate = useNavigate()
 
     useEffect(() => {
         const fetchNotifications = async () => {
+            setLoading(true)
             const requestOptions = {
                 method: "GET",
                 credentials: "include"
@@ -544,7 +549,7 @@ export const useGetNotifications = () => {
             try {
                 const response = await fetch('http://localhost:8080/api/getNotifications', requestOptions)
                 const data = await response.json()
-                console.log(data)
+                // console.log(data)
                 if (!data.loggedIn) {
                     navigate('/login')
                 }
@@ -560,7 +565,7 @@ export const useGetNotifications = () => {
             }
         }
         fetchNotifications()
-    }, [navigate])
+    }, [navigate, refreshTrigger])
 
     return {
         notificationData,
@@ -569,7 +574,7 @@ export const useGetNotifications = () => {
 
 }
 
-export const useCreateGroup = () => {
+export const useCreateGroup = (onGroupCreated) => {
 
     const [groupData, setGroupData] = useState({
         title: '',
@@ -603,6 +608,7 @@ export const useCreateGroup = () => {
                     navigate('/login')
                 }
                 if (data.response === "success") {
+                    if (onGroupCreated) onGroupCreated()
                     navigate(`/group/${data.groupId}`)
                 }
             } catch (err) {
@@ -694,13 +700,12 @@ export const useCreateEvent = (groupId) => {
     }
 }
 
-export const useGetContacts = () => {
+export const useGetContacts = (refreshTrigger) => {
     const [contacts, setContacts] = useState(null)
     const [loading, setLoading] = useState(true)
     const navigate = useNavigate()
 
     useEffect(() => {
-
         const getContacts = async () => {
             const requestOptions = {
                 method: "GET",
@@ -724,7 +729,7 @@ export const useGetContacts = () => {
 
         }
         getContacts()
-    }, [navigate])
+    }, [navigate, refreshTrigger])
     return {
         contacts,
         loading
@@ -732,28 +737,36 @@ export const useGetContacts = () => {
 }
 
 
-export const useGetComments = (postId) => {
+export const useGetComments = (postId, refreshCommentTrigger) => {
+    const [comments, setComments] = useState([])
+    const [loading, setLoading] = useState(true)
     const navigate = useNavigate()
     useEffect(() => {
         const getComments = async () => {
             const requestOptions = {
-                method: "GET",
+                method: "POST",
                 credentials: "include",
-                body: JSON.stringify({ "id": postId })
+                body: JSON.stringify({ "id": Number(postId) })
             }
             try {
                 const response = await fetch("http://localhost:8080/api/getComments", requestOptions)
                 const data = await response.json()
-                console.log(data)
+                console.log("getcomment:", data)
                 if (!data.loggedIn) {
                     navigate('/login')
                 }
+                if (data.response === "success") {
+                    setComments(data.comments || [])
+                }
             } catch (err) {
                 console.log(err)
+            } finally {
+                setLoading(false)
             }
         }
         getComments()
-    }, [postId])
+    }, [postId, navigate, refreshCommentTrigger])
+    return { comments, loading }
 }
 
 export const useGetMessages = (userId) => {
@@ -898,4 +911,107 @@ export const useGetAllGroups = () => {
         groupData,
         loading
     }
+}
+
+export const UnFollow = (userId, onContactCreated) => {
+    const unFollow = async () => {
+        const requestOptions = {
+            method: 'DELETE',
+            credentials: 'include',
+            body: JSON.stringify({ "id": userId }),
+        }
+        try {
+            const response = await fetch('http://localhost:8080/api/unFollow', requestOptions)
+            const data = await response.json()
+            console.log(data)
+            if (data.response === "success") onContactCreated()
+        } catch (err) {
+            console.log(err)
+        }
+    }
+    console.log("calling unfollow")
+    unFollow()
+}
+
+export const useChangePrivacy = () => {
+    const navigate = useNavigate()
+    const changePrivacy = async (privacy) => {
+        const requestOptions = {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 'privacy': privacy })
+        }
+        console.log(privacy)
+        try {
+            const response = await fetch("http://localhost:8080/api/changePrivacy", requestOptions)
+            const data = await response.json()
+            console.log(data)
+            if (!data.loggedIn) {
+                navigate('/login')
+            }
+            if (data.response === "success") {
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+    return changePrivacy
+}
+
+export const useGetGroupInviteUsers = (groupId) => {
+    const [users, setUsers] = useState([])
+    const [loading, setLoading] = useState(false)
+    const navigate = useNavigate()
+
+    const fetchUsers = async () => {
+        setLoading(true)
+        const requestOptions = {
+            method: "POST",
+            credentials: "include",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ "groupId": groupId })
+        }
+        try {
+            const response = await fetch('http://localhost:8080/api/getGroupInviteUsers', requestOptions)
+            const data = await response.json()
+            console.log(data)
+            if (!data.loggedIn) {
+                navigate('/login')
+            }
+            if (data.response === "success") {
+                setUsers(data.users)
+            }
+        } catch (err) {
+            console.log(err)
+        } finally {
+            setLoading(false)
+        }
+    }
+    return {
+        users, loading, fetchUsers
+    }
+}
+
+export const useSendGroupInvite = () => {
+    const navigate = useNavigate()
+    const sendInvite = async (groupId, userId) => {
+        const requestOptions = {
+            method: 'POST',
+            credentials: "include",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ "groupId": groupId, 'userId': userId })
+        }
+        try {
+            const response = await fetch('http://localhost:8080/api/sendGroupInvite', requestOptions)
+            const data = await response.json()
+            console.log(data)
+            if (!data.loggedIn) {
+                navigate('/login')
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+    return { sendInvite }
 }

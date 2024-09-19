@@ -167,3 +167,13 @@ func (s *Store) CheckUserPrivacyStatus(userId int) (string, error) {
 	}
 	return privacy, nil
 }
+
+func (s *Store) ChangePrivacy(userId int, privacy string) error {
+	query := `UPDATE users SET privacy =? WHERE id = ?`
+	_, err := s.Db.Exec(query, privacy, userId)
+	if err != nil {
+		fmt.Println("err changing privacy")
+		return err
+	}
+	return nil
+}

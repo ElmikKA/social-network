@@ -36,20 +36,20 @@ func (s *Store) AddFollower(userId, follow int, pending string) (int, error) {
 
 func (s *Store) GetContacts(userId int) ([]models.Contacts, error) {
 	query := `
-	SELECT 
-	    u.id, 
-	    u.name, 
-	    u.avatar,
-	    CASE 
-	        WHEN f.userId = ? THEN 'following'
-	        WHEN f.following = ? THEN 'followee'
-	    END AS type
-	FROM followers f
-	JOIN users u ON (f.following = u.id OR f.userId = u.id)
-	WHERE (f.userId = ? OR f.following = ?) 
-	AND f.pending = 'completed'
-	AND u.id != ?;
-	`
+    SELECT
+        u.id,
+        u.name,
+        u.avatar,
+        CASE
+            WHEN f.userId = ? THEN 'following'
+            WHEN f.following = ? THEN 'followee'
+        END AS type
+    FROM followers f
+    JOIN users u ON (f.following = u.id OR f.userId = u.id)
+    WHERE (f.userId = ? OR f.following = ?)
+    AND f.pending = 'completed'
+    AND u.id != ?;
+    `
 
 	rows, err := s.Db.Query(query, userId, userId, userId, userId, userId)
 	if err != nil {
@@ -58,7 +58,8 @@ func (s *Store) GetContacts(userId int) ([]models.Contacts, error) {
 	}
 	defer rows.Close()
 
-	var contacts []models.Contacts
+	seenContacts := make(map[int]models.Contacts)
+
 	for rows.Next() {
 		var contact models.Contacts
 		err := rows.Scan(&contact.Id, &contact.Name, &contact.Avatar, &contact.Type)
@@ -66,6 +67,20 @@ func (s *Store) GetContacts(userId int) ([]models.Contacts, error) {
 			fmt.Println("error scanning contact info", err)
 			return nil, err
 		}
+
+		if existingContact, found := seenContacts[contact.Id]; found {
+			if contact.Type == "following" {
+				if existingContact.Type == "followee" {
+					seenContacts[contact.Id] = contact
+				}
+			}
+		} else {
+			seenContacts[contact.Id] = contact
+		}
+	}
+
+	contacts := make([]models.Contacts, 0, len(seenContacts))
+	for _, contact := range seenContacts {
 		contacts = append(contacts, contact)
 	}
 
@@ -104,7 +119,7 @@ func (s *Store) GetGroupChats(userId int) ([]models.GroupChats, error) {
 }
 
 func (s *Store) IsFollowing(userId, followee int) (string, error) {
-	query := `SELECT pending FROM followers WHERE (userId = ? AND following = ?) OR (userId = ? AND following = ?)`
+	query := `SELECT pending FROM followers WHERE userId = ? AND following = ?`
 	var pending string
 	err := s.Db.QueryRow(query, userId, followee, followee, userId).Scan(&pending)
 	if err != nil {
@@ -115,4 +130,14 @@ func (s *Store) IsFollowing(userId, followee int) (string, error) {
 		return pending, err
 	}
 	return pending, nil
+}
+
+func (s *Store) RemoveFollow(userId, followeeId int) error {
+	query := `DELETE FROM followers WHERE userId = ? AND following =?`
+	_, err := s.Db.Exec(query, userId, followeeId)
+	if err != nil {
+		fmt.Println("error removing follow", err)
+		return err
+	}
+	return nil
 }

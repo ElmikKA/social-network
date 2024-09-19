@@ -10,4 +10,5 @@ type Post struct {
 	Avatar    string `json:"avatar"`
 	CreatedAt string `json:"createdAt"`
 	Privacy   string `json:"privacy"`
+	CanSee    bool
 }

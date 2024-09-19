@@ -6,7 +6,7 @@ CREATE TABLE posts (
     groupId INTEGER NOT NULL,
     creator TEXT NOT NULL,
     title TEXC NOT NULL,
-    content TEXT NOT NULL,
+    content TEXT,
     avatar TEXT DEFAULT "",
     createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     privacy TEXT NOT NULL
