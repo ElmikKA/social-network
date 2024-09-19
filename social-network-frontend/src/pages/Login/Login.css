@@ -1,0 +1,147 @@
+.singin-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-image: url('../../assets/signin-page-background.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+
+.signin-container {
+    display: flex;
+    flex-direction: row;
+    height: 90vh;
+    width: 150vh;
+}
+
+.left-panel {
+    flex: 1;
+    background: linear-gradient(135deg, #FE9B33, #E86726, #B14B34);
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    color: white;
+    text-align: center;
+    border-radius: 20px 0px 0px 20px;
+    position: relative;
+    background-image: url('../../assets/left-panel-background.jpg');
+}
+
+.left-panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 20px 0px 0px 20px;
+    z-index: 1;
+}
+
+.left-panel .logo {
+    position: absolute;
+    top: 60px;
+    left: 50px;
+    z-index: 2;
+}
+
+.left-panel .welcome-message {
+    position: relative;
+    z-index: 2;
+}
+
+.left-panel .welcome-message h1 {
+    font-size: 36px;
+    margin-bottom: 10px;
+}
+
+.left-panel .welcome-message p {
+    font-size: 18px;
+    font-weight: 300;
+}
+
+.right-panel {
+    flex: 1;
+    background-color: #292C33;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    color: white;
+    border-radius: 0px 20px 20px 0px;
+}
+
+.right-panel h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    width: 100%;
+    max-width: 500px;
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #aaa;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: #303339;
+    color: white;
+    outline: none;
+}
+
+.btn {
+    width: 110%;
+    max-width: 500px;
+    padding: 12px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.continue-btn {
+    background-color: #FE9B33;
+    color: white;
+    margin-bottom: 10px;
+    transition: background-color ease-out 0.3s;
+}
+
+.continue-btn:hover {
+    background-color: #B14B34;
+}
+
+.register-btn {
+    background-color: #E86726;
+    color: white;
+    transition: background-color ease-out 0.3s;
+}
+
+.register-btn:hover {
+    background-color: #B14B34;
+}
+
+.or-separator {
+    margin: 10px 0;
+    font-size: 14px;
+    color: #999;
+    text-align: center;
+}

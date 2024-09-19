@@ -1,6 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@400..800&display=swap');
+
 * {
     border: 0px;
     margin: 0px;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    line-height: 1.6;
+    background-color: #292C33;
+    color: white;
+    font-family: 'Baloo Bhaijaan 2';
 }
 
 
@@ -90,6 +102,8 @@
     border: solid black 2px;
     padding: 5px;
 }
+
+
 
 .usersMain {
     /* width: 70%; */

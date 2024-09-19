@@ -1,7 +1,5 @@
 import { createRoot } from 'react-dom/client'
 import './index.css'
-
-
 import Register from './pages/Register/Register'
 import Login from './pages/Login/Login'
 import Profile from './pages/profile/Profile'
@@ -68,9 +66,6 @@ const Layout = () => {
     </div>
   )
 }
-
-
-
 const router = createBrowserRouter([
   {
     path: '/',
@@ -123,7 +118,6 @@ const router = createBrowserRouter([
     ]
   },
 ]);
-
 createRoot(document.getElementById('root')).render(
   <RouterProvider router={router} />
 )
