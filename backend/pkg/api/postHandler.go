@@ -11,7 +11,6 @@ import (
 )
 
 func (h *Handler) AddPost(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("adding post")
 	CorsEnabler(w, r)
 	if r.Method == http.MethodOptions {
 		return
@@ -55,7 +54,6 @@ func (h *Handler) AddPost(w http.ResponseWriter, r *http.Request) {
 		UserId:  user.Id,
 		GroupId: GroupId,
 	}
-	fmt.Println(post)
 
 	_, _, err = r.FormFile("avatar")
 	if err == nil {
@@ -69,8 +67,6 @@ func (h *Handler) AddPost(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		post.Avatar = filepath
-	} else {
-		fmt.Println("no avatar")
 	}
 
 	err = h.store.AddPost(post)
@@ -133,7 +129,6 @@ func (h *Handler) GetPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetAllPosts(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("getallpost")
 	CorsEnabler(w, r)
 	if r.Method == http.MethodOptions {
 		return
@@ -143,6 +138,14 @@ func (h *Handler) GetAllPosts(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		responseData["response"] = "failure"
 		responseData["message"] = "Method not allowed"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+	user, err := h.store.GetUserFromCookie(r)
+	if err != nil {
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(responseData)
 		return
@@ -167,16 +170,35 @@ func (h *Handler) GetAllPosts(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(responseData)
 		return
 	}
+	privPosts, err := h.store.GetAllNormalPostsPrivacy(user.Id)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			fmt.Println("no rows")
+			responseData["response"] = "success"
+			responseData["message"] = "GetAllPosts success"
+			responseData["getAllPosts"] = nil
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(responseData)
+			return
+		}
+		fmt.Println("error getallposts", err)
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		responseData["getAllPosts"] = nil
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
 	responseData["response"] = "success"
 	responseData["message"] = "GetAllPosts success"
 	responseData["getAllPosts"] = posts
+	responseData["getAllPostsPrivate"] = privPosts
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(responseData)
 }
 
 func (h *Handler) GetAllGroups(w http.ResponseWriter, r *http.Request) {
 	CorsEnabler(w, r)
-	fmt.Println("getallgroups")
 
 	responseData := make(map[string]interface{})
 	responseData["loggedIn"] = true

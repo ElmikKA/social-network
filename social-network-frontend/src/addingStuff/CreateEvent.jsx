@@ -1,13 +1,17 @@
 import React from 'react'
-import { useCreateEvent } from '../services/api'
+import { useCreateEvent } from '../api'
 
-const CreateEvent = () => {
-    const groupId = 1
+const CreateEvent = ({ setRefreshTrigger, groupId }) => {
     const { eventData, handleChange, handleSubmit } = useCreateEvent(groupId)
+
+    const submit = (e) => {
+        handleSubmit(e)
+        setRefreshTrigger(post => !post)
+    }
 
     return (
         <div className='createEventDiv'>
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', maxWidth: '400px', margin: '0 auto' }}>
+            <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', maxWidth: '400px', margin: '0 auto' }}>
                 create event
                 < label htmlFor="title" > Title</label >
                 <input type="text" id="title" value={eventData.title} onChange={handleChange} required />

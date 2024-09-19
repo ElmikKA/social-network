@@ -21,8 +21,9 @@ type UserStore interface {
 	GoOnline(id int) error
 	AddPost(post Post) error
 	GetPost(id int) (Post, error)
-	GetAllUserPosts(userId int) ([]Post, error)
+	GetAllUserPosts(userId, creator int) ([]Post, error)
 	GetAllNormalPosts() ([]Post, error)
+	GetAllNormalPostsPrivacy(userId int) ([]Post, error)
 	GetAllGroupPosts(groupId int) ([]Post, error)
 	GetGroupMembers(groupId int) ([]GroupMember, error)
 	GetIsPartOfGroup(groupId, userId int) (bool, error)
@@ -38,12 +39,18 @@ type UserStore interface {
 	AddEvent(event Event) error
 	RespondEvent(userId, eventId int, answer string) error
 	AddMessage(msg Message) error
-	GetOnlineGroupMembers(userId int) ([]int, error)
+	GetOnlineGroupMembers(groupId int) ([]int, error)
 	GetNotifications(userId int) ([]Notification, error)
 	GetContacts(userId int) ([]Contacts, error)
 	GetGroupChats(userId int) ([]GroupChats, error)
-	GetMessages(userId, groupId int) ([]Message, error)
+	GetMessages(partner, groupId, userId int) ([]Message, error)
 	IsFollowing(userId, followee int) (string, error)
 	GetAllGroups() ([]Group, error)
 	GetGroup(groupId int) (Group, error)
+	GetGroupJoinStatus(groupId, userId int) (string, error)
+	RemoveFollow(userId, followeeId int) error
+	ChangePrivacy(userId int, Privacy string) error
+	IsGroupOwner(userId, groupId int) (bool, error)
+	GetInvite(groupId int) ([]Users, error)
+	SendGroupInvite(GroupId, UserId int) error
 }

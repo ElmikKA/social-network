@@ -1,9 +1,11 @@
 import React from 'react'
-import { useCreateGroup } from '../../services/api'
+import { useCreateGroup } from '../../api'
+import { useOutletContext } from 'react-router-dom'
 
 const CreateGroupPage = () => {
+    const { onContactCreated } = useOutletContext()
 
-    const { groupData, handleChange, handleSubmit } = useCreateGroup()
+    const { groupData, handleChange, handleSubmit } = useCreateGroup(onContactCreated)
 
 
 

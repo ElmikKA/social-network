@@ -6,4 +6,5 @@ type Message struct {
 	Message    string `json:"message"`
 	ReceiverId int    `json:"receiverId"`
 	GroupId    int    `json:"groupId"`
+	Opened     bool   `json:"opened"`
 }

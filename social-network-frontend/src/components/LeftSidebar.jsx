@@ -1,17 +1,13 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useCheckLoggedIn } from '../services/api'
+import { useCheckLoggedIn } from '../api'
 
 const LeftSidebar = () => {
     const navigate = useNavigate()
-    const userId = 1
     const { userData, loading } = useCheckLoggedIn()
 
     if (loading) {
         return <div>Loading...</div>
-    }
-    if (userData) {
-        console.log(userData)
     }
     return (
         <div className='leftSidebar'>

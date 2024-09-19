@@ -15,8 +15,5 @@ CREATE TABLE users (
     privacy TEXT NOT NULL 
 );
 
--- adds a default row to the users table
-INSERT INTO users (name, email, password, firstname, lastname, dateOfBirth) 
-VALUES ("first","first@gmail.com", "$2a$10$b/dECtQ9x/udGiu7QKueT.fnck54Ozvnnumh3w67gFcYIW8RqR7d6","fName", "lName", "2024-09-05T11:11:42+00:00");
 -- +goose Down
 DROP TABLE users;

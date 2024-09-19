@@ -1,12 +1,15 @@
 import React from 'react'
-import { useRespondNotification } from '../../services/api'
+import { useRespondNotification } from '../../api'
+import { useOutletContext } from 'react-router-dom'
 
-const RespondNotificationButton = ({ idRef, type, response }) => {
+const RespondNotificationButton = ({ refreshSidebar, setRefreshTrigger, idRef, type, response }) => {
 
-    const respondNotification = useRespondNotification()
+
+    const respondNotification = useRespondNotification(refreshSidebar)
 
     const handleClick = () => {
         respondNotification(idRef, type, response)
+        setRefreshTrigger(prev => !prev)
         return <div>response sent</div>
     }
 

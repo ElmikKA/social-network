@@ -11,7 +11,6 @@ import (
 )
 
 func (h *Handler) CreateGroup(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("creating group")
 	CorsEnabler(w, r)
 	if r.Method == http.MethodOptions {
 		return
@@ -72,7 +71,6 @@ func (h *Handler) CreateGroup(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) RequestGroupJoin(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("sending group join request")
 	CorsEnabler(w, r)
 	if r.Method == http.MethodOptions {
 		return
@@ -144,7 +142,6 @@ func (h *Handler) RequestGroupJoin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetGroupData(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("get group data")
 	CorsEnabler(w, r)
 	if r.Method == http.MethodOptions {
 		return
@@ -173,7 +170,6 @@ func (h *Handler) GetGroupData(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("groupId", response.GroupId)
 	// check if part of group
 
 	partOfGroup, err := h.store.GetIsPartOfGroup(response.GroupId, h.id)
@@ -187,12 +183,20 @@ func (h *Handler) GetGroupData(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if !partOfGroup {
-		fmt.Println("not a member")
 		responseData["member"] = false
 	} else {
-		fmt.Println("member")
 		responseData["member"] = true
 	}
+
+	owner, err := h.store.IsGroupOwner(h.id, response.GroupId)
+	if err != nil {
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+	responseData["owner"] = owner
 
 	posts, err := h.store.GetAllGroupPosts(response.GroupId)
 	if err != nil {
@@ -209,8 +213,6 @@ func (h *Handler) GetGroupData(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// owner, all member, all events
-
 	groupMembers, err := h.store.GetGroupMembers(response.GroupId)
 	if err != nil {
 		fmt.Println("error getting groupmembers", err)
@@ -220,6 +222,17 @@ func (h *Handler) GetGroupData(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(responseData)
 		return
 	}
+
+	pending, err := h.store.GetGroupJoinStatus(response.GroupId, h.id)
+	if err != nil {
+		fmt.Println("err getting group join status", err)
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+	responseData["joinStatus"] = pending
 
 	events, err := h.store.GetGroupEvents(response.GroupId, h.id)
 	if err != nil {
@@ -247,9 +260,98 @@ func (h *Handler) GetGroupData(w http.ResponseWriter, r *http.Request) {
 	responseData["groupMembers"] = groupMembers
 	responseData["groupEvents"] = events
 	responseData["groupData"] = group
-	fmt.Println("get group data success")
-	fmt.Println(responseData)
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(responseData)
+}
+
+func (h *Handler) GetGrouInviteUsers(w http.ResponseWriter, r *http.Request) {
+	CorsEnabler(w, r)
+
+	responseData := make(map[string]interface{})
+	responseData["loggedIn"] = true
+	if r.Method != http.MethodPost {
+		responseData["response"] = "failure"
+		responseData["message"] = "Method not allowed"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+
+	var data struct {
+		GroupId int `json:"groupId"`
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&data)
+	if err != nil {
+		fmt.Println("error decoding getpost")
+		responseData["response"] = "failure"
+		responseData["message"] = "Invalid payload"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+
+	users, err := h.store.GetInvite(data.GroupId)
+	if err != nil {
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+
+	responseData["response"] = "success"
+	responseData["message"] = "GetAllPosts success"
+	responseData["users"] = users
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(responseData)
+}
+
+func (h *Handler) SendGroupInvite(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("sending invite")
+	CorsEnabler(w, r)
+
+	responseData := make(map[string]interface{})
+	responseData["loggedIn"] = true
+	if r.Method != http.MethodPost {
+		responseData["response"] = "failure"
+		responseData["message"] = "Method not allowed"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+
+	var data struct {
+		GroupId int `json:"groupId"`
+		UserId  int `json:"userId"`
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&data)
+	if err != nil {
+		fmt.Println("error decoding getpost")
+		responseData["response"] = "failure"
+		responseData["message"] = "Invalid payload"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+	fmt.Println(data)
+
+	err = h.store.SendGroupInvite(data.GroupId, data.UserId)
+	if err != nil {
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+
+	responseData["response"] = "success"
+	responseData["message"] = "Invite sent successfully"
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(responseData)
+
 }

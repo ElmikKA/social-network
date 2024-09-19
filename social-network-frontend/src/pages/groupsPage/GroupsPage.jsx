@@ -1,5 +1,5 @@
 import React from 'react'
-import { useGetAllGroups, useGetGroupData } from '../../services/api'
+import { useGetAllGroups, useGetGroupData } from '../../api'
 import GroupsBox from '../../components/GroupsBox'
 
 const GroupsPage = () => {

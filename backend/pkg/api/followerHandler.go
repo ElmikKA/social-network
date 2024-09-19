@@ -7,7 +7,6 @@ import (
 )
 
 func (h *Handler) AddFollow(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("adding follower")
 	CorsEnabler(w, r)
 	if r.Method == http.MethodOptions {
 		return
@@ -44,8 +43,6 @@ func (h *Handler) AddFollow(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(responseData)
 		return
 	}
-	fmt.Println(privacy)
-	// add notification
 
 	user, err := h.store.GetUserFromCookie(r)
 	if err != nil {
@@ -57,7 +54,6 @@ func (h *Handler) AddFollow(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if privacy == "public" {
-		fmt.Println("public user")
 		exists, err := h.store.AddFollower(user.Id, data.Id, "completed")
 		if err != nil {
 			responseData["response"] = "failure"
@@ -93,7 +89,6 @@ func (h *Handler) AddFollow(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(responseData)
 		return
 	}
-	fmt.Println(followerTableId)
 	if followerTableId == 0 {
 		fmt.Println("already following")
 		// the user is already following them
@@ -112,7 +107,6 @@ func (h *Handler) AddFollow(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetContacts(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("getting contacts")
 	CorsEnabler(w, r)
 	responseData := make(map[string]interface{})
 	responseData["loggedIn"] = true
@@ -123,7 +117,6 @@ func (h *Handler) GetContacts(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(responseData)
 		return
 	}
-	fmt.Println("getting contacts after get")
 	user, err := h.store.GetUserFromCookie(r)
 	if err != nil {
 		responseData["response"] = "failure"
@@ -141,6 +134,7 @@ func (h *Handler) GetContacts(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(responseData)
 		return
 	}
+	fmt.Println(contacts)
 	groupChats, err := h.store.GetGroupChats(user.Id)
 	if err != nil {
 		responseData["response"] = "failure"
@@ -154,6 +148,55 @@ func (h *Handler) GetContacts(w http.ResponseWriter, r *http.Request) {
 	responseData["message"] = "getContacts successful"
 	responseData["contacts"] = contacts
 	responseData["groupChats"] = groupChats
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(responseData)
+}
+
+func (h *Handler) UnFollow(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("here")
+	CorsEnabler(w, r)
+
+	responseData := make(map[string]interface{})
+	if r.Method != http.MethodDelete {
+		responseData["response"] = "failure"
+		responseData["message"] = "Method not allowed"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+
+	var data struct {
+		Id int `json:"id"`
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&data)
+	if err != nil {
+		responseData["response"] = "failure"
+		responseData["message"] = "Invalid payload"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+
+	user, err := h.store.GetUserFromCookie(r)
+	if err != nil {
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+	err = h.store.RemoveFollow(user.Id, data.Id)
+	if err != nil {
+		responseData["response"] = "failure"
+		responseData["message"] = "Internal server error"
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseData)
+		return
+	}
+
+	responseData["response"] = "success"
+	responseData["message"] = "Removed follow successfully"
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(responseData)
 }

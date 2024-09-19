@@ -64,8 +64,6 @@ BEGIN
 END;
 
 
-
-
 CREATE TRIGGER set_groupMembers_role_and_pending_and_create_notification
 AFTER INSERT ON groupMembers
 FOR EACH ROW
@@ -90,9 +88,19 @@ BEGIN
         (SELECT title FROM groups WHERE id = NEW.groupId),  
         'g_ref', 
         NEW.id  
-    FROM groupMembers
-    WHERE id = NEW.id AND pending = 'pending';  
-END;
+    WHERE NEW.invitee = 0;
+
+    INSERT INTO notifications (userId, content, type, idRef)
+    SELECT 
+        NEW.userId,
+        'You have been added to the group ' || (SELECT title FROM groups WHERE id = NEW.groupId),
+        'gi_ref',
+        NEW.id
+    WHERE NEW.invitee = 1;
+END
+
+
+
 
 CREATE TRIGGER delete_notification_on_groupMemberUpdate
 AFTER UPDATE OF pending ON groupMembers

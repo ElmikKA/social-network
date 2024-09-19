@@ -1,15 +1,19 @@
 import React, { useState } from 'react'
 
-import { useCreatePost } from '../../services/api'
+import { useCreatePost } from '../../api'
 
-const CreatePost = () => {
-    const groupId = 1 // 0 for normal post, any other int for the group you're posting in
+const CreatePost = ({ setRefreshTrigger, groupId }) => {
 
     const { postData, handleChange, handleFileChange, handleSubmit } = useCreatePost(groupId)
 
+    const submit = (e) => {
+        setRefreshTrigger(prev => !prev)
+        handleSubmit(e)
+    }
+
 
     return (
-        <form onSubmit={handleSubmit} method='POST' style={{ display: 'flex', flexDirection: 'column', maxWidth: '400px', margin: '0 auto' }}>
+        <form onSubmit={submit} method='POST' style={{ display: 'flex', flexDirection: 'column', maxWidth: '400px', margin: '0 auto' }}>
 
             <label htmlFor="title">Title</label>
             <input type="text" id="title" placeholder='Title' required value={postData.title} onChange={handleChange} />
@@ -24,7 +28,7 @@ const CreatePost = () => {
             <select id="privacy" value={postData.privacy} onChange={handleChange}>
                 <option value="public">public</option>
                 <option value="private">priate</option>
-                <option value="almostPrivate">almost private</option>
+                {/* <option value="almostPrivate">almost private</option> */}
             </select>
 
             <button type='submit'>Create post</button>
