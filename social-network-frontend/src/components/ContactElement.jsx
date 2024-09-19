@@ -5,11 +5,11 @@ const ContactElement = ({ contacts }) => {
     const navigate = useNavigate()
     return (
         <>
-            <p>Contacts:</p>
+            <p style={{fontWeight: '600'}}>Contacts:</p>
             {contacts?.length > 0 ? (
                 <div>
                     {contacts.map((contact) => (
-                        <button key={contact.Id}
+                        <div key={contact.Id}
                             className='contactChatList'
                             onClick={() => navigate(`/message/${contact.Id}`)} >
                             <img
@@ -18,7 +18,7 @@ const ContactElement = ({ contacts }) => {
                                 style={{ width: '50px', height: '50px', borderRadius: '50%' }}
                             />
                             {contact.Name}
-                        </button>
+                        </div>
                     ))}
                 </div>
             ) : (<p>No contacts available</p>)}

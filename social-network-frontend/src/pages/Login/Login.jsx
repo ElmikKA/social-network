@@ -26,7 +26,7 @@ function Login() {
                 <div className='right-panel'>
                     <h2>Sign In</h2>
                     <form onSubmit={handleSubmit} method='POST'>
-                        <div className='form-group'>
+                        <div className='login-form-group'>
                             <label htmlFor="name">Email Address or Username</label>
                             <input 
                                 type="text" 
@@ -37,7 +37,7 @@ function Login() {
                             />
                         </div>
 
-                        <div className='form-group'>
+                        <div className='login-form-group'>
                             <label htmlFor="password">Password</label>
                             <input 
                                 type="text" 

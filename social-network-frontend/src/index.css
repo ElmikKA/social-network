@@ -1,5 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@400..800&display=swap');
 
+:root {
+    --background-color: #292C33;
+    --primary-color: #303339; 
+    --secondary-color: #FE9B33;
+    --background-for-div: rgba(232, 103, 38, 0.5);
+    --placeholder-color-for-avatar: #14FFF1;
+}
+
 * {
     border: 0px;
     margin: 0px;
@@ -15,64 +23,352 @@ body {
     font-family: 'Baloo Bhaijaan 2';
 }
 
-
-.navbar {
-    width: 100%;
-    height: 50px;
-    top: 0;
-    position: sticky;
-    background-color: lavender;
-
-}
-
-/* 
-.footer {
+/* Header Section */
+.header {
     position: fixed;
-    bottom: 0;
     width: 100%;
-    background-color: lavender;
-    text-align: center;
-    padding: 5px 0px;
-} */
-
-.page {
-    min-height: 100vh;
-    background-color: lightcyan;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--primary-color);
 }
 
-.leftSidebar {
+.logo-and-search-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin: 10px 20px 20px 20px;
+}
+
+.search-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 450px;
+    height: 30px;
+    margin: 20px 0px 0px 50px;
+    background-color: var(--background-color);
+    border-radius: 30px;
+}
+
+.search-icon {
+    height: 20px;
+    width: 20px;
+    margin-left: 5px;
+}
+
+.search-input {
+    margin-left: 5px;
+    background: none;
+    width: 100%;
+    color: white;
+    outline: none;
+}
+
+.notification-message-profile-buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 200px;
+    margin-right: 20px;
+}
+
+.dropdown-menu {
+    position: absolute;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    top: 70px;
+    right: 190px;
+    width: 200px;
+    z-index: 10;
+}
+
+.dropdown-menu p {
+    margin: 0;
+    padding: 8px;
+    border-bottom: 1px solid #444;
+}
+
+.dropdown-menu p:last-child {
+    border-bottom: none;
+}
+
+/* ************* Right Sidebar Section **************** */
+.rightSidebar {
+    position: fixed;
+    right: 20px;
+    top: 120px;
+    height: 700px;
+    width: 300px;
+    background-color: var(--primary-color);
+    border-radius: 20px;
+    transform: translateX(120%);
+    transition: transform ease-in-out 0.5s;
+}
+
+.rightSidebar.open {
+    transform: translateX(0);
+}
+
+.right-sidebar-inner-div {
+    margin: 20px;
+}
+
+/* ************* Right Sidebar Section (Group Chats) **************** */
+.groupChatDiv {
+    margin-top: 20px;
+}
+
+.message-window-group {
+    display: flex;
+}
+
+.group-chat-list {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    transition: background-color 0.3s ease-in;
+}
+
+.group-chat-list:hover {
+    background-color: var(--background-for-div);
+}
+
+/* ************* Left Sidebar Section **************** */
+.left-sidebar {
+    position: fixed;
+    top: 93px;
     display: flex;
     flex-direction: column;
-    width: 15%;
-    background-color: lightblue;
+    width: 280px ;
+    height: 100vh;
+    background-color: var(--primary-color);
 }
 
-.leftSidebarButton {
+.right-sidebar-main-pages-div {
+    margin-left: 30px;
+}
+
+.left-sidebar-button-div {
+    display: flex;
+    width: 80%;
+    align-items: center;
+    padding: 5px 20px;
+    border-radius: 30px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-out;
+}
+
+.left-sidebar-button-div:hover {
+    background-color: var(--background-for-div);
+}
+
+.left-sidebar-button-div.active {
+    background-color: var(--background-for-div);
+}
+
+.left-sidebar-button-div h4 {
+    margin-left: 20px;
+}
+
+.left-sidebar-button {
     margin: 5px;
     padding: 5px;
 }
 
 
-.rightSidebar {
-    width: 15%;
-    background-color: lightblue;
+.page {
+    min-height: 100vh;
 }
 
 .outletBody {
+    flex-grow: 1;
     width: 70%;
 }
 
-.homePage {}
-
-.homePosts {
-    width: 100%;
-    background-color: gray;
+/* ************* Home Page Section **************** */
+.home-page {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
-.postBox {
-    border: 1px solid #ccc;
-    padding: 16px;
-    margin: 16px
+/* .home-posts {
+    width: 660px;
+} */
+
+/* ************* Create Posts Section **************** */
+.create-post {
+    width: 660px;
+    background-color: var(--primary-color);
+    display: flex;
+    justify-content: flex-start;
+    margin: 120px 30px 30px 30px;
+    border-radius: 20px;
+    padding: 30px;
+}
+
+.form-group {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 47%;
+}
+
+.form-group label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #aaa;
+}
+
+.form-field input, .form-field textarea, .form-field select {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--background-color);
+    color: white;
+    outline: none;
+}
+
+.create-post-submit-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30px;
+    width: 150px;
+    padding: 12px;
+    font-size: 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    background-color: #E86726;
+    transition: background-color 0.5s;
+    color: white;
+}
+
+.create-post-submit-button:hover {
+    background-color: var(--background-for-div);
+}
+
+.file-input-container {
+    display: flex;
+    align-items: center;
+}
+
+.file-input {
+    display: none;
+}
+
+/* Custom button */
+.custom-file-upload {
+    padding: 15px 15px;
+    background-image: url('./assets/image.png');
+    background-repeat: no-repeat;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    border: none;
+}
+
+/* Style for displaying the file name */
+.file-name {
+    margin-left: 10px;
+    color: white;
+    font-size: 14px;
+}
+
+/* ************* Posts Section **************** */
+
+.post-box {
+    width: 660px;
+    margin: 0px 30px 30px 30px;
+    padding: 30px;
+    border-radius: 20px;
+    background-color: var(--primary-color);
+}
+
+.post-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.user-avatar-and-name {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.avatar-placeholder {
+    height: 50px;
+    width: 50px;
+    border-radius: 50px;
+    background-color: var(--placeholder-color-for-avatar);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 25px;
+    font-weight: 600;
+}
+
+.post-content {
+    margin: 20px 0px;
+}
+
+.post-title-and-content {
+    margin: 0px 5px 10px 5px;
+}
+
+.name-and-time-div {
+    margin-left: 10px;
+    margin-top: 5px;
+}
+/* ******************Opening A Full Picture****************** */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    position: relative;
+    width: auto;
+    max-width: 90%;
+    max-height: 90%;
+    padding: 20px;
+}
+
+.full-image {
+    width: 100%;
+    height: 90vh;
+    border-radius: 12px;
+    cursor: pointer;
 }
 
 .notifications {
@@ -80,8 +376,42 @@ body {
     background-color: lightgray;
 }
 
-.profile {
-    background-color: gray;
+/* ******************Like and Comment Section****************** */
+.like-and-comment-section {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.345);
+}
+
+.like-and-comment {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 10px 5px 10px;
+    margin-right: 10px;
+    margin-top: 5px;
+    border-radius: 20px;
+    height: 30px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-out;
+}
+
+.like-and-comment p {
+    margin-left: 10px;
+}
+
+.like-and-comment:hover {
+    background-color: var(--background-for-div);
+}
+
+.profile { 
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    flex-grow: 1;
+    margin-top: 100px;
 }
 
 .followButton {
@@ -171,6 +501,7 @@ body {
 
 .commentBox {
     border: solid red 1px;
+    color: black;
 }
 
 .inviteBox {

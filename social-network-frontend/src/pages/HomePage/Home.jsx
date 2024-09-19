@@ -9,11 +9,11 @@ const Home = () => {
     const { allPosts } = useGetAllPosts(refreshTrigger)
 
     return (
-        <div className='homePage'>
-            <div className='createPost'>
+        <div className='home-page'>
+            <div className='create-post'>
                 <CreatePost setRefreshTrigger={setRefreshTrigger} groupId={0} />
             </div>
-            <div className='homePosts'>
+            <div className='home-posts'>
                 <PostBox allPosts={allPosts} />
             </div>
         </div>

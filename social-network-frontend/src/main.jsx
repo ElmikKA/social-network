@@ -29,6 +29,7 @@ const Layout = () => {
   const [refreshTrigger, setRefreshTrigger] = useState(false)
   const { contacts: fetchedContacts, loading } = useGetContacts(refreshTrigger);
   const [contacts, setContacts] = useState([]);
+  const [isMessengerOpen, setMessengerOpen] = useState(true);
 
   useEffect(() => {
     InitSocket()
@@ -46,21 +47,24 @@ const Layout = () => {
     setRefreshTrigger(prev => !prev)
   }, [])
 
+  const toggleMessenger = () => {
+      setMessengerOpen(!isMessengerOpen);
+  };
+
   if (loading) return <div>Loading...</div>
-
-
+  
   return (
     <div className='page'>
-      <Header />
+      <Header onToggleMessenger={toggleMessenger}/>
       <div className='main' style={{ display: "flex" }}>
         <LeftSidebar />
         <div className='outletBody'>
           <Outlet context={{ onContactCreated: handleContactCreated }} />
         </div>
-        <div className='notifications'>
+        {/* <div className='notifications'>
           <Notifications refreshSidebar={handleContactCreated} />
-        </div>
-        <RightSidebar contacts={contacts} />
+        </div> */}
+        <RightSidebar contacts={contacts} isOpen={isMessengerOpen} />
       </div>
       <Footer />
     </div>

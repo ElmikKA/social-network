@@ -83,20 +83,20 @@
     margin-bottom: 20px;
 }
 
-.form-group {
+.login-form-group {
     width: 100%;
     max-width: 500px;
     margin-bottom: 20px;
 }
 
-.form-group label {
+.login-form-group label {
     display: block;
     font-size: 14px;
     margin-bottom: 5px;
     color: #aaa;
 }
 
-.form-group input {
+.login-form-group input {
     width: 100%;
     padding: 10px;
     font-size: 16px;
