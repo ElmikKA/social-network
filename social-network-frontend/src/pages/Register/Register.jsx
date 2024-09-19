@@ -29,6 +29,20 @@ const Register = () => {
                         <button className='back-button-to-login-section' onClick={handleBackButtonClick}>BACK</button>
                     </div>
                     <form onSubmit={handleSubmit} method='POST' className='registration-form'>
+                    <div className='register-form-group'>
+                            <div className='register-form-field'>
+                                <label htmlFor="name">Name</label>
+                                <input type="text" id="name" placeholder="Name" required value={registerData.name} onChange={handleChange} />
+                            </div>
+                            <div className='register-form-field'>
+                            <label htmlFor="privacy">Privacy</label>
+                                <select id="privacy" value={registerData.privacy} onChange={handleChange}>
+                                    <option value="public">public</option>
+                                    <option value="private">private</option>
+                                    {/* <option value="almostPrivate">almost private</option> */}
+                                </select>
+                            </div>
+                        </div>
                         <div className='register-form-group'>
                             <div className='register-form-field'>
                                 <label htmlFor="email">Email</label>
