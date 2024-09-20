@@ -1,34 +1,38 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 
-import RespondNotificationButton from './ui/RespondNotificationButton'
-import { useGetNotifications } from '../api'
-import { useOutletContext } from 'react-router-dom'
+import RespondNotificationButton from './ui/RespondNotificationButton';
+import { useGetNotifications, useGetUser } from '../api';
 
 const Notifications = ({ refreshSidebar }) => {
-    const [refreshTrigger, setRefreshTrigger] = useState(false)
+    const [refreshTrigger, setRefreshTrigger] = useState(false);
 
-    const { notificationData, loading } = useGetNotifications(refreshTrigger)
+    const { notificationData, loading } = useGetNotifications(refreshTrigger);
+
+    console.log(notificationData)
 
     useEffect(() => {
         const intervalId = setInterval(() => {
-            setRefreshTrigger(prev => !prev)
-        }, 5000);
-        return () => clearInterval(intervalId)
-    }, [])
+            setRefreshTrigger(prev => !prev);
+        }, 5000); // Refresh every 5 seconds
+
+        return () => clearInterval(intervalId); // Cleanup interval on unmount
+    }, []);
 
     if (loading) {
-        return <div>Loading...</div>
+        return <div>Loading...</div>;
     }
+
     return (
         <div>
             {notificationData?.notifications?.length > 0 ? (
                 <ul>
                     {notificationData.notifications.map((notification) => (
-                        <li key={notification.id}>
-                            {notification.content}
-                            <RespondNotificationButton refreshSidebar={refreshSidebar} setRefreshTrigger={setRefreshTrigger} idRef={notification.idRef} type={notification.type} response="completed" ></RespondNotificationButton >
-                            <RespondNotificationButton refreshSidebar={refreshSidebar} setRefreshTrigger={setRefreshTrigger} idRef={notification.idRef} type={notification.type} response="rejected" ></RespondNotificationButton >
-                        </li>
+                        <NotificationItem
+                            key={notification.id}
+                            notification={notification}
+                            refreshSidebar={refreshSidebar}
+                            setRefreshTrigger={setRefreshTrigger}
+                        />
                     ))}
                 </ul>
             ) : (
@@ -36,6 +40,38 @@ const Notifications = ({ refreshSidebar }) => {
             )}
         </div>
     );
-}
+};
 
-export default Notifications
+export default Notifications;
+
+/* Separate NotificationItem Component */
+const NotificationItem = ({ notification, refreshSidebar, setRefreshTrigger }) => {
+    const { userData, loading: userLoading, error } = useGetUser(notification.idRef, setRefreshTrigger); // Assuming the notification has userId
+    console.log('id', typeof notification.id)
+
+    if (userLoading) return <li>Loading user data...</li>;
+    if (error) return <li>Error loading user data...</li>;
+
+    return (
+        <li>
+            {/* Notification content */}
+            {notification.content} from {userData?.getUser?.firstName || 'Unknown User'}
+
+            {/* RespondNotificationButton for Accept and Reject actions */}
+            <RespondNotificationButton
+                refreshSidebar={refreshSidebar}
+                setRefreshTrigger={setRefreshTrigger}
+                idRef={notification.idRef}
+                type={notification.type}
+                response="completed"
+            />
+            <RespondNotificationButton
+                refreshSidebar={refreshSidebar}
+                setRefreshTrigger={setRefreshTrigger}
+                idRef={notification.idRef}
+                type={notification.type}
+                response="rejected"
+            />
+        </li>
+    );
+};

@@ -5,6 +5,7 @@ import searchIcon from '../assets/search.png';
 import notificationBell from '../assets/notification-bell.png';
 import chatLine from '../assets/chat-line.png';
 import { useState } from "react";
+import Notifications from '../components/Notifications'
 
 function Header({ onToggleMessenger }) {
     const navigate = useNavigate()
@@ -30,7 +31,7 @@ function Header({ onToggleMessenger }) {
                 <img src={notificationBell} alt="" style={{cursor: 'pointer'}} onClick={toggleNotificationDropdown}/>
                 {isNotificationOpen && (
                     <div className="dropdown-menu">
-                        <p>No new notifications</p>
+                        <Notifications></Notifications>
                     </div>
                 )}
 

@@ -14,7 +14,7 @@ const RespondNotificationButton = ({ refreshSidebar, setRefreshTrigger, idRef, t
     }
 
     return (
-        <button onClick={handleClick}>
+        <button onClick={handleClick} className='btn '>
             {response === "completed" && <p>accept</p>}
             {response === "rejected" && <p>reject</p>}
         </button>

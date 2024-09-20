@@ -124,15 +124,17 @@ body {
 
 .message-window-group {
     display: flex;
+    flex-direction: column;
 }
 
 .group-chat-list {
     display: flex;
     align-items: center;
     cursor: pointer;
-    width: 100%;
+    width: 97%;
     padding: 10px;
     border-radius: 10px;
+    margin-bottom: 10px;
     transition: background-color 0.3s ease-in;
 }
 
@@ -191,20 +193,59 @@ body {
 .outletBody {
     flex-grow: 1;
     width: 70%;
+    display: flex;
+    justify-content: center;
+    margin-top: 100px;
+    margin-left: 200px;
 }
 
 /* ************* Home Page Section **************** */
 .home-page {
     display: flex;
     flex-grow: 1;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: center;
-    align-items: center;
 }
 
-/* .home-posts {
-    width: 660px;
-} */
+.main-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.notification-content, .event-content {
+    margin-top: 30px;
+    background-color: var(--primary-color);
+    height: fit-content;
+    padding: 30px;
+    width: 280px;
+    border-radius: 20px;
+}
+
+
+
+
+
+
+.notification-icon-wrapper {
+    position: relative; /* This allows the red dot to be positioned absolutely */
+    display: inline-block;
+}
+
+/* Red dot styling */
+.notification-dot {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 10px;
+    height: 10px;
+    background-color: red;
+    border-radius: 50%;
+    border: 2px solid white; /* Adds a white border to blend with the bell */
+}
+
+
+
+
 
 /* ************* Create Posts Section **************** */
 .create-post {
@@ -212,7 +253,7 @@ body {
     background-color: var(--primary-color);
     display: flex;
     justify-content: flex-start;
-    margin: 120px 30px 30px 30px;
+    margin: 30px 30px 30px 30px;
     border-radius: 20px;
     padding: 30px;
 }
@@ -290,7 +331,6 @@ body {
     border: none;
 }
 
-/* Style for displaying the file name */
 .file-name {
     margin-left: 10px;
     color: white;
@@ -316,6 +356,13 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.user-avatar {
+    height: 50px;
+    width: 50px;
+    border: 1px solid var(--secondary-color);
+    border-radius: 50px;
 }
 
 .avatar-placeholder {
