@@ -6,7 +6,7 @@ const ContactElement = ({ contacts }) => {
     return (
         <>
             <p style={{fontWeight: '600'}}>Contacts:</p>
-            {contacts?.length > 0 ? (
+            {contacts?.length > 0  && contacts !== null ? (
                 <div className='message-window-group'>
                     {contacts.map((contact) => (
                         <div key={contact.Id}
