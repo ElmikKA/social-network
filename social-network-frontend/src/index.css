@@ -6,6 +6,7 @@
     --secondary-color: #FE9B33;
     --background-for-div: rgba(232, 103, 38, 0.5);
     --placeholder-color-for-avatar: #14FFF1;
+    --secondary-color-for-text: #7E7E7E;
 }
 
 * {
@@ -21,6 +22,28 @@ body {
     background-color: #292C33;
     color: white;
     font-family: 'Baloo Bhaijaan 2';
+}
+
+
+/* Main pages layout */
+.page {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.main {
+    display: flex;
+    flex-grow: 1;
+    margin-top: 94px;
+}
+
+.outletBody {
+    display: flex;
+    justify-content: flex-start;
+    margin-left: 300px;
+    /* /* width: calc(100% - 280px); */
+    height: calc(100vh - 60px);
 }
 
 /* Header Section */
@@ -82,7 +105,7 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     top: 70px;
     right: 190px;
-    width: 200px;
+    width: 250px;
     z-index: 10;
 }
 
@@ -101,7 +124,7 @@ body {
     position: fixed;
     right: 20px;
     top: 120px;
-    height: 700px;
+    height: 600px;
     width: 300px;
     background-color: var(--primary-color);
     border-radius: 20px;
@@ -185,20 +208,6 @@ body {
     padding: 5px;
 }
 
-
-.page {
-    min-height: 100vh;
-}
-
-.outletBody {
-    flex-grow: 1;
-    width: 70%;
-    display: flex;
-    justify-content: center;
-    margin-top: 100px;
-    margin-left: 200px;
-}
-
 /* ************* Home Page Section **************** */
 .home-page {
     display: flex;
@@ -221,15 +230,10 @@ body {
     border-radius: 20px;
 }
 
-
-
-
-
-
-.notification-icon-wrapper {
-    position: relative; /* This allows the red dot to be positioned absolutely */
+/* .notification-icon-wrapper {
+    position: relative; 
     display: inline-block;
-}
+} */
 
 /* Red dot styling */
 .notification-dot {
@@ -240,9 +244,50 @@ body {
     height: 10px;
     background-color: red;
     border-radius: 50%;
-    border: 2px solid white; /* Adds a white border to blend with the bell */
+    border: 2px solid white;
 }
 
+
+/* ************* Notifications Section **************** */
+.notification-div {
+    display: flex;
+    flex-direction: column;
+}
+
+.notification-div ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin-left: 0;
+}
+
+.notification-div ul li {
+    margin: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.notification-button-div {
+    margin-top: 10px;
+}
+
+.notification-btn {
+    width: 47%;
+    max-width: 120px;
+    padding: 10px;
+    font-size: 12px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    background-color: var(--secondary-color);
+    color: white;
+    margin-right: 5px;
+    transition: background-color 0.3s ease-out;
+}
+
+.notification-btn:hover {
+    background-color: var(--background-for-div);
+}
 
 
 
@@ -452,13 +497,82 @@ body {
     background-color: var(--background-for-div);
 }
 
+/* ******************User Profile Section****************** */
 .profile { 
     display: flex;
-    justify-content: center;
     flex-direction: column;
     align-items: center;
     flex-grow: 1;
-    margin-top: 100px;
+    margin-top: 20px;
+}
+
+/* User header section */
+.user-profile-header {
+    background-color: var(--primary-color);
+    width: 1100px;
+    padding: 30px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.user-picture-name-and-email {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.user-name-and-email {
+    margin-left: 10px;
+}
+
+.user-name {
+    font-size: 36px;
+    font-weight: 600;
+}
+
+.user-email {
+    color: var(--secondary-color-for-text);
+}
+
+.change-privacy-form select{
+    padding: 10px;
+    width: 100px;
+    font-size: 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--background-color);
+    color: white;
+    outline: none;
+    margin-right: 10px;
+}
+
+
+.privacy-change-button {
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    background-color: var(--secondary-color);
+    border-radius: 20px;
+    padding: 10px;
+    transition: background-color 0.3s ease-out;
+}
+
+.privacy-change-button:hover {
+    background-color: var(--background-for-div);
+}
+
+.main-content-for-profile {
+    display: flex;
+    flex-direction: row;
+    width: 1100px;
+    gap: 30px;
+}
+
+.profile-information-div {
+    width: 410px;
+
 }
 
 .followButton {

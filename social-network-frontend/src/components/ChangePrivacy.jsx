@@ -15,12 +15,12 @@ const ChangePrivacy = ({ status }) => {
     }
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className='change-privacy-form'>
             <select id="privacy" value={privacy} onChange={handleChange}>
                 <option value="public">public</option>
                 <option value="private">private</option>
             </select>
-            <button type='submit'>change privacy</button>
+            <button type='submit' className='privacy-change-button'>Change privacy</button>
         </form>
 
     )

@@ -21,45 +21,64 @@ const Profile = () => {
         }
     }, [userData])
     console.log(privacy)
+    console.log(userData)
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error: {error}</p>;
     return (
         <div className='profile'>
-            <h2>Profile Page</h2>
-            <p>Name: {userData.getUser.name}</p>
-            <p>Email: {userData.getUser.email}</p>
 
+            <div className='user-profile-header'>
+                <div className='user-picture-name-and-email'>
+                    <div className='profile-picture'>
+                        <img
+                            src={`http://localhost:8080/api/avatars/${userData.getUser.avatar ? userData.getUser.avatar : '/db/assets /default.webp'}`}
+                            alt="Profile Avatar"
+                            style={{ width: '100px', height: '100px', borderRadius: '50%' }}
+                        />
+                    </div>
+                    <div className='user-name-and-email'>
+                        <p className='user-name'>{`${userData.getUser.firstName} ${userData.getUser.lastName}`}</p>
+                        <p className='user-email'>{userData.getUser.email}</p>
+                    </div>
+                </div>
 
+                <div className='follow-or-privacy-button'>
 
-            <p>First Name: {userData.getUser.firstName}</p>
-            <p>Last Name: {userData.getUser.lastName}</p>
-
-            <div>
-                <h3>Profile picture</h3>
-                <img
-                    src={`http://localhost:8080/api/avatars/${userData.getUser.avatar ? userData.getUser.avatar : '/db/assets /default.webp'}`}
-                    alt="Profile Avatar"
-                    style={{ width: '100px', height: '100px', borderRadius: '50%' }}
-                />
+                    {userData.ownPage && privacy && <ChangePrivacy status={privacy} />}
+                    
+                    {!userData.ownPage && <div>
+                    {
+                        userData.following !== '' ? <p className='followButton'>{userData.following === "completed" ? <UnFollowButton userId={userData.getUser.id} setRefreshTrigger={setRefreshTrigger} /> : userData.following}</p> :
+                            <FollowButton userId={id} setRefreshTrigger={setRefreshTrigger} />
+                    }
+                    </div>}
+                </div>
             </div>
-            {userData.ownPage && privacy && <ChangePrivacy status={privacy} />}
 
-            {!userData.ownPage && <div>
+            <div className='main-content-for-profile'>
 
-                {
-                    userData.following !== '' ? <p className='followButton'>{userData.following === "completed" ? <UnFollowButton userId={userData.getUser.id} setRefreshTrigger={setRefreshTrigger} /> : userData.following}</p> :
-                        <FollowButton userId={id} setRefreshTrigger={setRefreshTrigger} />
-                }
-            </div>}
+                <div className='profile-information-div'> 
+                    <h2>Profile Page</h2>
+                    <p>Name: {userData.getUser.name}</p>
+                    <p>Email: {userData.getUser.email}</p>
 
-            {userData.CanSee ?
-                <>
-                    <PostBox allPosts={userData.posts} />
-                </>
-                : <p>private profile</p>
-            }
 
+
+                    <p>First Name: {userData.getUser.firstName}</p>
+                    <p>Last Name: {userData.getUser.lastName}</p>
+                </div>
+
+                <div className='profile-posts'>
+                    {userData.CanSee ?
+                        <>
+                            <PostBox allPosts={userData.posts} />
+                        </>
+                        : <p>private profile</p>
+                    }   
+                </div>
+
+            </div>
         </div>
     );
 };
