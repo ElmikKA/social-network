@@ -36,7 +36,7 @@ const GroupPage = () => {
             {groupData.owner && <p>owner of group</p>}
 
 
-            {groupData?.joinStatus === 'completed' ? (
+            {groupData?.joinStatus === 'completed'&& groupData.owner ? (
                 <div>
                     <ToggleInviteGroup groupId={groupData.groupData.id} />
                     <EventBox setRefreshTrigger={setRefreshTrigger} events={groupData.groupEvents} />

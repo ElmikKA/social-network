@@ -641,7 +641,8 @@ body {
     font-weight: 600;
 }
 
-.users-main {
+/* ******************Users Section****************** */
+.users-main, .groups-main {
     display: flex;
     flex-direction: row;
     width: 100%;
@@ -669,7 +670,7 @@ body {
     cursor: pointer;
 }
 
-.user-profile-items:hover {
+.user-profile-items:hover, .groups-items:hover {
     background-color: var(--secondary-color);
 }
 
@@ -679,6 +680,32 @@ body {
     border-radius: 50px;
 }
 
+/* ******************Groups Section****************** */
+
+.groups-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    grid-template-rows: repeat(auto-fit, 100px);
+    gap: 20px;
+    width: 100%;
+}
+
+.groups-items {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 20px;
+    border-radius: 20px;
+    transition: background-color 0.3s ease-out;
+    cursor: pointer;
+    height: 60px;
+}
+
+.groups-items h3 {
+    margin-left: 20px;
+}
 
 .followButton {
     background-color: white;
@@ -697,15 +724,6 @@ body {
     height: 50px;
     border: solid black 2px;
     padding: 5px;
-}
-
-
-.groupsMain {
-    /* width: 70%; */
-}
-
-.groupBox {
-    padding: 10px;
 }
 
 .groupPage {
