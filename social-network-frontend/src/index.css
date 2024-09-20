@@ -40,10 +40,10 @@ body {
 
 .outletBody {
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
     margin-left: 300px;
-    /* /* width: calc(100% - 280px); */
-    height: calc(100vh - 60px);
+    margin-right: 200px;
+    width: 100%;
 }
 
 /* Header Section */
@@ -289,9 +289,6 @@ body {
     background-color: var(--background-for-div);
 }
 
-
-
-
 /* ************* Create Posts Section **************** */
 .create-post {
     width: 660px;
@@ -509,7 +506,7 @@ body {
 /* User header section */
 .user-profile-header {
     background-color: var(--primary-color);
-    width: 1100px;
+    width: 1000px;
     padding: 30px;
     border-radius: 20px;
     display: flex;
@@ -566,14 +563,122 @@ body {
 .main-content-for-profile {
     display: flex;
     flex-direction: row;
-    width: 1100px;
-    gap: 30px;
+    justify-content: space-between;
+    margin-top: 30px;
+    max-width: 1060px;
+}
+
+.profile .main-content-for-profile .profile-posts .post-box {
+    margin-right: 0px;
 }
 
 .profile-information-div {
-    width: 410px;
-
+    width: 310px;
+    border-radius: 20px;
 }
+
+.follower-and-post {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 30px;
+    background-color: var(--primary-color);
+    border-radius: 20px;
+    margin-bottom: 20px;
+}
+
+.followers-and-posts-conatiner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.profile-status-and-about-me, .user-information {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 30px;
+    background-color: var(--primary-color);
+    border-radius: 20px;
+    margin-bottom: 20px;
+}
+
+.profile-status {
+    display: flex;
+    flex-direction: row;
+    margin-top: 10px;
+}
+
+.profile-status h4 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10px;
+}
+
+.about-me {
+    border-top: 1px solid var(--secondary-color-for-text);
+    margin-top: 20px;
+}
+
+.about-me h3 {
+    margin-top: 10px;
+}
+
+.user-information-label p {
+    font-size: 14px;
+    color: var(--secondary-color-for-text);
+}
+
+/* No Posts or Private Profile  */
+.no-posts-or-private-profile {
+    width: 680px;
+    margin: 0px 0px 30px 30px;
+    background-color: var(--primary-color);
+    padding: 30px;
+    border-radius: 20px;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.users-main {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.users-profile-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-rows: repeat(auto-fit, 200px);
+    gap: 20px;
+    width: 100%;
+}
+
+.user-profile-items  {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 20px;
+    border-radius: 20px;
+    transition: background-color 0.3s ease-out;
+    cursor: pointer;
+}
+
+.user-profile-items:hover {
+    background-color: var(--secondary-color);
+}
+
+.user-profile-items img {
+    width: 100px;
+    background: none;
+    border-radius: 50px;
+}
+
 
 .followButton {
     background-color: white;
@@ -594,15 +699,6 @@ body {
     padding: 5px;
 }
 
-
-
-.usersMain {
-    /* width: 70%; */
-}
-
-.userBox {
-    padding: 10px;
-}
 
 .groupsMain {
     /* width: 70%; */

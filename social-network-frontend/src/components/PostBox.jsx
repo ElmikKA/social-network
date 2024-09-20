@@ -17,7 +17,9 @@ const PostBox = ({ allPosts }) => {
                     )
                 ))
             ) : (
-                <p>No posts</p>
+                <div className='no-posts-or-private-profile'>
+                    <p>No posts</p>
+                </div>
             )}
         </div>
     );
@@ -26,10 +28,8 @@ const PostBox = ({ allPosts }) => {
 const PostItem = ({ post, refreshTrigger }) => {
     const { userData, loading, error } = useGetUser(post.userId, refreshTrigger);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const navigate = useNavigate();
     const [showComments, setShowComments] = useState(false); // State to toggle comments
 
-    // Function to toggle comments
     const handleCommentToggle = () => {
         setShowComments(!showComments);
     };
@@ -102,8 +102,7 @@ const PostItem = ({ post, refreshTrigger }) => {
                     <p>Comments</p>
                 </div>
             </div>
-
-            {/* Conditionally render the CommentToggle component */}
+            
             {showComments && <CommentToggle postId={post.id} />}
         </div>
     );

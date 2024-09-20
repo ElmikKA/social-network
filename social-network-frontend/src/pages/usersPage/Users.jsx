@@ -9,7 +9,7 @@ const Users = () => {
 
 
     return (
-        <div className='usersMain'>
+        <div className='users-main'>
             <UserBox users={allUsers} />
         </div>
     )

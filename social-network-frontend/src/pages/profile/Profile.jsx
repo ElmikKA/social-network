@@ -6,6 +6,9 @@ import { useParams } from 'react-router-dom';
 import PostBox from '../../components/PostBox';
 import UnFollowButton from '../../components/ui/UnFollowButton';
 import ChangePrivacy from '../../components/ChangePrivacy';
+import privateStatus from '../../assets/private-status.png'
+import publicStatus from '../../assets/public-status.png'
+import { formatDate } from '../../utils/helpers';
 
 const Profile = () => {
     const { id } = useParams()
@@ -59,14 +62,76 @@ const Profile = () => {
             <div className='main-content-for-profile'>
 
                 <div className='profile-information-div'> 
-                    <h2>Profile Page</h2>
-                    <p>Name: {userData.getUser.name}</p>
-                    <p>Email: {userData.getUser.email}</p>
+                    <div className='follower-and-post'>
+                        <div className='followers-and-posts-conatiner'>
+                            <p>Follower</p>
+                            <h3>{userData.followers !== null ? userData.followers.length : 0}</h3>
+                        </div>
+
+                        <div className='followers-and-posts-conatiner'>
+                            <p>Posts</p>
+                            <h3>{userData.posts !== null ? userData.posts.length : 0}</h3>
+                        </div>
+                    </div>
+
+                    <div className='profile-status-and-about-me'>
+                        <h3>Profile Status</h3>
+
+                        <div className='profile-status'>
+                            {userData.getUser.privacy === 'private' ? 
+                                <>
+                                    <img src={privateStatus}></img>
+                                    <h4>Private</h4>
+                                </>
+                                :
+                                <>
+                                    <img src={publicStatus}></img>
+                                    <h4>Public</h4>
+                                </>
+                            }
+                        </div>
+
+                        <div className='about-me'>
+                            <h3>About Me</h3>
+                            <p>{userData.getUser.aboutMe !== '' ? userData.getUser.aboutMe : 'No information'}</p>
+                        </div>
+                        
 
 
+                    </div>
 
-                    <p>First Name: {userData.getUser.firstName}</p>
-                    <p>Last Name: {userData.getUser.lastName}</p>
+                    <div className='user-information'>
+                        <h3>User Information</h3>
+                        <div className='user-information-label'>
+                            <p>Name</p>
+                            <h4>{userData.getUser.name}</h4>
+                        </div>
+
+                        <div className='user-information-label'>
+                            <p>First Name</p>
+                            <h4>{userData.getUser.firstName}</h4>
+                        </div>
+
+                        <div className='user-information-label'>
+                            <p>Last Name</p>
+                            <h4>{userData.getUser.lastName}</h4>
+                        </div>
+
+                        <div className='user-information-label'>
+                            <p>Email</p>
+                            <h4>{userData.getUser.email}</h4>
+                        </div>
+
+                        <div className='user-information-label'>
+                            <p>Date of Birth</p>
+                            <h4>{formatDate(userData.getUser.dateOfBirth)}</h4>
+                        </div>
+
+                        <div className='user-information-label'>
+                            <p>Nickname</p>
+                            <h4>{userData.getUser.nickname}</h4>
+                        </div>
+                    </div>
                 </div>
 
                 <div className='profile-posts'>
@@ -74,7 +139,9 @@ const Profile = () => {
                         <>
                             <PostBox allPosts={userData.posts} />
                         </>
-                        : <p>private profile</p>
+                        : <div className='no-posts-or-private-profile'>
+                            <p>private profile</p>
+                        </div> 
                     }   
                 </div>
 
