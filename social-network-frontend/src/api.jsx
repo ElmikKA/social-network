@@ -56,39 +56,30 @@ export const useLogin = () => {
 }
 
 export const useLogOut = () => {
-    const [logOut, setLogOut] = useState(false)
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
+    const handleLogOut = async () => {
+        const requestOptions = {
+            method: "DELETE",
+            credentials: 'include'
+        };
 
-    useEffect(() => {
-        const sendLogOut = async () => {
-            const requestOptions = {
-                method: "DELETE",
-                credentials: 'include'
+        try {
+            const response = await fetch('http://localhost:8080/api/logout', requestOptions);
+            const data = await response.json();
+            console.log(data);
+
+            if (data.response === "success") {
+                closeSocket();
+                navigate('/login');
             }
-            try {
-                const response = await fetch('http://localhost:8080/api/logout', requestOptions)
-                const data = await response.json()
-                console.log(data)
-                if (data.response === "success") {
-                    navigate('/login')
-                    closeSocket()
-                }
-            } catch (err) {
-                console.log(err)
-            }
+        } catch (err) {
+            console.log("Logout error: ", err);
         }
-        if (logOut) {
-            sendLogOut()
-            setLogOut(false)
-        }
-    }, [logOut, navigate])
-    const handleLogOut = () => {
-        setLogOut(true)
-    }
-    return handleLogOut
+    };
 
-}
+    return handleLogOut;
+};
 
 export const useRegister = () => {
 

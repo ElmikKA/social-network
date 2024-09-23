@@ -17,8 +17,7 @@ const CommentInput = ({ refreshComments, postId }) => {
                 <CustomFileInput id="avatar" accept="image/*" onChange={handleFileChange}/>
                 <input type="text" id='content' placeholder='comment...' required value={commentData.content} onChange={handleChange} />
             </div>
-
-
+            
             <button type='submit'>Comment</button>
         </form>
     )

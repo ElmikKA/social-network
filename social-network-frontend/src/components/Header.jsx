@@ -11,11 +11,21 @@ function Header({ onToggleMessenger }) {
     const navigate = useNavigate()
 
     const [isNotificationOpen, setNotificationOpen] = useState(false);
+    const [isLogoutOpen, setLogoutOpen] = useState(false);
 
     const toggleNotificationDropdown = () => {
         setNotificationOpen(!isNotificationOpen);
+        if(!isNotificationOpen) {
+            setLogoutOpen(false)
+        }
     };
 
+    const toggleLogoutDropdown = () => {
+        setLogoutOpen(!isLogoutOpen);
+        if(!isLogoutOpen) {
+            setNotificationOpen(false);
+        }
+    };
 
     return (
         <header className="header">
@@ -37,8 +47,12 @@ function Header({ onToggleMessenger }) {
 
                 <img src={chatLine} alt="" style={{cursor: 'pointer'}} onClick={onToggleMessenger}/>
 
-                <div className="header-profile-picture" style={{width: '30px', height: '30px', background: 'white', borderRadius: '50px'}}>
-
+                <div className="header-profile-picture" onClick={toggleLogoutDropdown} style={{width: '30px', height: '30px', background: 'white', borderRadius: '50px', cursor: 'pointer'}}>
+                    {isLogoutOpen && (
+                        <div className="logout-dropdown-menu">
+                            <LogoutButton></LogoutButton>
+                        </div>
+                    )}
                 </div>
             </div>
         </header>
