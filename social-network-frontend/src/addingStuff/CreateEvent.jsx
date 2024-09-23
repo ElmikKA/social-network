@@ -10,19 +10,33 @@ const CreateEvent = ({ setRefreshTrigger, groupId }) => {
     }
 
     return (
-        <div className='createEventDiv'>
-            <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', maxWidth: '400px', margin: '0 auto' }}>
-                create event
-                < label htmlFor="title" > Title</label >
-                <input type="text" id="title" value={eventData.title} onChange={handleChange} required />
+        <div className='create-event-div'>
+            <form onSubmit={submit} style={{width: '100%'}}>
+                <h3>Create event</h3>
 
-                <label htmlFor="description">description</label>
-                <input type="text" id="description" value={eventData.description} onChange={handleChange} required />
+                <div className='form-group'>
+                    <div className='form-field'>
+                        < label htmlFor="title" > Title</label >
+                        <input type="text" id="title" value={eventData.title} onChange={handleChange} required />
+                    </div>
 
-                <label htmlFor="time">Date of Birth</label>
-                <input type="date" id="time" required value={eventData.time} onChange={handleChange} />
+                    <div className='form-field'>
+                        <label htmlFor="description">description</label>
+                        <input type="text" id="description" value={eventData.description} onChange={handleChange} required />
+                    </div>
+                </div>
 
-                <button type='submit'>create event</button>
+                <div className='form-group'>
+                    <div className='form-field'>
+                        <label htmlFor="time">Date of Birth</label>
+                        <input type="date" id="time" required value={eventData.time} onChange={handleChange} />
+                    </div>
+
+                    <div className='form-field'>
+                        <button type='submit'>Create event</button>
+                    </div>
+                </div>
+                                
             </form></div>
     )
 }

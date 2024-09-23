@@ -273,7 +273,7 @@ body {
 }
 
 /* ************* Create Posts Section **************** */
-.create-post, .create-group-post-div {
+.create-post, .create-group-post-div, .create-event-div {
     width: 660px;
     background-color: var(--primary-color);
     display: flex;
@@ -315,7 +315,7 @@ body {
     outline: none;
 }
 
-.create-post-submit-button {
+.create-post-submit-button, .create-event-div button {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -331,7 +331,7 @@ body {
     color: white;
 }
 
-.create-post-submit-button:hover {
+.create-post-submit-button:hover, .create-event-div button:hover {
     background-color: var(--background-for-div);
 }
 
@@ -803,7 +803,7 @@ body {
     margin-top: 10px;
     font-size: 16px;
     border: none;
-    border-radius: 20px;
+    border-radius: 10px;
     cursor: pointer;
     font-weight: 600;
     background-color: var(--secondary-color);
