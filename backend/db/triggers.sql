@@ -161,3 +161,19 @@ WHEN NEW.pending IN ('completed','rejected')
 BEGIN
     DELETE FROM notifications WHERE idRef = NEW.id;
 END;
+
+
+CREATE TRIGGER delete_completed_notification
+AFTER INSERT ON notifications
+FOR EACH ROW
+BEGIN
+    DELETE FROM notifications
+    WHERE id = NEW.id
+    AND NEW.type = 'g_ref'
+    AND EXISTS (
+        SELECT 1
+        FROM groupMembers
+        WHERE id = NEW.idRef
+        AND pending = 'completed'
+    );
+END;
