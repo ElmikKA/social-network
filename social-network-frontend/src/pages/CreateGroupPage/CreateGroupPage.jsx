@@ -17,10 +17,10 @@ const CreateGroupPage = () => {
                 <label htmlFor="title">Title</label>
                 <input type="text" id="title" required value={groupData.title} onChange={handleChange} />
 
-                <label htmlFor="description">description</label>
+                <label htmlFor="description">Description</label>
                 <input type="text" id="description" value={groupData.description} onChange={handleChange} required />
 
-                <button type='submit'>create group</button>
+                <button type='submit'>Create Group</button>
 
             </form>
         </div>

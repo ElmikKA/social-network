@@ -21,14 +21,12 @@ const RightSidebar = ({isOpen}) => {
             <div className='right-sidebar-inner-div'>
                 <div className='contactDiv'>
                     {
-                        contacts !== null ? <ContactElement contacts={contacts.contacts}/> : 'somethin wrong'
-
+                        <ContactElement contacts={contacts.contacts}/>
                     }
                 </div>
                 <div className='groupChatDiv'>
                     {
-                        contacts !== null ? <GroupElement groupChat={contacts.groupChats} /> : 'somethin else'
-
+                        <GroupElement groupChat={contacts.groupChats} />
                     }
                 </div>
             </div>
