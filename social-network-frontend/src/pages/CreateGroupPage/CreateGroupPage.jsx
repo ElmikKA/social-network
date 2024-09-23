@@ -10,17 +10,20 @@ const CreateGroupPage = () => {
 
 
     return (
-        <form onSubmit={handleSubmit} className='createGroupPage'>
+        <div className='create-group-page-div'>
+            <h2>Create a New Group</h2>
+            <form onSubmit={handleSubmit} className='create-group-page'>
 
-            <label htmlFor="title">Titl</label>
-            <input type="text" id="title" required value={groupData.title} onChange={handleChange} />
+                <label htmlFor="title">Title</label>
+                <input type="text" id="title" required value={groupData.title} onChange={handleChange} />
 
-            <label htmlFor="description">description</label>
-            <input type="text" id="description" value={groupData.description} onChange={handleChange} required />
+                <label htmlFor="description">description</label>
+                <input type="text" id="description" value={groupData.description} onChange={handleChange} required />
 
-            <button type='submit'>create group</button>
+                <button type='submit'>create group</button>
 
-        </form>
+            </form>
+        </div>
     )
 }
 

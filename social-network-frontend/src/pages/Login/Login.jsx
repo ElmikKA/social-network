@@ -40,7 +40,7 @@ function Login() {
                         <div className='login-form-group'>
                             <label htmlFor="password">Password</label>
                             <input 
-                                type="text" 
+                                type="password" 
                                 id="password"
                                 value={loginData.password} 
                                 onChange={handleChange} 

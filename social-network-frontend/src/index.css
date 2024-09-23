@@ -777,16 +777,25 @@ body {
     flex-grow: 1;
 }
 
-
-
-.groupPage {
-    /* width: 70%; */
-}
-
-.homePage {
+/* *****************Create Group Page********************* */
+.create-group-page-div {
     display: flex;
+    justify-content: center;
     flex-direction: column;
+    padding: 30px;
+    margin: 30px;
+    width: 100%;
+    height: 200px;
+    background-color: var(--primary-color);
+    border-radius: 20px;
 }
+
+.create-group-page {
+ display: flex;
+ flex-direction: column;
+ justify-content: center;
+}
+
 
 .createGroupPage {
     /* width: 70%; */
