@@ -6,7 +6,7 @@ const GroupElement = (groupChats) => {
     return (
         <>
             <p style={{fontWeight: '600'}}>GroupChats:</p>
-            {groupChats?.groupChat?.length > 0 ? (
+            {groupChats?.groupChat?.length > 0 && groupChats.groupChat !== null ? (
                 <div className='message-window-group'>
                     {groupChats.groupChat.map((groupChat) => (
                         <div key={groupChat.GroupId} className='group-chat-list' onClick={() => navigate(`/groupMessage/${groupChat.GroupId}`)}>

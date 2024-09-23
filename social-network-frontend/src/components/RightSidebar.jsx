@@ -11,6 +11,8 @@ const RightSidebar = ({isOpen}) => {
         return <div>Loading...</div>
     }
 
+    console.log(contacts)
+
     // add buttons to open message box
     // make the contacts and groups into elements
 
@@ -18,10 +20,16 @@ const RightSidebar = ({isOpen}) => {
         <div className={`rightSidebar ${isOpen ? 'open' : ''}`}>
             <div className='right-sidebar-inner-div'>
                 <div className='contactDiv'>
-                    <ContactElement contacts={contacts.contacts} />
+                    {
+                        contacts !== null ? <ContactElement contacts={contacts.contacts}/> : 'somethin wrong'
+
+                    }
                 </div>
                 <div className='groupChatDiv'>
-                    <GroupElement groupChat={contacts.groupChats} />
+                    {
+                        contacts !== null ? <GroupElement groupChat={contacts.groupChats} /> : 'somethin else'
+
+                    }
                 </div>
             </div>
         </div >
