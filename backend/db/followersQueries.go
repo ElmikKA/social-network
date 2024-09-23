@@ -95,6 +95,7 @@ func (s *Store) GetGroupChats(userId int) ([]models.GroupChats, error) {
 	FROM groups g
 	JOIN groupMembers gm ON g.id = gm.groupId
 	WHERE gm.userId = ?
+	AND gm.pending = "completed"
 	`
 
 	rows, err := s.Db.Query(query, userId)
