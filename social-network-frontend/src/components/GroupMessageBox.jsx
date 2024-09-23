@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useGetGroupMessages, useGetMessages } from '../api';
 import { useParams } from 'react-router-dom';
 import { GetSocket } from '../WebSocket';
@@ -10,6 +10,13 @@ const GroupMessageBox = () => {
     const { messages: initialMessages, loading } = useGetGroupMessages(GroupId)
     const [messages, setMessages] = useState([])
 
+    const messagesEndRef = useRef(null); 
+    const scrollToBottom = () => {
+        if (messagesEndRef.current) {
+            messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
     useEffect(() => {
         if (initialMessages && initialMessages.messages) {
             setMessages(initialMessages.messages)
@@ -17,6 +24,10 @@ const GroupMessageBox = () => {
             setMessages([])
         }
     }, [initialMessages])
+
+    useEffect(() => {
+        scrollToBottom(); 
+    }, [messages]); 
 
     if (loading) {
         return <p>Loading messages...</p>;
@@ -37,7 +48,7 @@ const GroupMessageBox = () => {
 
     if (!messages || messages.length === 0) return <div>No messages</div>
     return (
-        <div>
+        <div className='messages-box'>
             {messages.map((message, index) => (
                 <div key={index}>
                     <strong> {message.name}:</strong> {message.message}

@@ -7,7 +7,7 @@ const GroupMessagePage = () => {
 
 
     return (
-        <div>
+        <div className='group-messages-page'>
             <h1>Group Message Page</h1>
             <GroupMessageBox />
             <GroupMessageInput />

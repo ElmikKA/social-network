@@ -14,9 +14,9 @@ const CommentElement = ({ postId }) => {
     if (loading) return <p>Loading comments...</p>
 
     return (
-        <div>
-            <CommentInput refreshComments={refreshComments} postId={postId} />
+        <div className='comment-elements'>
             <CommentBox comments={comments} />
+            <CommentInput refreshComments={refreshComments} postId={postId} />
         </div>
     )
 }

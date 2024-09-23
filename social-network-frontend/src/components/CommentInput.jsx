@@ -1,5 +1,6 @@
 import React from 'react'
 import { useSetComment } from '../api'
+import { CustomFileInput } from './ui/CustomeFile'
 
 const CommentInput = ({ refreshComments, postId }) => {
 
@@ -11,11 +12,12 @@ const CommentInput = ({ refreshComments, postId }) => {
     }
 
     return (
-        <form onSubmit={submit} method='POST' className='commentInput'>
+        <form onSubmit={submit} method='POST' className='comment-input'>
+            <div style={{width: '100%', marginTop: '10px'}}>
+                <CustomFileInput id="avatar" accept="image/*" onChange={handleFileChange}/>
+                <input type="text" id='content' placeholder='comment...' required value={commentData.content} onChange={handleChange} />
+            </div>
 
-            <input type="text" id='content' placeholder='comment...' required value={commentData.content} onChange={handleChange} />
-
-            <input type="file" id="avatar" accept='image/*' onChange={handleFileChange} />
 
             <button type='submit'>Comment</button>
         </form>

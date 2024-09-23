@@ -28,8 +28,8 @@ const MessageBox = () => {
     }, [initialMessages])
 
     useEffect(() => {
-        scrollToBottom(); // Automatically scroll to the bottom when messages change
-    }, [messages]); // This will run whenever the messages array is updated
+        scrollToBottom(); 
+    }, [messages]); 
 
     if (loading) {
         return <p>Loading messages...</p>;
@@ -53,7 +53,7 @@ const MessageBox = () => {
     return (
         <div className='messages-box'>
             {messages.map((message, index) => (
-                <div key={index} className={message.receiverId === receiverId || message.senderId === receiverId  ? 'message-right' : 'message-left'}>
+                <div key={index}>
                     <strong> {message.name}:</strong> {message.message} {index}
                 </div>
             ))}

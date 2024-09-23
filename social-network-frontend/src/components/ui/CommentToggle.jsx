@@ -4,8 +4,7 @@ import CommentElement from './CommentElement'
 const CommentToggle = ({ postId }) => {
 
     return (
-        <div className='commentToggle' >
-            <p>opened comments</p>
+        <div className='comment-toggle' >
             <CommentElement postId={postId} />
         </div >
     )

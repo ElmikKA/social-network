@@ -389,6 +389,7 @@ body {
     border-radius: 50px;
 }
 
+
 .avatar-placeholder {
     height: 50px;
     width: 50px;
@@ -817,7 +818,7 @@ body {
 }
 
 /* *****************Messages Page********************* */
-.message-page {
+.message-page, .group-messages-page {
     display: flex;
     flex-direction: column;
     width: 600px;
@@ -838,7 +839,7 @@ body {
     overflow-y: auto;
 }
 
-.messages-input-div {
+.messages-input-div, .comment-input {
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -874,48 +875,90 @@ body {
 .messages-input-div button:hover {
     background-color: var(--background-for-div);
 }
-.createGroupPage {
-    /* width: 70%; */
+
+/* *****************Comment Section********************* */
+.comment-toggle {
     display: flex;
     flex-direction: column;
+    width: 100%;
+    margin-top: 10px;
 }
 
-.groupEventDiv {
-    border: solid gray 1px;
-}
-
-.groupEventBox {
+.comment-box {
+    background-color: var(--background-color);
     padding: 10px;
-    border: solid black 1px;
-}
-
-.createEventDiv {
-    border: solid black 1px;
-}
-
-.createPost {
-    border: solid black 1px;
-}
-
-.commentToggle {
-    background-color: white;
-    border: solid white 1px;
-}
-
-.commentInput {
     display: flex;
     flex-direction: column;
-    max-width: 400px;
-    margin: 0 auto
+    border-radius: 20px;
+    margin-bottom: 10px;
 }
 
-.commentMain {
-    border: solid black 1px;
+.user-avatar-and-name-comment {
+    display: flex;
+    align-items: center;
 }
 
-.commentBox {
-    border: solid red 1px;
-    color: black;
+.user-avatar-comment {
+    height: 50px;
+    width: 50px;
+    border: 1px solid var(--secondary-color);
+    border-radius: 50px;
+}
+
+.avatar-placeholder-comment {
+    height: 32px;
+    width: 32px;
+    border-radius: 50px;
+    background-color: var(--placeholder-color-for-avatar);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 15px;
+    font-weight: 600;
+}
+.name-and-time-div-comment {
+    margin-left: 10px;
+    font-size: 14px;
+}
+
+.comment-input {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 20px;
+
+}
+
+.comment-input input {
+    width: 90%;
+    height: 30px;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--background-color);
+    color: white;
+    outline: none;
+}
+
+.comment-input button {
+    width: 150px;
+    height: 40px;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    background-color: var(--secondary-color);
+    color: white;
+    margin-bottom: 5px;
+    transition: background-color 0.3s ease-out;
+}
+
+.comment-input button:hover {
+    background-color: var(--background-for-div);
 }
 
 .inviteBox {
