@@ -34,7 +34,7 @@ const MessageInput = () => {
     };
 
     return (
-        <div>
+        <div className='messages-input-div'>
             <input
                 type="text"
                 placeholder='Type a message...'

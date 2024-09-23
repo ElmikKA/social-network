@@ -1,5 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@400..800&display=swap');
 
+:root {
+    --background-color: #292C33;
+    --primary-color: #303339; 
+    --secondary-color: #FE9B33;
+    --background-for-div: rgba(232, 103, 38, 0.5);
+    --placeholder-color-for-avatar: #14FFF1;
+    --secondary-color-for-text: #7E7E7E;
+}
+
 * {
     border: 0px;
     margin: 0px;
@@ -16,63 +25,421 @@ body {
 }
 
 
-.navbar {
-    width: 100%;
-    height: 50px;
-    top: 0;
-    position: sticky;
-    background-color: lavender;
-
-}
-
-/* 
-.footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background-color: lavender;
-    text-align: center;
-    padding: 5px 0px;
-} */
-
+/* Main pages layout */
 .page {
-    min-height: 100vh;
-    background-color: lightcyan;
-}
-
-.leftSidebar {
     display: flex;
     flex-direction: column;
-    width: 15%;
-    background-color: lightblue;
+    height: 100vh;
 }
 
-.leftSidebarButton {
+.main {
+    display: flex;
+    flex-grow: 1;
+    margin-top: 94px;
+}
+
+.outletBody {
+    display: flex;
+    justify-content: center;
+    margin-left: 300px;
+    margin-right: 200px;
+    width: 100%;
+}
+
+/* Header Section */
+.header {
+    position: fixed;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--primary-color);
+}
+
+.logo-and-search-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin: 10px 20px 20px 20px;
+}
+
+.search-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 450px;
+    height: 30px;
+    margin: 20px 0px 0px 50px;
+    background-color: var(--background-color);
+    border-radius: 30px;
+}
+
+.search-icon {
+    height: 20px;
+    width: 20px;
+    margin-left: 5px;
+}
+
+.search-input {
+    margin-left: 5px;
+    background: none;
+    width: 100%;
+    color: white;
+    outline: none;
+}
+
+.notification-message-profile-buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 200px;
+    margin-right: 20px;
+}
+
+.dropdown-menu {
+    position: absolute;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    top: 70px;
+    right: 190px;
+    width: 250px;
+    z-index: 10;
+}
+
+.dropdown-menu p {
+    margin: 0;
+    padding: 8px;
+    border-bottom: 1px solid #444;
+}
+
+.dropdown-menu p:last-child {
+    border-bottom: none;
+}
+
+/* ************* Right Sidebar Section **************** */
+.rightSidebar {
+    position: fixed;
+    right: 20px;
+    top: 120px;
+    height: 600px;
+    width: 300px;
+    background-color: var(--primary-color);
+    border-radius: 20px;
+    transform: translateX(120%);
+    transition: transform ease-in-out 0.5s;
+}
+
+.rightSidebar.open {
+    transform: translateX(0);
+}
+
+.right-sidebar-inner-div {
+    margin: 20px;
+}
+
+/* ************* Right Sidebar Section (Group Chats) **************** */
+.groupChatDiv {
+    margin-top: 20px;
+}
+
+.message-window-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.group-chat-list {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    width: 97%;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    transition: background-color 0.3s ease-in;
+}
+
+.group-chat-list:hover {
+    background-color: var(--background-for-div);
+}
+
+/* ************* Left Sidebar Section **************** */
+.left-sidebar {
+    position: fixed;
+    top: 93px;
+    display: flex;
+    flex-direction: column;
+    width: 280px ;
+    height: 100vh;
+    background-color: var(--primary-color);
+}
+
+.right-sidebar-main-pages-div {
+    margin-left: 30px;
+}
+
+.left-sidebar-button-div {
+    display: flex;
+    width: 80%;
+    align-items: center;
+    padding: 5px 20px;
+    border-radius: 30px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-out;
+}
+
+.left-sidebar-button-div:hover {
+    background-color: var(--background-for-div);
+}
+
+.left-sidebar-button-div.active {
+    background-color: var(--background-for-div);
+}
+
+.left-sidebar-button-div h4 {
+    margin-left: 20px;
+}
+
+.left-sidebar-button {
     margin: 5px;
     padding: 5px;
 }
 
-
-.rightSidebar {
-    width: 15%;
-    background-color: lightblue;
+/* ************* Home Page Section **************** */
+.home-page {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: row;
+    justify-content: center;
 }
 
-.outletBody {
-    width: 70%;
+.main-content {
+    display: flex;
+    flex-direction: column;
 }
 
-.homePage {}
+.notification-content, .event-content {
+    margin-top: 30px;
+    background-color: var(--primary-color);
+    height: fit-content;
+    padding: 30px;
+    width: 280px;
+    border-radius: 20px;
+}
 
-.homePosts {
+
+/* ************* Notifications Section **************** */
+.notification-div {
+    display: flex;
+    flex-direction: column;
+}
+
+.notification-div ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin-left: 0;
+}
+
+.notification-div ul li {
+    margin: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.notification-button-div {
+    margin-top: 10px;
+}
+
+.notification-btn {
+    width: 47%;
+    max-width: 120px;
+    padding: 10px;
+    font-size: 12px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    background-color: var(--secondary-color);
+    color: white;
+    margin-right: 5px;
+    transition: background-color 0.3s ease-out;
+}
+
+.notification-btn:hover {
+    background-color: var(--background-for-div);
+}
+
+/* ************* Create Posts Section **************** */
+.create-post, .create-group-post-div {
+    width: 660px;
+    background-color: var(--primary-color);
+    display: flex;
+    justify-content: flex-start;
+    margin: 30px;
+    border-radius: 20px;
+    padding: 30px;
+}
+
+.form-group {
+    display: flex;
+    justify-content: space-between;
     width: 100%;
-    background-color: gray;
+    margin-bottom: 10px;
 }
 
-.postBox {
-    border: 1px solid #ccc;
-    padding: 16px;
-    margin: 16px
+.form-field {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 47%;
+}
+
+.form-group label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #aaa;
+}
+
+.form-field input, .form-field textarea, .form-field select {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--background-color);
+    color: white;
+    outline: none;
+}
+
+.create-post-submit-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30px;
+    width: 150px;
+    padding: 12px;
+    font-size: 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    background-color: #E86726;
+    transition: background-color 0.5s;
+    color: white;
+}
+
+.create-post-submit-button:hover {
+    background-color: var(--background-for-div);
+}
+
+.file-input-container {
+    display: flex;
+    align-items: center;
+}
+
+.file-input {
+    display: none;
+}
+
+/* ************* Custome Button **************** */
+.custom-file-upload {
+    padding: 15px 15px;
+    background-image: url('./assets/image.png');
+    background-repeat: no-repeat;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    border: none;
+}
+
+.file-name {
+    margin-left: 10px;
+    color: white;
+    font-size: 14px;
+}
+
+/* ************* Posts Section **************** */
+.post-box {
+    width: 660px;
+    margin: 0px 30px 30px 30px;
+    padding: 30px;
+    border-radius: 20px;
+    background-color: var(--primary-color);
+}
+
+.post-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.user-avatar-and-name {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.user-avatar {
+    height: 50px;
+    width: 50px;
+    border: 1px solid var(--secondary-color);
+    border-radius: 50px;
+}
+
+.avatar-placeholder {
+    height: 50px;
+    width: 50px;
+    border-radius: 50px;
+    background-color: var(--placeholder-color-for-avatar);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 25px;
+    font-weight: 600;
+}
+
+.post-content {
+    margin: 20px 0px;
+}
+
+.post-title-and-content {
+    margin: 0px 5px 10px 5px;
+}
+
+.name-and-time-div {
+    margin-left: 10px;
+    margin-top: 5px;
+}
+/* ******************Opening A Full Picture****************** */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    position: relative;
+    width: auto;
+    max-width: 90%;
+    max-height: 90%;
+    padding: 20px;
+}
+
+.full-image {
+    width: 100%;
+    height: 90vh;
+    border-radius: 12px;
+    cursor: pointer;
 }
 
 .notifications {
@@ -80,8 +447,246 @@ body {
     background-color: lightgray;
 }
 
-.profile {
-    background-color: gray;
+/* ******************Like and Comment Section****************** */
+.like-and-comment-section {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.345);
+}
+
+.like-and-comment {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 10px 5px 10px;
+    margin-right: 10px;
+    margin-top: 5px;
+    border-radius: 20px;
+    height: 30px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-out;
+}
+
+.like-and-comment p {
+    margin-left: 10px;
+}
+
+.like-and-comment:hover {
+    background-color: var(--background-for-div);
+}
+
+/* ******************User Profile Section****************** */
+.profile { 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-grow: 1;
+    margin-top: 20px;
+}
+
+/* User header section */
+.user-profile-header {
+    background-color: var(--primary-color);
+    width: 1000px;
+    padding: 30px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.user-picture-name-and-email {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.user-name-and-email {
+    margin-left: 10px;
+}
+
+.user-name {
+    font-size: 36px;
+    font-weight: 600;
+}
+
+.user-email {
+    color: var(--secondary-color-for-text);
+}
+
+.change-privacy-form select{
+    padding: 10px;
+    width: 100px;
+    font-size: 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--background-color);
+    color: white;
+    outline: none;
+    margin-right: 10px;
+}
+
+
+.privacy-change-button {
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    background-color: var(--secondary-color);
+    border-radius: 20px;
+    padding: 10px;
+    transition: background-color 0.3s ease-out;
+}
+
+.privacy-change-button:hover {
+    background-color: var(--background-for-div);
+}
+
+.main-content-for-profile {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 30px;
+    max-width: 1060px;
+}
+
+.profile .main-content-for-profile .profile-posts .post-box {
+    margin-right: 0px;
+}
+
+.profile-information-div {
+    width: 310px;
+    border-radius: 20px;
+}
+
+.follower-and-post {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 30px;
+    background-color: var(--primary-color);
+    border-radius: 20px;
+    margin-bottom: 20px;
+}
+
+.followers-and-posts-conatiner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.profile-status-and-about-me, .user-information {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 30px;
+    background-color: var(--primary-color);
+    border-radius: 20px;
+    margin-bottom: 20px;
+}
+
+.profile-status {
+    display: flex;
+    flex-direction: row;
+    margin-top: 10px;
+}
+
+.profile-status h4 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10px;
+}
+
+.about-me {
+    border-top: 1px solid var(--secondary-color-for-text);
+    margin-top: 20px;
+}
+
+.about-me h3 {
+    margin-top: 10px;
+}
+
+.user-information-label p {
+    font-size: 14px;
+    color: var(--secondary-color-for-text);
+}
+
+/* No Posts or Private Profile  */
+.no-posts-or-private-profile {
+    width: 680px;
+    margin: 0px 0px 30px 30px;
+    background-color: var(--primary-color);
+    padding: 30px;
+    border-radius: 20px;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+/* ******************Users Section****************** */
+.users-main, .groups-main {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.users-profile-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-rows: repeat(auto-fit, 200px);
+    gap: 20px;
+    width: 100%;
+}
+
+.user-profile-items  {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 20px;
+    border-radius: 20px;
+    transition: background-color 0.3s ease-out;
+    cursor: pointer;
+}
+
+.user-profile-items:hover, .groups-items:hover {
+    background-color: var(--secondary-color);
+}
+
+.user-profile-items img {
+    width: 100px;
+    background: none;
+    border-radius: 50px;
+}
+
+/* ******************Groups Section****************** */
+
+.groups-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    grid-template-rows: repeat(auto-fit, 100px);
+    gap: 20px;
+    width: 100%;
+}
+
+.groups-items {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 20px;
+    border-radius: 20px;
+    transition: background-color 0.3s ease-out;
+    cursor: pointer;
+    height: 60px;
+}
+
+.groups-items h3 {
+    margin-left: 20px;
 }
 
 .followButton {
@@ -103,33 +708,172 @@ body {
     padding: 5px;
 }
 
-
-
-.usersMain {
-    /* width: 70%; */
+/* ******************Group Section****************** */
+.group-page {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
 }
 
-.userBox {
-    padding: 10px;
-}
-
-.groupsMain {
-    /* width: 70%; */
-}
-
-.groupBox {
-    padding: 10px;
-}
-
-.groupPage {
-    /* width: 70%; */
-}
-
-.homePage {
+.group-header-and-information {
     display: flex;
     flex-direction: column;
+    width: 300px;
+    margin: 30px;
 }
 
+.group-picture-and-name, .about-the-group-div, .group-events {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--primary-color);
+    width: 100%;
+    padding: 30px;
+    border-radius: 20px;
+    margin-bottom: 30px;
+}
+
+.about-the-group-div {
+    display: flex;
+    align-items: baseline;
+}
+
+.group-posts-members-events-section {
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
+}
+
+.members-posts-events {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.group-events {
+    align-items: baseline;
+}
+
+.group-posts {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+/* *****************Create Group Page********************* */
+.create-group-page-div {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    padding: 30px;
+    margin: 30px;
+    width: 1100px;
+    height: 200px;
+    background-color: var(--primary-color);
+    border-radius: 20px;
+}
+
+.create-group-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.create-group-page label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #aaa;
+}
+
+.create-group-page input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--background-color);
+    color: white;
+    outline: none;
+}
+
+.create-group-page button {
+    width: 200px;
+    padding: 10px;
+    margin-top: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    background-color: var(--secondary-color);
+    color: white;
+    margin-right: 5px;
+    transition: background-color 0.3s ease-out;
+}
+
+.create-group-page button:hover {
+    background-color: var(--background-for-div);
+}
+
+/* *****************Messages Page********************* */
+.message-page {
+    display: flex;
+    flex-direction: column;
+    width: 600px;
+    height: 80vh;
+    background-color: var(--primary-color);
+    margin: 30px;
+    padding: 30px;
+    border-radius: 20px;
+}
+
+.messages-box {
+    width: 100%;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    overflow-y: auto;
+}
+
+.messages-input-div {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.messages-input-div input {
+    width: 70%;
+    height: 30px;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--background-color);
+    color: white;
+    outline: none;
+}
+
+.messages-input-div button {
+    width: 20%;
+    max-width: 120px;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    background-color: var(--secondary-color);
+    color: white;
+    margin-right: 5px;
+    transition: background-color 0.3s ease-out;
+}
+
+.messages-input-div button:hover {
+    background-color: var(--background-for-div);
+}
 .createGroupPage {
     /* width: 70%; */
     display: flex;
@@ -171,6 +915,7 @@ body {
 
 .commentBox {
     border: solid red 1px;
+    color: black;
 }
 
 .inviteBox {

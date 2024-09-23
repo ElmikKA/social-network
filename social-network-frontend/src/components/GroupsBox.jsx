@@ -6,14 +6,17 @@ const GroupsBox = ({ groups }) => {
     console.log(groups)
 
     return (
-        <div>
+        <div className='groups-grid'>
             {groups ? (
                 groups.map((group) => (
-                    <div key={group.id} className='groupBox' onClick={() => navigate(`/group/${group.id}`)}>
-                        {group.title}
+                    <div key={group.id} className='groups-items' onClick={() => navigate(`/group/${group.id}`)}>
+                        
                         <img src={`http://localhost:8080/api/avatars/db/assets/default.png`}
                             alt="group picture"
-                            style={{ width: '50px', height: '50px', borderRadius: '50%' }} />
+                            style={{ width: '50px', height: '50px', borderRadius: '50%' }} 
+                        />
+
+                        <h3>{group.title}</h3>
                     </div>
                 ))
             ) : <p>No posts</p>}

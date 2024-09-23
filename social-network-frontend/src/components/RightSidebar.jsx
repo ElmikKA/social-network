@@ -1,35 +1,34 @@
-import React, { useEffect } from 'react'
+import React from 'react'
+import { useGetContacts } from '../api'
 import ContactElement from './ContactElement'
 import GroupElement from './GroupElement'
 
-const RightSidebar = ({ contacts }) => {
+const RightSidebar = ({isOpen}) => {
 
+    const { contacts, loading } = useGetContacts()
 
-    useEffect(() => {
+    if (loading) {
+        return <div>Loading...</div>
+    }
 
-
-    }, [contacts])
+    console.log(contacts)
 
     // add buttons to open message box
     // make the contacts and groups into elements
 
     return (
-        <div className='rightSidebar'>
-            <div className='contactDiv'>
-                <p>Contacts:</p>
-                {contacts?.contacts?.length > 0 ? (
-                    <ContactElement contacts={contacts.contacts} />
-                ) : (
-                    <p>No contacts available</p>
-                )}
-            </div>
-            <div className='groupChatDiv'>
-                <p>GroupChats:</p>
-                {contacts?.groupChats?.length > 0 ? (
-                    <GroupElement groupChat={contacts.groupChats} />
-                ) : (
-                    <p>no groupchat available</p>
-                )}
+        <div className={`rightSidebar ${isOpen ? 'open' : ''}`}>
+            <div className='right-sidebar-inner-div'>
+                <div className='contactDiv'>
+                    {
+                        <ContactElement contacts={contacts.contacts}/>
+                    }
+                </div>
+                <div className='groupChatDiv'>
+                    {
+                        <GroupElement groupChat={contacts.groupChats} />
+                    }
+                </div>
             </div>
         </div >
     )
