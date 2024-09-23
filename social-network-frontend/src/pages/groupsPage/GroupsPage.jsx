@@ -10,7 +10,7 @@ const GroupsPage = () => {
 
 
     return (
-        <div className='groupsMain'>
+        <div className='groups-main'>
             <GroupsBox groups={groupData.groupData} />
         </div>
     )

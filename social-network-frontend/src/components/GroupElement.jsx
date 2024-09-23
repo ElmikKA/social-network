@@ -5,17 +5,17 @@ const GroupElement = (groupChats) => {
     const navigate = useNavigate()
     return (
         <>
-            <p>GroupChats:</p>
-            {groupChats?.groupChat?.length > 0 ? (
-                <div>
+            <p style={{fontWeight: '600'}}>GroupChats:</p>
+            {groupChats?.groupChat?.length > 0 && groupChats.groupChat !== null ? (
+                <div className='message-window-group'>
                     {groupChats.groupChat.map((groupChat) => (
-                        <button key={groupChat.GroupId} className='groupChatList' onClick={() => navigate(`/groupMessage/${groupChat.GroupId}`)}>
+                        <div key={groupChat.GroupId} className='group-chat-list' onClick={() => navigate(`/groupMessage/${groupChat.GroupId}`)}>
                             <img
                                 src={'http://localhost:8080/api/avatars/db/static/default.png'}
-                                style={{ width: '50px', height: '50px', borderRadius: '50%' }}
+                                style={{ width: '30px', height: '30px', borderRadius: '50%', marginRight: '10px'}}
                             />
-                            {groupChat.Title}
-                        </button>
+                            <p>{groupChat.Title}</p>
+                        </div>
                     ))}
                 </div>
             ) : (<p>No groups available</p>)}

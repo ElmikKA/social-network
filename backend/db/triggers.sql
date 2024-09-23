@@ -97,7 +97,7 @@ BEGIN
         'gi_ref',
         NEW.id
     WHERE NEW.invitee = 1;
-END
+END;
 
 
 

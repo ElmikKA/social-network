@@ -5,14 +5,14 @@ const UserBox = (users) => {
     console.log(users.users)
     const navigate = useNavigate()
     return (
-        <div>
+        <div className='users-profile-grid'>
             {users.users.map((user) => (
-                <div key={user.id} className='userBox' onClick={() => navigate(`/user/${user.id}`)}>
+                <div key={user.id} className='user-profile-items' onClick={() => navigate(`/user/${user.id}`)}>
                     <img
                         src={`http://localhost:8080/api/avatars/${user.avatar ? user.avatar : '/db/assets/default.webp'}`}
                         alt={`${user.name}'s Avatar`}
-                        style={{ width: '50px', height: '50px', borderRadius: '50%' }} />
-                    {user.name}
+                         />
+                    <h2>{user.name}</h2>
                 </div>
             ))
             }

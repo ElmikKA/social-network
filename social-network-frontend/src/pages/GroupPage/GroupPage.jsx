@@ -29,26 +29,70 @@ const GroupPage = () => {
     }
 
     return (
-        <div className='groupPage'>
-            <h2>Group page</h2>
-            <p>{groupData.groupData.title}</p>
-            <p>Description: {groupData.groupData.description}</p>
-            {groupData.owner && <p>owner of group</p>}
+        <div className='group-page'>
 
+            <div className='group-header-and-information'>
+                <div className='group-picture-and-name'>
+                    <div className='group-picture' style={{width: '100px', height: '100px', borderRadius: '50px', backgroundColor: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'black'}}>
+                        <p>NEW</p>
+                    </div>
+                    <h2>{groupData.groupData.title}</h2>
 
-            {groupData?.joinStatus === 'completed' ? (
-                <div>
-                    <ToggleInviteGroup groupId={groupData.groupData.id} />
-                    <EventBox setRefreshTrigger={setRefreshTrigger} events={groupData.groupEvents} />
-                    <CreateEvent setRefreshTrigger={setRefreshTrigger} groupId={groupData.groupData.id} />
-                    <CreateGroupPost setRefreshTrigger={setRefreshTrigger} groupId={groupData.groupData.id} />
-                    <GroupPostBox posts={groupData.groupPosts} />
+                    <div className='group-posts-members-events-section'>
+                        <div className='members-posts-events'>
+                            <p>Members</p>
+                            <h3>{groupData.groupMembers !== null ? groupData.groupMembers.length : '0'}</h3>
+                        </div>
+                        <div className='members-posts-events'>
+                            <p>Posts</p>
+                            <h3>{groupData.groupPosts !== null ? groupData.groupPosts.length : '0'}</h3>
+                        </div>
+                        <div className='members-posts-events'>
+                            <p>Events</p>
+                            <h3>{groupData.groupEvents !== null ? groupData.groupEvents.length : '0'}</h3>
+                        </div>
+                    </div>
+
+                    <div className='join-or-invite-button'>
+
+                    {groupData?.joinStatus === 'completed' && groupData.owner ? (
+                        <div>
+                            <ToggleInviteGroup groupId={groupData.groupData.id}  />
+                        </div>
+                    ) : groupData?.joinStatus === 'pending' ? (
+                        <p>Join request pending...</p>
+                    ) : groupData?.joinStatus === "" ? ( 
+                        <button onClick={handleJoinGroup}>Join Group</button>
+                    ) : null} 
+                    </div>
+
                 </div>
-            ) : groupData?.joinStatus === 'pending' ? (
-                <p>Join request pending...</p>
-            ) : groupData?.joinStatus === "" ? (  // Render button only when joinStatus is empty string
-                <button onClick={handleJoinGroup}>Join Group</button>
-            ) : null} {/* Render nothing if joinStatus is undefined or any other value */}
+
+                <div className='about-the-group-div'>
+                    <h3>About the Group</h3>
+                    <p>{groupData.groupData.description}</p>
+                </div>
+
+                <div className='group-events'>
+                    <h3>Upcoming Group Events</h3>
+                    {groupData.joinStatus === 'completed' ? 
+                        <EventBox setRefreshTrigger={setRefreshTrigger} events={groupData.groupEvents} /> : 
+                        <p>Only Members can see the events!</p>
+                    }
+                </div>
+            </div>
+
+            <div className='group-posts'>
+                {groupData?.joinStatus === 'completed' ? 
+                    <div>
+                        <CreateGroupPost setRefreshTrigger={setRefreshTrigger} groupId={groupData.groupData.id} />
+                        <CreateEvent setRefreshTrigger={setRefreshTrigger} groupId={groupData.groupData.id} />
+                        <GroupPostBox posts={groupData.groupPosts} />
+                    </div> 
+                    : 
+                    <p>Need to join the group to see information</p>
+                }
+            </div>
         </div>
     )
 }

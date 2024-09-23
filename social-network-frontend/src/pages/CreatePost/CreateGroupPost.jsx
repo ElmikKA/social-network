@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-
 import { useCreatePost } from '../../api'
+import { CustomFileInput } from '../../components/ui/CustomeFile'
 
 const CreateGroupPost = ({ setRefreshTrigger, groupId }) => {
 
@@ -11,21 +11,28 @@ const CreateGroupPost = ({ setRefreshTrigger, groupId }) => {
     }
 
     return (
-        <div className='createGroupPostDiv'>
-
-            <form onSubmit={submit} method='POST' style={{ display: 'flex', flexDirection: 'column', maxWidth: '400px', margin: '0 auto' }}>
-                Create post
-
-                <label htmlFor="title">Title</label>
-                <input type="text" id="title" placeholder='Title' required value={postData.title} onChange={handleChange} />
-
-                <label htmlFor="content">Content</label>
-                <input type="text" id="content" placeholder='Content' required value={postData.content} onChange={handleChange} />
-
-                <label htmlFor="avatar">picture</label>
-                <input type="file" id="avatar" accept='image/*' onChange={handleFileChange} />
-
-                <button type='submit'>Create post</button>
+        <div className='create-group-post-div'>
+            <form onSubmit={submit} method='POST' style={{width: '100%'}}>
+                <h3>Create a New Post</h3>
+                <div className='form-group'>
+                    <div className='form-field'>
+                        <input type="text" id="title" placeholder='Title' required value={postData.title} onChange={handleChange} />
+                    </div>
+                    
+                </div>
+                
+                <div className='form-field' style={{width: '97%'}}>
+                    <textarea type="text" id="content" placeholder="What's on your mind?" required value={postData.content} onChange={handleChange} />
+                </div>
+                
+                <div className='form-group' style={{marginTop: '20px'}}>
+                    <div className='form-field'>
+                        <CustomFileInput id="avatar" accept="image/*" onChange={handleFileChange}/>
+                    </div>
+                    <div>
+                        <button type='submit' className='create-post-submit-button'>Create post</button>
+                    </div>
+                </div>
             </form>
         </div>
     )

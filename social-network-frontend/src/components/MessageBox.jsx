@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useGetMessages } from '../api';
 import { useParams } from 'react-router-dom';
 import { GetSocket } from '../WebSocket';
@@ -11,6 +11,13 @@ const MessageBox = () => {
     const { messages: initialMessages, loading } = useGetMessages(receiverId);
     const [messages, setMessages] = useState([])
 
+    const messagesEndRef = useRef(null); // Create a ref for the end of the message box
+    const scrollToBottom = () => {
+        if (messagesEndRef.current) {
+            messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
     useEffect(() => {
         if (initialMessages && initialMessages.messages) {
 
@@ -20,7 +27,9 @@ const MessageBox = () => {
         }
     }, [initialMessages])
 
-
+    useEffect(() => {
+        scrollToBottom(); // Automatically scroll to the bottom when messages change
+    }, [messages]); // This will run whenever the messages array is updated
 
     if (loading) {
         return <p>Loading messages...</p>;
@@ -39,14 +48,16 @@ const MessageBox = () => {
         }
     }
 
-    if (!messages || messages.length === 0) return <div>No messages</div>
+    if (!messages || messages.length === 0) return <div className='messages-box'>No messages</div>
+    console.log('messages', messages)
     return (
-        <div>
+        <div className='messages-box'>
             {messages.map((message, index) => (
-                <div key={index}>
-                    <strong> {message.name}:</strong> {message.message}
+                <div key={index} className={message.receiverId === receiverId || message.senderId === receiverId  ? 'message-right' : 'message-left'}>
+                    <strong> {message.name}:</strong> {message.message} {index}
                 </div>
             ))}
+            <div ref={messagesEndRef} />
         </div>
     );
 };
