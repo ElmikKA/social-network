@@ -80,7 +80,6 @@ const GroupPage = () => {
                         <p>Only Members can see the events!</p>
                     }
                 </div>
-
             </div>
 
             <div className='group-posts'>
