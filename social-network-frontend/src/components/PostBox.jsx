@@ -25,7 +25,7 @@ const PostBox = ({ allPosts }) => {
     );
 };
 
-const PostItem = ({ post, refreshTrigger }) => {
+export const PostItem = ({ post, refreshTrigger }) => {
     const { userData, loading, error } = useGetUser(post.userId, refreshTrigger);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [showComments, setShowComments] = useState(false); // State to toggle comments

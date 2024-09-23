@@ -290,12 +290,12 @@ body {
 }
 
 /* ************* Create Posts Section **************** */
-.create-post {
+.create-post, .create-group-post-div {
     width: 660px;
     background-color: var(--primary-color);
     display: flex;
     justify-content: flex-start;
-    margin: 30px 30px 30px 30px;
+    margin: 30px;
     border-radius: 20px;
     padding: 30px;
 }
@@ -380,7 +380,6 @@ body {
 }
 
 /* ************* Posts Section **************** */
-
 .post-box {
     width: 660px;
     margin: 0px 30px 30px 30px;
@@ -725,6 +724,60 @@ body {
     border: solid black 2px;
     padding: 5px;
 }
+
+/* ******************Group Section****************** */
+.group-page {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+}
+
+.group-header-and-information {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    margin: 30px;
+}
+
+.group-picture-and-name, .about-the-group-div, .group-events {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--primary-color);
+    width: 100%;
+    padding: 30px;
+    border-radius: 20px;
+    margin-bottom: 30px;
+}
+
+.about-the-group-div {
+    display: flex;
+    align-items: baseline;
+}
+
+.group-posts-members-events-section {
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
+}
+
+.members-posts-events {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.group-events {
+    align-items: baseline;
+}
+
+.group-posts {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+
 
 .groupPage {
     /* width: 70%; */
